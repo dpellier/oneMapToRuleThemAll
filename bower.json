@@ -1,0 +1,10 @@
+{
+  "name": "oneMapToRuleThemAll",
+  "version": "0.1.0",
+  "authors": [
+    "Damien Pellier <dpellier@gmail.com>"
+  ],
+  "description": "Unique interface above multiple map providers",
+  "main": "dist/oneMapToRuleThemAll.js",
+  "license": "MIT"
+}
