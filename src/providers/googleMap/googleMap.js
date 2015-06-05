@@ -1,77 +1,50 @@
 'use strict';
 
-module.exports = {
-    render: render,
-    defineMarker: defineMarker,
-    loadScript: loadScript
-};
+var Map = require('../../Map');
 
-/**
- * Render the map with a list of given location
- * @param domElement - DOM Element where the map will be appended
- * @param points - List of points to draw
- * @param mapKey - Google Map API Key
- */
-function render(domElement, points, apiKey, options) {
+class GoogleMap extends Map {
+    constructor(...args) {
+        super(...args);
+        this.provider = 'Google Map';
+    }
 
+    render(loadingMask) {
+        // TODO loadingMask
 
-    var map;
+        var map = new google.maps.Map(this.domElement, this.options);
+        var bounds = new google.maps.LatLngBounds();
 
-    //var infowindow = new google.maps.InfoWindow();
+        this.points.forEach(function(point) {
+            var marker = createMarker(google, map, point.latitude, point.longitude);
+            bounds.extend(marker.position);
+        });
 
-    // TODO customize marker options
+        map.fitBounds(bounds);
+    }
 
+    loadFiles(callback) {
 
-    map = new google.maps.Map(domElement, options);
-    var bounds = new google.maps.LatLngBounds();
+        // Add a global callback function to be called when google map script finish loading
+        window._googleMapCallbackOnLoad = function() {
 
-    points.forEach(function(point, idx) {
-        var marker = createMarker(google, map, point.latitude, point.longitude);
-        //bindMarkerClick(google, marker, point, infowindow);
-        bounds.extend(marker.position);
-        //point._marker = marker;
-        //point._markerIdx = idx + 1;
-    });
+            // Remove callback to keep global clean
+            delete window._googleMapCallbackOnLoad;
+            callback();
+        };
 
-    map.fitBounds(bounds);
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey;
 
+        this.domElement.appendChild(script);
+    }
 }
 
 function createMarker(google, map, latitude, longitude) {
-    var marker = new google.maps.Marker({
+    return new google.maps.Marker({
         position: new google.maps.LatLng(latitude, longitude),
         map: map
     });
-
-    return marker;
 }
 
-
-/**
- * TODO
- */
-function defineMarker() {
-
-}
-
-/**
- * Load the Leaflet resource
- * @param domElement - DOM Element where the resources will be appended
- * @param callback - function called after all resources are loaded
- * @param mapKey - Google Map API Key
- */
-function loadScript(domElement, callback, mapKey) {
-
-    // Add a global callback function to be called when google map script finish loading
-    window._googleMapCallbackOnLoad = function() {
-
-        // Remove callback to keep global clean
-        delete window._googleMapCallbackOnLoad;
-        callback();
-    };
-
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + mapKey;
-    domElement.appendChild(script);
-}
+window.Map = GoogleMap;
