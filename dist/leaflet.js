@@ -58,65 +58,57 @@
 	var domUtils = __webpack_require__(6);
 	var loaderUtils = __webpack_require__(7);
 
-	var GoogleMap = (function (_Map) {
-	    function GoogleMap() {
+	var Leaflet = (function (_Map) {
+	    function Leaflet() {
 	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 	            args[_key] = arguments[_key];
 	        }
 
-	        _classCallCheck(this, GoogleMap);
+	        _classCallCheck(this, Leaflet);
 
-	        _get(Object.getPrototypeOf(GoogleMap.prototype), 'constructor', this).apply(this, args);
-	        this.provider = 'Google Map';
+	        _get(Object.getPrototypeOf(Leaflet.prototype), 'constructor', this).apply(this, args);
+	        this.provider = 'Leaflet';
 	    }
 
-	    _inherits(GoogleMap, _Map);
+	    _inherits(Leaflet, _Map);
 
-	    _createClass(GoogleMap, [{
+	    _createClass(Leaflet, [{
 	        key: 'render',
 	        value: function render() {
-	            var _this = this;
+	            var map = L.map(this.domElement).setView([51.505, -0.09], 13);
 
-	            this.points = [this.points[0]];
+	            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+	                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+	                maxZoom: 18,
+	                id: 'dpellier.c61a9bf4',
+	                accessToken: this.apiKey
+	            }).addTo(map);
 
-	            var map = new google.maps.Map(this.domElement, this.options.map);
-	            var bounds = new google.maps.LatLngBounds();
-
-	            this.points.forEach(function (point) {
-	                var marker = createMarker(map, point.latitude, point.longitude, _this.options.marker);
-	                bounds.extend(marker.position);
-	            });
-
-	            map.fitBounds(bounds);
+	            var marker = L.marker([51.5, -0.09]).addTo(map);
 	        }
 	    }, {
 	        key: 'load',
 	        value: function load(callback, loadingMask) {
-	            window._googleMapCallbackOnLoad = function () {
-	                delete window._googleMapCallbackOnLoad;
-	                callback();
-	            };
 
 	            if (loadingMask) {
-	                window._googleMapCallbackOnLoad = loaderUtils.addLoader(this.domElement, loadingMask, window._googleMapCallbackOnLoad);
+	                callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
 	            }
 
-	            domUtils.addScript(this.domElement, 'https://maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey);
+	            domUtils.addResources(this.domElement, [domUtils.createScript('http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js'), domUtils.createStyle('http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css')], callback);
 	        }
 	    }]);
 
-	    return GoogleMap;
+	    return Leaflet;
 	})(Map);
 
-	function createMarker(map, latitude, longitude, options) {
+	function createMarker(map, latitude, longitude) {
 	    return new google.maps.Marker({
 	        position: new google.maps.LatLng(latitude, longitude),
-	        map: map,
-	        icon: options
+	        map: map
 	    });
 	}
 
-	window.Map = GoogleMap;
+	window.Map = Leaflet;
 
 /***/ },
 /* 1 */

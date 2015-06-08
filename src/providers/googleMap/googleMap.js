@@ -1,6 +1,8 @@
 'use strict';
 
 var Map = require('../../Map');
+var domUtils = require('../../utils/dom');
+var loaderUtils = require('../../utils/loader');
 
 class GoogleMap extends Map {
     constructor(...args) {
@@ -8,42 +10,39 @@ class GoogleMap extends Map {
         this.provider = 'Google Map';
     }
 
-    render(loadingMask) {
-        // TODO loadingMask
+    render() {
+        this.points = [this.points[0]];
 
-        var map = new google.maps.Map(this.domElement, this.options);
-        var bounds = new google.maps.LatLngBounds();
+        let map = new google.maps.Map(this.domElement, this.options.map);
+        let bounds = new google.maps.LatLngBounds();
 
-        this.points.forEach(function(point) {
-            var marker = createMarker(google, map, point.latitude, point.longitude);
+        this.points.forEach((point) => {
+            let marker = createMarker(map, point.latitude, point.longitude, this.options.marker);
             bounds.extend(marker.position);
         });
 
         map.fitBounds(bounds);
     }
 
-    loadFiles(callback) {
-
-        // Add a global callback function to be called when google map script finish loading
+    load(callback, loadingMask) {
         window._googleMapCallbackOnLoad = function() {
-
-            // Remove callback to keep global clean
             delete window._googleMapCallbackOnLoad;
             callback();
         };
 
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey;
+        if (loadingMask) {
+            window._googleMapCallbackOnLoad = loaderUtils.addLoader(this.domElement, loadingMask, window._googleMapCallbackOnLoad);
+        }
 
-        this.domElement.appendChild(script);
+        domUtils.addScript(this.domElement, 'https://maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey);
     }
 }
 
-function createMarker(google, map, latitude, longitude) {
+function createMarker(map, latitude, longitude, options) {
     return new google.maps.Marker({
         position: new google.maps.LatLng(latitude, longitude),
-        map: map
+        map: map,
+        icon: options
     });
 }
 

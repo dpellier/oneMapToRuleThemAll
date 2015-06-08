@@ -1,6 +1,9 @@
 'use strict';
 
 var Map = require('../../Map');
+var domUtils = require('../../utils/dom');
+var loaderUtils = require('../../utils/loader');
+var objectAssign = require('object-assign');
 
 class BingMap extends Map {
     constructor(...args) {
@@ -8,47 +11,45 @@ class BingMap extends Map {
         this.provider = 'Bing Map';
     }
 
-    render(loadingMask) {
-        // TODO loadingMask
-
-        var map = new Microsoft.Maps.Map(this.domElement, {credentials: this.apiKey});
+    render() {
+        let map = new Microsoft.Maps.Map(this.domElement, objectAssign({
+            credentials: this.apiKey
+        }, this.options.map));
 
         if (this.points.length > 1) {
 
-            var locations = this.points.map(function (point) {
+            let locations = this.points.map((point) => {
                 var loc = new Microsoft.Maps.Location(point.latitude, point.longitude);
-                var pin = new Microsoft.Maps.Pushpin(loc);
+                var pin = new Microsoft.Maps.Pushpin(loc, this.options.marker);
                 map.entities.push(pin);
 
                 return loc;
             });
 
-            var viewBoundaries = Microsoft.Maps.LocationRect.fromLocations(locations);
+            let viewBoundaries = Microsoft.Maps.LocationRect.fromLocations(locations);
             map.setView({bounds: viewBoundaries});
 
         } else {
 
-            var loc = new Microsoft.Maps.Location(this.points[0].latitude, this.points[0].longitude);
-            var pin = new Microsoft.Maps.Pushpin(loc);
+            let loc = new Microsoft.Maps.Location(this.points[0].latitude, this.points[0].longitude);
+            let pin = new Microsoft.Maps.Pushpin(loc, this.options.marker);
 
             map.entities.push(pin);
             map.setView({center: loc, zoom: 10});
         }
     }
 
-    loadFiles(callback) {
-        // Add a global callback function to be called when bing script finish loading
+    load(callback, loadingMask) {
         window._bingCallbackOnLoad = function() {
-
-            // Remove callback to keep global clean
             delete window._bingCallbackOnLoad;
             callback();
         };
 
-        var script = document.createElement('script');
-        script.setAttribute('src', 'http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad');
-        script.setAttribute('type', 'text/javascript');
-        this.domElement.appendChild(script);
+        if (loadingMask) {
+            window._bingCallbackOnLoad = loaderUtils.addLoader(this.domElement, loadingMask, window._bingCallbackOnLoad);
+        }
+
+        domUtils.addScript(this.domElement, 'http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad');
     }
 }
 

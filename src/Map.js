@@ -1,10 +1,12 @@
 'use strict';
 
+require('./style.css');
+
 class Map {
     constructor(domElement, apiKey, options) {
         this.domElement = domElement;
         this.apiKey = apiKey;
-        this.options = options || {};
+        this.setOptions(options);
         this.provider = '[No provider defined]';
     }
 
@@ -13,15 +15,15 @@ class Map {
     }
 
     setOptions(options) {
-        this.options = options;
+        this.options = options || {};
     }
 
     render() {
-        console.log(this.provider + ' has no render method implemented');
+        console.error(this.provider + ' has no render method implemented');
     }
 
-    loadFiles() {
-        console.log(this.provider + ' has no loadFiles method implemented');
+    load() {
+        console.error(this.provider + ' has no load method implemented');
     }
 }
 
