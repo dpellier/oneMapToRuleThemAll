@@ -49,7 +49,7 @@ class GoogleMap extends Map {
 
         // Init the clustering if the option is set
         if (this.options.markerCluster.active) {
-            let markerClusterer = new MarkerClusterer(map, markers, this.options.markerCluster);
+            new MarkerClusterer(map, markers, this.options.markerCluster);
         }
     }
 
