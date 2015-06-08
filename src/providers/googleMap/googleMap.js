@@ -1,8 +1,10 @@
 'use strict';
 
-var Map = require('../../Map');
-var domUtils = require('../../utils/dom');
-var loaderUtils = require('../../utils/loader');
+let Map = require('../../Map');
+let domUtils = require('../../utils/dom');
+let loaderUtils = require('../../utils/loader');
+let MarkerClusterer = require('markerclustererplus');
+
 
 class GoogleMap extends Map {
     constructor(...args) {
@@ -11,17 +13,44 @@ class GoogleMap extends Map {
     }
 
     render() {
-        this.points = [this.points[0]];
+        // Require google object here cause they're not loaded before
+        let InfoWindow = require('./InfoWindow');
+        let Marker = require('./Marker');
 
+        // Init the map
         let map = new google.maps.Map(this.domElement, this.options.map);
         let bounds = new google.maps.LatLngBounds();
 
+        let infoWindow;
+        let markers = [];
+
+        // Init the info window is the option is set
+        if (this.options.infoWindow.active) {
+            infoWindow = new InfoWindow(this.options.infoWindow);
+        }
+
+        // Create a marker for each point
         this.points.forEach((point) => {
-            let marker = createMarker(map, point.latitude, point.longitude, this.options.marker);
+            let marker = new Marker(map, point, this.options.marker);
             bounds.extend(marker.position);
+            markers.push(marker);
+
+            // Bind the info window on marker click if the option is set
+            if (this.options.infoWindow.active) {
+                google.maps.event.addListener(marker, 'click', () => {
+                    infoWindow.setContent(this.options.infoWindow.content);
+                    infoWindow.open(map, marker);
+                });
+            }
         });
 
+        // Center the map
         map.fitBounds(bounds);
+
+        // Init the clustering if the option is set
+        if (this.options.markerCluster.active) {
+            let markerClusterer = new MarkerClusterer(map, markers, this.options.markerCluster);
+        }
     }
 
     load(callback, loadingMask) {
@@ -36,14 +65,6 @@ class GoogleMap extends Map {
 
         domUtils.addScript(this.domElement, 'https://maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey);
     }
-}
-
-function createMarker(map, latitude, longitude, options) {
-    return new google.maps.Marker({
-        position: new google.maps.LatLng(latitude, longitude),
-        map: map,
-        icon: options
-    });
 }
 
 window.Map = GoogleMap;

@@ -1,9 +1,9 @@
 'use strict';
 
-var Map = require('../../Map');
-var domUtils = require('../../utils/dom');
-var loaderUtils = require('../../utils/loader');
-var objectAssign = require('object-assign');
+let Map = require('../../Map');
+let domUtils = require('../../utils/dom');
+let loaderUtils = require('../../utils/loader');
+let objectAssign = require('object-assign');
 
 class BingMap extends Map {
     constructor(...args) {
@@ -12,29 +12,59 @@ class BingMap extends Map {
     }
 
     render() {
+        // Require microsoft object here cause they're not loaded before
+        let InfoBox = require('./InfoBox');
+
+        // Init the map
         let map = new Microsoft.Maps.Map(this.domElement, objectAssign({
             credentials: this.apiKey
         }, this.options.map));
 
+        let infoBox = {};
+        let infoBoxLayer;
+        let dataLayer = new Microsoft.Maps.EntityCollection();
+        map.entities.push(dataLayer);
+
+        // Init the info window is the option is set
+        if (this.options.infoWindow) {
+            infoBoxLayer = new Microsoft.Maps.EntityCollection();
+            map.entities.push(infoBoxLayer);
+        }
+
+        function addPin(point, options) {
+            let loc = new Microsoft.Maps.Location(point.latitude, point.longitude);
+            let pin = new Microsoft.Maps.Pushpin(loc, options.marker);
+
+            dataLayer.push(pin);
+
+            // Bind the info window on pin click if the option is set
+            if (options.infoWindow.active) {
+                infoBox = new InfoBox(pin.getLocation(), options.infoWindow);
+                infoBoxLayer.push(infoBox);
+
+                Microsoft.Maps.Events.addHandler(pin, 'click', (e) => {
+                    infoBox.display(e.target.getLocation(), options.infoWindow.description);
+                    map.setView({center: pin.getLocation()});
+                });
+            }
+
+            return pin.getLocation();
+        }
+
         if (this.points.length > 1) {
-
+            // Create a pin for each point
             let locations = this.points.map((point) => {
-                var loc = new Microsoft.Maps.Location(point.latitude, point.longitude);
-                var pin = new Microsoft.Maps.Pushpin(loc, this.options.marker);
-                map.entities.push(pin);
-
-                return loc;
+                return addPin(point, this.options);
             });
 
+            // Center the map
             let viewBoundaries = Microsoft.Maps.LocationRect.fromLocations(locations);
             map.setView({bounds: viewBoundaries});
 
         } else {
+            let loc = addPin(this.points[0], this.options);
 
-            let loc = new Microsoft.Maps.Location(this.points[0].latitude, this.points[0].longitude);
-            let pin = new Microsoft.Maps.Pushpin(loc, this.options.marker);
-
-            map.entities.push(pin);
+            // Center the map
             map.setView({center: loc, zoom: 10});
         }
     }

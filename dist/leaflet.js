@@ -55,8 +55,8 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
 	var Map = __webpack_require__(1);
-	var domUtils = __webpack_require__(6);
-	var loaderUtils = __webpack_require__(7);
+	var domUtils = __webpack_require__(7);
+	var loaderUtils = __webpack_require__(8);
 
 	var Leaflet = (function (_Map) {
 	    function Leaflet() {
@@ -121,6 +121,7 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 	__webpack_require__(2);
+	var objectAssign = __webpack_require__(6);
 
 	var Map = (function () {
 	    function Map(domElement, apiKey, options) {
@@ -140,7 +141,14 @@
 	    }, {
 	        key: 'setOptions',
 	        value: function setOptions(options) {
-	            this.options = options || {};
+	            var defaultOptions = {
+	                map: {},
+	                marker: {},
+	                markerCluster: {},
+	                infoWindow: {}
+	            }; // TODO depends on provider
+
+	            this.options = objectAssign(defaultOptions, options);
 	        }
 	    }, {
 	        key: 'render',
@@ -190,7 +198,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
-	exports.push([module.id, ".one-map-to-rule-them-all__spinner {\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    content: '';\n    width: 50px;\n    height: 50px;\n    margin: auto;\n    padding: 50px 0 0 50px;\n    background-color: #333;\n\n    border-radius: 100%;\n    /*-webkit-animation: scaleout 1.0s infinite ease-in-out;*/\n    animation: scaleout 1.0s infinite ease-in-out;\n}\n\n/*@-webkit-keyframes scaleout {*/\n    /*0% { -webkit-transform: scale(0.0) }*/\n    /*100% {*/\n        /*-webkit-transform: scale(1.0);*/\n        /*opacity: 0;*/\n    /*}*/\n/*}*/\n\n@keyframes scaleout {\n    0% {\n        transform: scale(0.0);\n        /*-webkit-transform: scale(0.0);*/\n    } 100% {\n          transform: scale(1.0);\n          /*-webkit-transform: scale(1.0);*/\n          opacity: 0;\n      }\n}\n", ""]);
+	exports.push([module.id, ".one-map-to-rule-them-all__spinner {\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    content: '';\n    width: 50px;\n    height: 50px;\n    margin: auto;\n    padding: 50px 0 0 50px;\n    background-color: #333;\n\n    border-radius: 100%;\n    animation: scaleout 1.0s infinite ease-in-out;\n}\n\n@keyframes scaleout {\n    0% {\n        transform: scale(0.0);\n    } 100% {\n          transform: scale(1.0);\n          opacity: 0;\n      }\n}\n", ""]);
 
 /***/ },
 /* 4 */
@@ -478,6 +486,51 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+	function ToObject(val) {
+		if (val == null) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+
+		return Object(val);
+	}
+
+	function ownEnumerableKeys(obj) {
+		var keys = Object.getOwnPropertyNames(obj);
+
+		if (Object.getOwnPropertySymbols) {
+			keys = keys.concat(Object.getOwnPropertySymbols(obj));
+		}
+
+		return keys.filter(function (key) {
+			return propIsEnumerable.call(obj, key);
+		});
+	}
+
+	module.exports = Object.assign || function (target, source) {
+		var from;
+		var keys;
+		var to = ToObject(target);
+
+		for (var s = 1; s < arguments.length; s++) {
+			from = arguments[s];
+			keys = ownEnumerableKeys(Object(from));
+
+			for (var i = 0; i < keys.length; i++) {
+				to[keys[i]] = from[keys[i]];
+			}
+		}
+
+		return to;
+	};
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	module.exports = {
 	    addScript: function addScript(domElement, src) {
@@ -523,7 +576,7 @@
 	};
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

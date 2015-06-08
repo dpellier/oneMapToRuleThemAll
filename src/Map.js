@@ -1,6 +1,7 @@
 'use strict';
 
 require('./style.css');
+let objectAssign = require('object-assign');
 
 class Map {
     constructor(domElement, apiKey, options) {
@@ -15,7 +16,14 @@ class Map {
     }
 
     setOptions(options) {
-        this.options = options || {};
+        let defaultOptions = {
+            map: {},
+            marker: {},
+            markerCluster: {},
+            infoWindow: {}
+        }; // TODO depends on provider
+
+        this.options = objectAssign(defaultOptions, options);
     }
 
     render() {

@@ -55,9 +55,9 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
 	var Map = __webpack_require__(1);
-	var domUtils = __webpack_require__(6);
-	var loaderUtils = __webpack_require__(7);
-	var objectAssign = __webpack_require__(8);
+	var domUtils = __webpack_require__(7);
+	var loaderUtils = __webpack_require__(8);
+	var objectAssign = __webpack_require__(6);
 
 	var BingMap = (function (_Map) {
 	    function BingMap() {
@@ -78,28 +78,58 @@
 	        value: function render() {
 	            var _this = this;
 
+	            // Require microsoft object here cause they're not loaded before
+	            var InfoBox = __webpack_require__(9);
+
+	            // Init the map
 	            var map = new Microsoft.Maps.Map(this.domElement, objectAssign({
 	                credentials: this.apiKey
 	            }, this.options.map));
 
+	            var infoBox = {};
+	            var infoBoxLayer = undefined;
+	            var dataLayer = new Microsoft.Maps.EntityCollection();
+	            map.entities.push(dataLayer);
+
+	            // Init the info window is the option is set
+	            if (this.options.infoWindow) {
+	                infoBoxLayer = new Microsoft.Maps.EntityCollection();
+	                map.entities.push(infoBoxLayer);
+	            }
+
+	            function addPin(point, options) {
+	                var loc = new Microsoft.Maps.Location(point.latitude, point.longitude);
+	                var pin = new Microsoft.Maps.Pushpin(loc, options.marker);
+
+	                dataLayer.push(pin);
+
+	                // Bind the info window on pin click if the option is set
+	                if (options.infoWindow.active) {
+	                    infoBox = new InfoBox(pin.getLocation(), options.infoWindow);
+	                    infoBoxLayer.push(infoBox);
+
+	                    Microsoft.Maps.Events.addHandler(pin, 'click', function (e) {
+	                        infoBox.display(e.target.getLocation(), options.infoWindow.description);
+	                        map.setView({ center: pin.getLocation() });
+	                    });
+	                }
+
+	                return pin.getLocation();
+	            }
+
 	            if (this.points.length > 1) {
-
+	                // Create a pin for each point
 	                var locations = this.points.map(function (point) {
-	                    var loc = new Microsoft.Maps.Location(point.latitude, point.longitude);
-	                    var pin = new Microsoft.Maps.Pushpin(loc, _this.options.marker);
-	                    map.entities.push(pin);
-
-	                    return loc;
+	                    return addPin(point, _this.options);
 	                });
 
+	                // Center the map
 	                var viewBoundaries = Microsoft.Maps.LocationRect.fromLocations(locations);
 	                map.setView({ bounds: viewBoundaries });
 	            } else {
+	                var loc = addPin(this.points[0], this.options);
 
-	                var loc = new Microsoft.Maps.Location(this.points[0].latitude, this.points[0].longitude);
-	                var pin = new Microsoft.Maps.Pushpin(loc, this.options.marker);
-
-	                map.entities.push(pin);
+	                // Center the map
 	                map.setView({ center: loc, zoom: 10 });
 	            }
 	        }
@@ -135,6 +165,7 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 	__webpack_require__(2);
+	var objectAssign = __webpack_require__(6);
 
 	var Map = (function () {
 	    function Map(domElement, apiKey, options) {
@@ -154,7 +185,14 @@
 	    }, {
 	        key: 'setOptions',
 	        value: function setOptions(options) {
-	            this.options = options || {};
+	            var defaultOptions = {
+	                map: {},
+	                marker: {},
+	                markerCluster: {},
+	                infoWindow: {}
+	            }; // TODO depends on provider
+
+	            this.options = objectAssign(defaultOptions, options);
 	        }
 	    }, {
 	        key: 'render',
@@ -204,7 +242,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
-	exports.push([module.id, ".one-map-to-rule-them-all__spinner {\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    content: '';\n    width: 50px;\n    height: 50px;\n    margin: auto;\n    padding: 50px 0 0 50px;\n    background-color: #333;\n\n    border-radius: 100%;\n    /*-webkit-animation: scaleout 1.0s infinite ease-in-out;*/\n    animation: scaleout 1.0s infinite ease-in-out;\n}\n\n/*@-webkit-keyframes scaleout {*/\n    /*0% { -webkit-transform: scale(0.0) }*/\n    /*100% {*/\n        /*-webkit-transform: scale(1.0);*/\n        /*opacity: 0;*/\n    /*}*/\n/*}*/\n\n@keyframes scaleout {\n    0% {\n        transform: scale(0.0);\n        /*-webkit-transform: scale(0.0);*/\n    } 100% {\n          transform: scale(1.0);\n          /*-webkit-transform: scale(1.0);*/\n          opacity: 0;\n      }\n}\n", ""]);
+	exports.push([module.id, ".one-map-to-rule-them-all__spinner {\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    content: '';\n    width: 50px;\n    height: 50px;\n    margin: auto;\n    padding: 50px 0 0 50px;\n    background-color: #333;\n\n    border-radius: 100%;\n    animation: scaleout 1.0s infinite ease-in-out;\n}\n\n@keyframes scaleout {\n    0% {\n        transform: scale(0.0);\n    } 100% {\n          transform: scale(1.0);\n          opacity: 0;\n      }\n}\n", ""]);
 
 /***/ },
 /* 4 */
@@ -492,6 +530,51 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+	function ToObject(val) {
+		if (val == null) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+
+		return Object(val);
+	}
+
+	function ownEnumerableKeys(obj) {
+		var keys = Object.getOwnPropertyNames(obj);
+
+		if (Object.getOwnPropertySymbols) {
+			keys = keys.concat(Object.getOwnPropertySymbols(obj));
+		}
+
+		return keys.filter(function (key) {
+			return propIsEnumerable.call(obj, key);
+		});
+	}
+
+	module.exports = Object.assign || function (target, source) {
+		var from;
+		var keys;
+		var to = ToObject(target);
+
+		for (var s = 1; s < arguments.length; s++) {
+			from = arguments[s];
+			keys = ownEnumerableKeys(Object(from));
+
+			for (var i = 0; i < keys.length; i++) {
+				to[keys[i]] = from[keys[i]];
+			}
+		}
+
+		return to;
+	};
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	module.exports = {
 	    addScript: function addScript(domElement, src) {
@@ -537,7 +620,7 @@
 	};
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -564,49 +647,58 @@
 	};
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
-	function ToObject(val) {
-		if (val == null) {
-			throw new TypeError('Object.assign cannot be called with null or undefined');
-		}
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-		return Object(val);
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+	var objectAssign = __webpack_require__(6);
+
+	var InfoBox = (function (_Microsoft$Maps$Infobox) {
+	    function InfoBox(location, options) {
+	        _classCallCheck(this, InfoBox);
+
+	        _get(Object.getPrototypeOf(InfoBox.prototype), 'constructor', this).call(this, location, objectAssign({ visible: false }, options, getDescription(options.description)));
+	    }
+
+	    _inherits(InfoBox, _Microsoft$Maps$Infobox);
+
+	    _createClass(InfoBox, [{
+	        key: 'display',
+	        value: function display(location, description) {
+	            this.setLocation(location);
+
+	            _get(Object.getPrototypeOf(InfoBox.prototype), 'setOptions', this).call(this, {
+	                visible: true,
+	                description: getDescription(description)
+	            });
+	        }
+	    }]);
+
+	    return InfoBox;
+	})(Microsoft.Maps.Infobox);
+
+	function getDescription(description) {
+	    if (typeof description === 'string') {
+	        return description;
+	    }
+
+	    if (typeof description === 'function') {
+	        return description();
+	    }
+
+	    console.error('Info Box description must be a string or a function that return a string');
 	}
 
-	function ownEnumerableKeys(obj) {
-		var keys = Object.getOwnPropertyNames(obj);
-
-		if (Object.getOwnPropertySymbols) {
-			keys = keys.concat(Object.getOwnPropertySymbols(obj));
-		}
-
-		return keys.filter(function (key) {
-			return propIsEnumerable.call(obj, key);
-		});
-	}
-
-	module.exports = Object.assign || function (target, source) {
-		var from;
-		var keys;
-		var to = ToObject(target);
-
-		for (var s = 1; s < arguments.length; s++) {
-			from = arguments[s];
-			keys = ownEnumerableKeys(Object(from));
-
-			for (var i = 0; i < keys.length; i++) {
-				to[keys[i]] = from[keys[i]];
-			}
-		}
-
-		return to;
-	};
-
+	module.exports = InfoBox;
 
 /***/ }
 /******/ ]);
