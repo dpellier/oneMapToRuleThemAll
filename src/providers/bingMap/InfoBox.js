@@ -4,29 +4,31 @@ var objectAssign = require('object-assign');
 
 class InfoBox extends Microsoft.Maps.Infobox {
     constructor(location, options) {
-        super(location, objectAssign({visible: false}, options, getDescription(options.description)));
+        super(location, objectAssign({visible: false}, options, {description: ''}));//getDescription(options.description)));
+
+        this._descriptionConfig = options.description;
     }
 
-    display(location, description) {
-        this.setLocation(location);
+    build(data) {
+        if (typeof this._descriptionConfig === 'string') {
+            return this._descriptionConfig;
+        }
+
+        if (typeof this._descriptionConfig === 'function') {
+            return this._descriptionConfig(data) || ' ';
+        }
+
+        console.error('Info Box description must be a string or a function that return a string');
+    }
+
+    display(location, data) {
+        super.setLocation(location);
 
         super.setOptions({
             visible: true,
-            description: getDescription(description)
+            description: this.build(data)
         });
     }
-}
-
-function getDescription(description) {
-    if (typeof description === 'string') {
-        return description;
-    }
-
-    if (typeof description === 'function') {
-        return description();
-    }
-
-    console.error('Info Box description must be a string or a function that return a string');
 }
 
 module.exports = InfoBox;

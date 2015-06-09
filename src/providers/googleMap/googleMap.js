@@ -38,8 +38,7 @@ class GoogleMap extends Map {
             // Bind the info window on marker click if the option is set
             if (this.options.infoWindow.active) {
                 google.maps.event.addListener(marker, 'click', () => {
-                    infoWindow.setContent(this.options.infoWindow.content);
-                    infoWindow.open(map, marker);
+                    infoWindow.open(point.data, map, marker);
                 });
             }
         });

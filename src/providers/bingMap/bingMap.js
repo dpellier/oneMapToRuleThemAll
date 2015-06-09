@@ -21,14 +21,13 @@ class BingMap extends Map {
         }, this.options.map));
 
         let infoBox = {};
-        let infoBoxLayer;
         let dataLayer = new Microsoft.Maps.EntityCollection();
         map.entities.push(dataLayer);
 
         // Init the info window is the option is set
         if (this.options.infoWindow) {
-            infoBoxLayer = new Microsoft.Maps.EntityCollection();
-            map.entities.push(infoBoxLayer);
+            infoBox = new InfoBox(new Microsoft.Maps.Location(0, 0), this.options.infoWindow);
+            map.entities.push(infoBox);
         }
 
         function addPin(point, options) {
@@ -39,11 +38,8 @@ class BingMap extends Map {
 
             // Bind the info window on pin click if the option is set
             if (options.infoWindow.active) {
-                infoBox = new InfoBox(pin.getLocation(), options.infoWindow);
-                infoBoxLayer.push(infoBox);
-
                 Microsoft.Maps.Events.addHandler(pin, 'click', (e) => {
-                    infoBox.display(e.target.getLocation(), options.infoWindow.description);
+                    infoBox.display(e.target.getLocation(), point.data);
                     map.setView({center: pin.getLocation()});
                 });
             }
