@@ -9,8 +9,12 @@ let MarkerClusterer = require('markerclustererplus');
 class GoogleMap extends Map {
     constructor(...args) {
         super(...args);
+
         this.provider = 'Google Map';
+        this.map = null;
         this.markers = [];
+        this.infoWindow = null;
+        this.markerClusterer = null;
     }
 
     render() {
@@ -19,36 +23,42 @@ class GoogleMap extends Map {
         let Marker = require('./Marker');
 
         // Init the map
-        let map = new google.maps.Map(this.domElement, this.options.map);
+        this.map = new google.maps.Map(this.domElement, this.options.map);
         let bounds = new google.maps.LatLngBounds();
-
-        let infoWindow;
 
         // Init the info window is the option is set
         if (this.options.infoWindow.active) {
-            infoWindow = new InfoWindow(this.options.infoWindow);
+            this.infoWindow = new InfoWindow(this.options.infoWindow);
         }
 
         // Create a marker for each point
         this.points.forEach((point) => {
-            let marker = new Marker(map, point, this.options.marker);
+            let marker = new Marker(this.map, point, this.options.marker);
             bounds.extend(marker.position);
+
             this.markers.push(marker);
 
             // Bind the info window on marker click if the option is set
             if (this.options.infoWindow.active) {
                 google.maps.event.addListener(marker, 'click', () => {
-                    infoWindow.open(point.data, map, marker);
+                    this.infoWindow.open(point.data, this.map, marker);
                 });
             }
         });
 
+        if (this.options.map.zoom) {
+            // This is needed to set the zoom after fitBounds,
+            google.maps.event.addListenerOnce(this.map, 'bounds_changed', () => {
+                this.map.setZoom(Math.min(this.options.map.zoom, this.map.getZoom()));
+            });
+        }
+
         // Center the map
-        map.fitBounds(bounds);
+        this.map.fitBounds(bounds);
 
         // Init the clustering if the option is set
         if (this.options.markerCluster.active) {
-            new MarkerClusterer(map, this.markers, this.options.markerCluster);
+            this.markerClusterer = new MarkerClusterer(this.map, this.markers, this.options.markerCluster);
         }
     }
 
@@ -71,6 +81,12 @@ class GoogleMap extends Map {
         });
 
         if (marker.length) {
+            // If the marker is inside a cluster, we have to zoom to it before triggering the click
+            if (this.options.markerCluster.active && !marker[0].getMap()) {
+                this.map.setZoom(17);
+                this.map.panTo(marker[0].position);
+            }
+
             new google.maps.event.trigger(marker[0], 'click');
         }
     }
