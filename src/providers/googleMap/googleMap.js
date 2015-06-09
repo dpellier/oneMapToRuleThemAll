@@ -41,7 +41,11 @@ class GoogleMap extends Map {
             // Bind the info window on marker click if the option is set
             if (this.options.infoWindow.active) {
                 google.maps.event.addListener(marker, 'click', () => {
-                    this.infoWindow.open(point.data, this.map, marker);
+                    if (this.infoWindow.anchor && this.infoWindow.anchor.id === marker.id) {
+                        this.infoWindow.close();
+                    } else {
+                        this.infoWindow.open(point.data, this.map, marker);
+                    }
                 });
             }
         });
