@@ -146,7 +146,7 @@
 	                marker: {},
 	                markerCluster: {},
 	                infoWindow: {}
-	            }; // TODO depends on provider
+	            };
 
 	            this.options = objectAssign(defaultOptions, options);
 	        }
@@ -159,6 +159,11 @@
 	        key: 'load',
 	        value: function load() {
 	            console.error(this.provider + ' has no load method implemented');
+	        }
+	    }, {
+	        key: 'clickOnMarker',
+	        value: function clickOnMarker() {
+	            console.error(this.provider + ' has no clickOnMarker method implemented');
 	        }
 	    }]);
 

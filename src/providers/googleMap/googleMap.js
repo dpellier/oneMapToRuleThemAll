@@ -10,6 +10,7 @@ class GoogleMap extends Map {
     constructor(...args) {
         super(...args);
         this.provider = 'Google Map';
+        this.markers = [];
     }
 
     render() {
@@ -22,7 +23,6 @@ class GoogleMap extends Map {
         let bounds = new google.maps.LatLngBounds();
 
         let infoWindow;
-        let markers = [];
 
         // Init the info window is the option is set
         if (this.options.infoWindow.active) {
@@ -33,7 +33,7 @@ class GoogleMap extends Map {
         this.points.forEach((point) => {
             let marker = new Marker(map, point, this.options.marker);
             bounds.extend(marker.position);
-            markers.push(marker);
+            this.markers.push(marker);
 
             // Bind the info window on marker click if the option is set
             if (this.options.infoWindow.active) {
@@ -48,7 +48,7 @@ class GoogleMap extends Map {
 
         // Init the clustering if the option is set
         if (this.options.markerCluster.active) {
-            new MarkerClusterer(map, markers, this.options.markerCluster);
+            new MarkerClusterer(map, this.markers, this.options.markerCluster);
         }
     }
 
@@ -63,6 +63,16 @@ class GoogleMap extends Map {
         }
 
         domUtils.addScript(this.domElement, 'https://maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey);
+    }
+
+    clickOnMarker(markerId) {
+        let marker = this.markers.filter((marker) => {
+            return marker.id === markerId;
+        });
+
+        if (marker.length) {
+            new google.maps.event.trigger(marker[0], 'click');
+        }
     }
 }
 

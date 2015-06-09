@@ -14,6 +14,7 @@ class Marker extends google.maps.Marker {
         }
 
         super(marker);
+        this.id = point.id;
     }
 }
 

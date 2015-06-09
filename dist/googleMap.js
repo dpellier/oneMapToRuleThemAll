@@ -69,6 +69,7 @@
 
 	        _get(Object.getPrototypeOf(GoogleMap.prototype), 'constructor', this).apply(this, args);
 	        this.provider = 'Google Map';
+	        this.markers = [];
 	    }
 
 	    _inherits(GoogleMap, _Map);
@@ -87,7 +88,6 @@
 	            var bounds = new google.maps.LatLngBounds();
 
 	            var infoWindow = undefined;
-	            var markers = [];
 
 	            // Init the info window is the option is set
 	            if (this.options.infoWindow.active) {
@@ -98,7 +98,7 @@
 	            this.points.forEach(function (point) {
 	                var marker = new Marker(map, point, _this.options.marker);
 	                bounds.extend(marker.position);
-	                markers.push(marker);
+	                _this.markers.push(marker);
 
 	                // Bind the info window on marker click if the option is set
 	                if (_this.options.infoWindow.active) {
@@ -113,7 +113,7 @@
 
 	            // Init the clustering if the option is set
 	            if (this.options.markerCluster.active) {
-	                new MarkerClusterer(map, markers, this.options.markerCluster);
+	                new MarkerClusterer(map, this.markers, this.options.markerCluster);
 	            }
 	        }
 	    }, {
@@ -129,6 +129,17 @@
 	            }
 
 	            domUtils.addScript(this.domElement, 'https://maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey);
+	        }
+	    }, {
+	        key: 'clickOnMarker',
+	        value: function clickOnMarker(markerId) {
+	            var marker = this.markers.filter(function (marker) {
+	                return marker.id === markerId;
+	            });
+
+	            if (marker.length) {
+	                new google.maps.event.trigger(marker[0], 'click');
+	            }
 	        }
 	    }]);
 
@@ -173,7 +184,7 @@
 	                marker: {},
 	                markerCluster: {},
 	                infoWindow: {}
-	            }; // TODO depends on provider
+	            };
 
 	            this.options = objectAssign(defaultOptions, options);
 	        }
@@ -186,6 +197,11 @@
 	        key: 'load',
 	        value: function load() {
 	            console.error(this.provider + ' has no load method implemented');
+	        }
+	    }, {
+	        key: 'clickOnMarker',
+	        value: function clickOnMarker() {
+	            console.error(this.provider + ' has no clickOnMarker method implemented');
 	        }
 	    }]);
 
@@ -720,6 +736,7 @@
 	        }
 
 	        _get(Object.getPrototypeOf(Marker.prototype), 'constructor', this).call(this, marker);
+	        this.id = point.id;
 	    }
 
 	    _inherits(Marker, _google$maps$Marker);
