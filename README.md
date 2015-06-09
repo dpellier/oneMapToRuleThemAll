@@ -6,7 +6,7 @@
 |-----|:----------:|:--------:|:-----:|:------:|:-----------:|
 | map customization | OK | OK | TODO | TODO | TODO |
 | marker customization | OK | OK | TODO | TODO | TODO |
-| cluster customization | OK | OK | TODO | TODO | TODO |
+| cluster customization | OK | TODO | TODO | TODO | TODO |
 | info window customization | OK | TODO | TODO | TODO | TODO |
 | marker on click customization | OK | TODO | TODO | TODO | TODO |
 
@@ -14,7 +14,7 @@
 | | Google Map | Bing Map | Baidu | Yandex | ViaMichelin |
 |-----|:----------:|:--------:|:-----:|:------:|:-----------:|
 | Chrome | OK | OK | ? | ? | ? |
-| Firefox | ? | ? | ? | ? | ? |
+| Firefox | OK | OK | ? | ? | ? |
 | Opera | ? | ? | ? | ? | ? |
 | Safari | ? | ? | ? | ? | ? |
 | IE10 | ? | ? | ? | ? | ? |
