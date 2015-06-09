@@ -3,7 +3,7 @@
 
 ##### Advancement
 |  | Google Map | Bing Map | Baidu | Yandex | ViaMichelin |
-|--|:----------:|:--------:|:-----:|:------:|:-----------:|
+|-----|:----------:|:--------:|:-----:|:------:|:-----------:|
 | map customization | <div style="background-color:lightgreen;">OK</div> | <div style="background-color:lightgreen;">OK</div> | <div style="background-color:orange;">TODO</div> | <div style="background-color:orange;">TODO</div> | <div style="background-color:orange;">TODO</div> |
 | marker customization | <div style="background-color:lightgreen;">OK</div> | <div style="background-color:lightgreen;">OK</div> | <div style="background-color:orange;">TODO</div> | <div style="background-color:orange;">TODO</div> | <div style="background-color:orange;">TODO</div> |
 | cluster customization | <div style="background-color:lightgreen;">OK</div> | <div style="background-color:lightgreen;">OK</div> | <div style="background-color:orange;">TODO</div> | <div style="background-color:orange;">TODO</div> | <div style="background-color:orange;">TODO</div> |
@@ -11,8 +11,8 @@
 | marker on click customization | <div style="background-color:lightgreen;">OK</div> | <div style="background-color:orange;">TODO</div> | <div style="background-color:orange;">TODO</div> | <div style="background-color:orange;">TODO</div> | <div style="background-color:orange;">TODO</div> |
 
 ##### Compatibility
-|  | Google Map | Bing Map | Baidu | Yandex | ViaMichelin |
-|--|:----------:|:--------:|:-----:|:------:|:-----------:|
+| | Google Map | Bing Map | Baidu | Yandex | ViaMichelin |
+|-----|:----------:|:--------:|:-----:|:------:|:-----------:|
 | Chrome | <div style="background-color:lightgreen;">OK</div> | <div style="background-color:lightgreen;">OK</div> | ? | ? | ? |
 | Firefox | ? | ? | ? | ? | ? |
 | Opera | ? | ? | ? | ? | ? |
@@ -20,4 +20,5 @@
 | IE10 | ? | ? | ? | ? | ? |
 | IE9 | ? | ? | ? | ? | ? |
 | IE8 | ? | ? | ? | ? | ? |
+
 
