@@ -85,9 +85,15 @@ class GoogleMap extends Map {
             if (this.options.markerCluster.active && !marker[0].getMap()) {
                 this.map.setZoom(17);
                 this.map.panTo(marker[0].position);
-            }
 
-            new google.maps.event.trigger(marker[0], 'click');
+                // We trigger the info window only after the pan has finished
+                google.maps.event.addListenerOnce(this.map, 'idle', function() {
+                    new google.maps.event.trigger(marker[0], 'click');
+                });
+
+            } else {
+                new google.maps.event.trigger(marker[0], 'click');
+            }
         }
     }
 }
