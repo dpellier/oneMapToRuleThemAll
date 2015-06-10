@@ -10,7 +10,9 @@ class Marker extends google.maps.Marker {
         };
 
         if (icon) {
-            objectAssign(marker, icon);
+            objectAssign(marker, {
+                icon: icon
+            });
         }
 
         super(marker);
