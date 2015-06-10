@@ -747,9 +747,10 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
 	var objectAssign = __webpack_require__(6);
+	var Label = __webpack_require__(13);
 
 	var Marker = (function (_google$maps$Marker) {
-	    function Marker(map, point, icon) {
+	    function Marker(map, point, options) {
 	        _classCallCheck(this, Marker);
 
 	        var marker = {
@@ -757,14 +758,21 @@
 	            map: map
 	        };
 
-	        if (icon) {
+	        if (options.icon) {
 	            objectAssign(marker, {
-	                icon: icon
+	                icon: options.icon
 	            });
 	        }
 
 	        _get(Object.getPrototypeOf(Marker.prototype), 'constructor', this).call(this, marker);
 	        this.id = point.id;
+
+	        if (options.label) {
+	            new Label({
+	                map: map,
+	                position: this.getPosition()
+	            }, point, options.label);
+	        }
 	    }
 
 	    _inherits(Marker, _google$maps$Marker);
@@ -773,6 +781,71 @@
 	})(google.maps.Marker);
 
 	module.exports = Marker;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+	function getCustomContent(content, point) {
+	    if (typeof content === 'function') {
+	        return content(point);
+	    }
+	    return content || '';
+	}
+
+	var Label = (function (_google$maps$OverlayView) {
+	    function Label(config, point, content) {
+	        _classCallCheck(this, Label);
+
+	        _get(Object.getPrototypeOf(Label.prototype), 'constructor', this).call(this);
+	        this.setValues(config);
+	        this._customContent = getCustomContent(content, point);
+
+	        this._div = document.createElement('div');
+	        this._div.style.cssText = 'position: absolute; display: none';
+	    }
+
+	    _inherits(Label, _google$maps$OverlayView);
+
+	    _createClass(Label, [{
+	        key: 'onAdd',
+	        value: function onAdd() {
+	            var pane = this.getPanes().floatPane;
+	            pane.appendChild(this._div);
+	        }
+	    }, {
+	        key: 'onRemove',
+	        value: function onRemove() {
+	            this._div.parentNode.removeChild(this.div_);
+	        }
+	    }, {
+	        key: 'draw',
+	        value: function draw() {
+	            var projection = this.getProjection();
+	            var position = projection.fromLatLngToDivPixel(this.get('position'));
+
+	            this._div.style.left = position.x + 'px';
+	            this._div.style.top = position.y + 'px';
+	            this._div.style.display = 'block';
+
+	            this._div.innerHTML = this._customContent;
+	        }
+	    }]);
+
+	    return Label;
+	})(google.maps.OverlayView);
+
+	module.exports = Label;
 
 /***/ }
 /******/ ]);
