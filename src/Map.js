@@ -12,7 +12,11 @@ class Map {
     }
 
     setPoints(points) {
-        this.points = points;
+        if (Object.prototype.toString.call(points) === '[object Array]') {
+            this.points = points;
+        } else {
+            this.points = [points];
+        }
     }
 
     setOptions(options) {
