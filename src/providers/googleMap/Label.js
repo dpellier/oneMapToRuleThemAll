@@ -27,21 +27,18 @@ class Label extends google.maps.OverlayView {
     }
 
     draw() {
-        this.show();
-        this._div.innerHTML = this._customContent;
-    }
-
-    hide() {
-        this._div.style.cssText = 'position: absolute; display: none';
-    }
-
-    show() {
         let projection = this.getProjection();
         let position = projection.fromLatLngToDivPixel(this.get('position'));
 
         this._div.style.left = position.x + 'px';
         this._div.style.top = position.y + 'px';
         this._div.style.display = 'block';
+
+        this._div.innerHTML = this._customContent;
+    }
+
+    hide() {
+        this._div.style.cssText = 'position: absolute; display: none';
     }
 }
 

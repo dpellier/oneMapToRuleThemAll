@@ -64,16 +64,16 @@ class GoogleMap extends Map {
         if (this.options.markerCluster.active) {
             this.markerClusterer = new MarkerClusterer(this.map, this.markers, this.options.markerCluster);
 
-            google.maps.event.addListener(this.markerClusterer, 'clusteringbegin', function(cluster) {
-                cluster.markers.forEach(function(marker) {
-                    marker.hideLabel();
-                });
-            });
+            google.maps.event.addListener(this.markerClusterer, 'clusteringend', function(clusterer) {
+                clusterer.getClusters().forEach(function(cluster) {
+                    var markers = cluster.getMarkers();
 
-            google.maps.event.addListener(this.markerClusterer, 'clusteringend', function(cluster) {
-                cluster.markers.forEach(function(marker) {
-                    marker.showLabel();
-                });
+                    if (markers.length > 1) {
+                        markers.forEach(function(marker) {
+                            marker.hideLabel();
+                        });
+                    }
+                })
             });
         }
     }

@@ -29,13 +29,7 @@ class Marker extends google.maps.Marker {
 
     hideLabel() {
         if (this.label) {
-            label.hide();
-        }
-    }
-
-    showLabel() {
-        if (this.label) {
-            label.show();
+            this.label.hide();
         }
     }
 }
