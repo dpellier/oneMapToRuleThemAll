@@ -63,6 +63,18 @@ class GoogleMap extends Map {
         // Init the clustering if the option is set
         if (this.options.markerCluster.active) {
             this.markerClusterer = new MarkerClusterer(this.map, this.markers, this.options.markerCluster);
+
+            google.maps.event.addListener(this.markerClusterer, 'clusteringbegin', function(cluster) {
+                cluster.markers.forEach(function(marker) {
+                    marker.hideLabel();
+                });
+            });
+
+            google.maps.event.addListener(this.markerClusterer, 'clusteringend', function(cluster) {
+                cluster.markers.forEach(function(marker) {
+                    marker.showLabel();
+                });
+            });
         }
     }
 

@@ -20,10 +20,22 @@ class Marker extends google.maps.Marker {
         this.id = point.id;
 
         if (options.label) {
-            new Label({
+            this.label = new Label({
                 map: map,
                 position: this.getPosition()
             }, point, options.label);
+        }
+    }
+
+    hideLabel() {
+        if (this.label) {
+            label.hide();
+        }
+    }
+
+    showLabel() {
+        if (this.label) {
+            label.show();
         }
     }
 }
