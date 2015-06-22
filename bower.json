@@ -1,9 +1,17 @@
 {
-  "name": "oneMapToRuleThemAll",
-  "version": "0.1.0",
-  "authors": [
-    "Damien Pellier <dpellier@gmail.com>"
-  ],
-  "description": "Unique interface above multiple map providers",
-  "license": "MIT"
+    "name": "oneMapToRuleThemAll",
+    "version": "0.1.0",
+    "main": "dist/googleMap.js",
+    "ignore": [
+        "src",
+        ".editorconfig",
+        ".gitignore",
+        "package.json",
+        "webpack.config.js"
+    ],
+    "authors": [
+        "Damien Pellier <dpellier@gmail.com>"
+    ],
+    "description": "Unique interface above multiple map providers",
+    "license": "MIT"
 }
