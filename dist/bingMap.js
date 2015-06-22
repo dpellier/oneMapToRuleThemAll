@@ -176,7 +176,11 @@
 	    _createClass(Map, [{
 	        key: 'setPoints',
 	        value: function setPoints(points) {
-	            this.points = points;
+	            if (Object.prototype.toString.call(points) === '[object Array]') {
+	                this.points = points;
+	            } else {
+	                this.points = [points];
+	            }
 	        }
 	    }, {
 	        key: 'setOptions',

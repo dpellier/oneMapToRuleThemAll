@@ -127,7 +127,7 @@
 
 	            // Init the clustering if the option is set
 	            if (this.options.markerCluster.active) {
-	                this.markerClusterer = new MarkerClusterer(this.map, this.markers, this.options.markerCluster); //TODO setClusterClass
+	                this.markerClusterer = new MarkerClusterer(this.map, this.markers, this.options.markerCluster);
 
 	                google.maps.event.addListener(this.markerClusterer, 'clusteringend', function (clusterer) {
 	                    clusterer.getClusters().forEach(function (cluster) {
@@ -211,7 +211,11 @@
 	    _createClass(Map, [{
 	        key: 'setPoints',
 	        value: function setPoints(points) {
-	            this.points = points;
+	            if (Object.prototype.toString.call(points) === '[object Array]') {
+	                this.points = points;
+	            } else {
+	                this.points = [points];
+	            }
 	        }
 	    }, {
 	        key: 'setOptions',
