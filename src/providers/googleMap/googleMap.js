@@ -93,7 +93,7 @@ class GoogleMap extends Map {
 
     clickOnMarker(markerId) {
         let marker = this.markers.filter((marker) => {
-            return marker.id === markerId;
+            return +marker.id === +markerId;
         });
 
         if (marker.length) {

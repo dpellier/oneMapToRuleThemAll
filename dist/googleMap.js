@@ -160,7 +160,7 @@
 	        key: 'clickOnMarker',
 	        value: function clickOnMarker(markerId) {
 	            var marker = this.markers.filter(function (marker) {
-	                return marker.id === markerId;
+	                return +marker.id === +markerId;
 	            });
 
 	            if (marker.length) {
