@@ -5,7 +5,6 @@ let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
 let MarkerClusterer = require('markerclustererplus');
 
-
 class GoogleMap extends Map {
     constructor(...args) {
         super(...args);
@@ -79,6 +78,11 @@ class GoogleMap extends Map {
     }
 
     load(callback, loadingMask) {
+        if (window.google && window.google.maps) {
+            callback();
+            return;
+        }
+
         window._googleMapCallbackOnLoad = function() {
             delete window._googleMapCallbackOnLoad;
             callback();
@@ -92,8 +96,9 @@ class GoogleMap extends Map {
     }
 
     clickOnMarker(markerId) {
+        markerId = markerId.toString();
         let marker = this.markers.filter((marker) => {
-            return +marker.id === +markerId;
+            return marker.id.toString() === markerId;
         });
 
         if (marker.length) {
@@ -111,6 +116,17 @@ class GoogleMap extends Map {
                 new google.maps.event.trigger(marker[0], 'click');
             }
         }
+    }
+
+    getDirections(origin, destination, callback) {
+        if (!this.directionsService) {
+            let DirectionsService = require('./DirectionsService');
+            this.directionsService = new DirectionsService();
+        }
+
+        var map = new google.maps.Map(this.domElement, this.options.map);
+
+        this.directionsService.getRouteWithMap(map, origin, destination, callback);
     }
 }
 

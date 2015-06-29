@@ -169,6 +169,11 @@
 	        value: function clickOnMarker() {
 	            console.error(this.provider + ' has no clickOnMarker method implemented');
 	        }
+	    }, {
+	        key: 'getDirections',
+	        value: function getDirections() {
+	            console.error(this.provider + ' has no getDirections method implemented');
+	        }
 	    }]);
 
 	    return Map;

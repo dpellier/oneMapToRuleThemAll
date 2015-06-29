@@ -9,6 +9,7 @@
 | cluster customization | OK | TODO | TODO | TODO | TODO |
 | info window customization | OK | TODO | TODO | TODO | TODO |
 | marker on click customization | OK | TODO | TODO | TODO | TODO |
+| driving directions | OK | TODO | TODO | TODO | TODO |
 
 ##### Compatibility
 | | Google Map | Bing Map | Baidu | Yandex | ViaMichelin |

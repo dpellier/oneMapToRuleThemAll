@@ -79,7 +79,7 @@
 	            var _this = this;
 
 	            // Require microsoft object here cause they're not loaded before
-	            var InfoBox = __webpack_require__(13);
+	            var InfoBox = __webpack_require__(9);
 
 	            // Init the map
 	            var map = new Microsoft.Maps.Map(this.domElement, objectAssign({
@@ -208,6 +208,11 @@
 	        key: 'clickOnMarker',
 	        value: function clickOnMarker() {
 	            console.error(this.provider + ' has no clickOnMarker method implemented');
+	        }
+	    }, {
+	        key: 'getDirections',
+	        value: function getDirections() {
+	            console.error(this.provider + ' has no getDirections method implemented');
 	        }
 	    }]);
 
@@ -652,11 +657,7 @@
 	};
 
 /***/ },
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
