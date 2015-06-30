@@ -1,34 +1,46 @@
 'use strict';
 
+let objectAssign = require('object-assign');
+
 class DirectionsService extends google.maps.DirectionsService {
-    constructor(...args) {
-        super(...args);
+    constructor(origin, destination, options, callback) {
+        super();
+
+        if (options.panelSelector) {
+            this.panel = document.querySelector(options.panelSelector);
+            delete options.panelSelector;
+        }
+
+        this.request = objectAssign({
+            travelMode: google.maps.TravelMode.DRIVING
+        }, options || {}, {
+            origin: origin,
+            destination: (options.region ? options.region + ' ' + destination : destination)
+        });
+
+        this.callback = callback || function() {};
     }
 
-    getRoute(origin, destination, callback) {
-        var request = {
-            origin: origin,
-            destination: destination,
-            travelMode: google.maps.TravelMode.DRIVING
-        };
-
-        this.route(request, function (result, status) {
+    requestRoute(callback) {
+        this.route(this.request, (result, status) => {
             if (status === google.maps.DirectionsStatus.OK) {
-                console.log('directions:');
-                console.log(result);
                 callback(result);
             }
         });
     }
 
-    getRouteWithMap(map, origin, destination, callback) {
-        this.getRoute(origin, destination, (result) => {
-            var display = new google.maps.DirectionsRenderer();
+    getRouteWithMap(map) {
+        this.requestRoute((result) => {
+            let display = new google.maps.DirectionsRenderer();
 
             display.setDirections(result);
             display.setMap(map);
 
-            callback(result.routes[0].legs[0].steps);
+            if (this.panel) {
+                display.setPanel(this.panel);
+            }
+
+            this.callback(result.routes[0]);    // TODO format this to be the same between all providers
         });
     }
 }

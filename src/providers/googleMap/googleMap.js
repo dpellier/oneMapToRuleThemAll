@@ -118,15 +118,13 @@ class GoogleMap extends Map {
         }
     }
 
-    getDirections(origin, destination, callback) {
-        if (!this.directionsService) {
-            let DirectionsService = require('./DirectionsService');
-            this.directionsService = new DirectionsService();
-        }
+    getDirections(origin, destination, options, callback) {
+        let DirectionsService = require('./DirectionsService');
+        this.directionsService = new DirectionsService(origin, destination, options, callback);
 
         var map = new google.maps.Map(this.domElement, this.options.map);
 
-        this.directionsService.getRouteWithMap(map, origin, destination, callback);
+        this.directionsService.getRouteWithMap(map);
     }
 }
 

@@ -79,7 +79,7 @@
 	            var _this = this;
 
 	            // Require microsoft object here cause they're not loaded before
-	            var InfoBox = __webpack_require__(9);
+	            var InfoBox = __webpack_require__(14);
 
 	            // Init the map
 	            var map = new Microsoft.Maps.Map(this.domElement, objectAssign({
@@ -657,7 +657,12 @@
 	};
 
 /***/ },
-/* 9 */
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
