@@ -952,11 +952,11 @@
 	        value: function getRouteWithMap(map) {
 	            var _this = this;
 
-	            this.requestRoute(function (result) {
-	                var display = new google.maps.DirectionsRenderer();
+	            var display = new google.maps.DirectionsRenderer();
+	            display.setMap(map);
 
+	            this.requestRoute(function (result) {
 	                display.setDirections(result);
-	                display.setMap(map);
 
 	                if (_this.panel) {
 	                    display.setPanel(_this.panel);

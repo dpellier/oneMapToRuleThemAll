@@ -30,11 +30,11 @@ class DirectionsService extends google.maps.DirectionsService {
     }
 
     getRouteWithMap(map) {
-        this.requestRoute((result) => {
-            let display = new google.maps.DirectionsRenderer();
+        let display = new google.maps.DirectionsRenderer();
+        display.setMap(map);
 
+        this.requestRoute((result) => {
             display.setDirections(result);
-            display.setMap(map);
 
             if (this.panel) {
                 display.setPanel(this.panel);
