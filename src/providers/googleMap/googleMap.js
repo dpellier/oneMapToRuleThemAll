@@ -5,6 +5,8 @@ let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
 let MarkerClusterer = require('markerclustererplus');
 
+let directionsService;
+
 class GoogleMap extends Map {
     constructor(...args) {
         super(...args);
@@ -120,11 +122,15 @@ class GoogleMap extends Map {
 
     getDirections(origin, destination, options, callback) {
         let DirectionsService = require('./DirectionsService');
-        this.directionsService = new DirectionsService(origin, destination, options, callback);
 
-        var map = new google.maps.Map(this.domElement, this.options.map);
+        if (!directionsService) {
+            let map = new google.maps.Map(this.domElement, this.options.map);
+            directionsService = new DirectionsService(map, options.panelSelector);
+        }
 
-        this.directionsService.getRouteWithMap(map);
+        delete options.panelSelector;
+
+        directionsService.getRoute(origin, destination, options, callback);
     }
 }
 
