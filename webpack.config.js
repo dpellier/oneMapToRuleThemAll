@@ -4,7 +4,7 @@ module.exports = {
     entry: {
         bingMap: "./src/providers/bingMap/BingMap.js",
         googleMap: "./src/providers/googleMap/GoogleMap.js",
-        leaflet: "./src/providers/leaflet/Leaflet.js"
+        yandex: "./src/providers/yandex/Yandex.js"
     },
     output: {
         filename: "[name].js",

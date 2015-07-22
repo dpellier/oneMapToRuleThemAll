@@ -10,6 +10,7 @@
     "markerclustererplus": "dpellier/markerclustererplus",
     "node-libs-browser": "^0.5.2",
     "object-assign": "^3.0.0",
+    "oneMapToRuleThemAll": "dpellier/oneMapToRuleThemAll",
     "style-loader": "^0.12.3",
     "webpack": "^1.9.10"
   },

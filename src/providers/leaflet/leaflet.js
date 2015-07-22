@@ -4,13 +4,14 @@ var Map = require('../../Map');
 var domUtils = require('../../utils/dom');
 var loaderUtils = require('../../utils/loader');
 
+// TODO see if change leaflet to a service or use default map tile provider
 class Leaflet extends Map {
     constructor(...args) {
         super(...args);
         this.provider = 'Leaflet';
     }
 
-    render() {
+    render(tileProvider) {
         let map = L.map(this.domElement).setView([51.505, -0.09], 13);
 
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
