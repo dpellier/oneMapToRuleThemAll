@@ -85,9 +85,6 @@
 	        value: function render() {
 	            var _this = this;
 
-	            // Require yandex object here cause they're not loaded before
-	            Marker = __webpack_require__(15);
-
 	            // Init the map
 	            this.map = new ymaps.Map(this.domElement, this.options.map);
 	            var bounds = [[0, 0], [0, 0]];
@@ -116,13 +113,16 @@
 	        }
 	    }, {
 	        key: 'load',
-	        value: function load(callback, loadingMask, clustered, routing) {
+	        value: function load(callback, loadingMask) {
 	            if (window.ymaps && window.ymaps.Map) {
 	                callback();
 	                return;
 	            }
 
 	            window._yandexCallbackOnLoad = function () {
+	                // Require yandex object here cause they're not loaded before
+	                Marker = __webpack_require__(14);
+
 	                delete window._yandexCallbackOnLoad;
 	                callback();
 	            };
@@ -149,7 +149,7 @@
 	        key: 'getDirections',
 	        value: function getDirections(origin, destination, options, callback) {
 	            if (!directionsService) {
-	                DirectionsService = __webpack_require__(16);
+	                DirectionsService = __webpack_require__(15);
 
 	                var map = new ymaps.Map(this.domElement, this.options.map);
 	                directionsService = new DirectionsService(map);
@@ -684,8 +684,7 @@
 /* 11 */,
 /* 12 */,
 /* 13 */,
-/* 14 */,
-/* 15 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -727,7 +726,7 @@
 	module.exports = Marker;
 
 /***/ },
-/* 16 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

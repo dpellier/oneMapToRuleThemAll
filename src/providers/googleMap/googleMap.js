@@ -3,7 +3,8 @@
 let Map = require('../../Map');
 let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
-let MarkerClusterer = require('markerclustererplus');
+let InfoWindow;
+let Marker;
 
 let directionsService;
 
@@ -19,10 +20,6 @@ class GoogleMap extends Map {
     }
 
     render() {
-        // Require google object here cause they're not loaded before
-        let InfoWindow = require('./InfoWindow');
-        let Marker = require('./Marker');
-
         // Init the map
         this.map = new google.maps.Map(this.domElement, this.options.map);
         let bounds = new google.maps.LatLngBounds();
@@ -79,22 +76,35 @@ class GoogleMap extends Map {
         }
     }
 
-    load(callback, loadingMask) {
+    load(callback, loadingMask, clustered) {
         if (window.google && window.google.maps) {
             callback();
             return;
         }
 
+        let domElement = this.domElement;
+
         window._googleMapCallbackOnLoad = function() {
+            // Require google object here cause they're not loaded before
+            InfoWindow = require('./InfoWindow');
+            Marker = require('./Marker');
+
             delete window._googleMapCallbackOnLoad;
-            callback();
+
+            if (clustered) {
+                domUtils.addResources(domElement, [
+                    domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/markerclusterer.min.js')
+                ], callback);
+            } else {
+                callback();
+            }
         };
 
         if (loadingMask) {
             window._googleMapCallbackOnLoad = loaderUtils.addLoader(this.domElement, loadingMask, window._googleMapCallbackOnLoad);
         }
 
-        domUtils.addScript(this.domElement, 'https://maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey);
+        domUtils.addScript(this.domElement, '//maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey);
     }
 
     clickOnMarker(markerId) {

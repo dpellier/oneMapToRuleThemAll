@@ -19,9 +19,6 @@ class Yandex extends Map {
     }
 
     render() {
-        // Require yandex object here cause they're not loaded before
-        Marker = require('./Marker');
-
         // Init the map
         this.map = new ymaps.Map(this.domElement, this.options.map);
         let bounds = [[0, 0], [0, 0]];
@@ -49,13 +46,16 @@ class Yandex extends Map {
         this.map.setBounds(bounds);
     }
 
-    load(callback, loadingMask, clustered, routing) {
+    load(callback, loadingMask) {
         if (window.ymaps && window.ymaps.Map) {
             callback();
             return;
         }
 
         window._yandexCallbackOnLoad = function() {
+            // Require yandex object here cause they're not loaded before
+            Marker = require('./Marker');
+
             delete window._yandexCallbackOnLoad;
             callback();
         };
