@@ -3,9 +3,10 @@
 let Map = require('../../Map');
 let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
+let DirectionsService;
 let Marker;
-let MarkerCluster;
-let TileLayer;
+
+let directionsService;
 
 class Yandex extends Map {
     constructor(...args) {
@@ -18,15 +19,17 @@ class Yandex extends Map {
     }
 
     render() {
+        // Require yandex object here cause they're not loaded before
+        Marker = require('./Marker');
+
         // Init the map
-        this.map = new L.Map(this.domElement, {center: new L.LatLng(67.6755, 33.936), zoom: 10, zoomAnimation: false });
-        this.map.addLayer(new TileLayer());
-        let bounds = L.latLngBounds([]);
+        this.map = new ymaps.Map(this.domElement, this.options.map);
+        let bounds = [[0, 0], [0, 0]];
 
         // Init the clustering if the option is set
         if (this.options.markerCluster.active) {
-            this.cluster = new MarkerCluster(this.options.markerCluster);
-            this.map.addLayer(this.cluster);
+            this.cluster = new ymaps.Clusterer(this.options.markerCluster);
+            this.map.geoObjects.add(this.cluster);
         }
 
         // Create a marker for each point
@@ -34,51 +37,34 @@ class Yandex extends Map {
             let marker = new Marker(point, this.options.marker);
             this.markers.push(marker);
 
-            // Bind the info window is the option is set
-            if (this.options.infoWindow.active) {
-                marker.bindPopup(L.popup(this.options.infoWindow).setContent(this.options.infoWindow.content(point.data)));
-            }
-
-            bounds.extend([point.latitude, point.longitude]);
+            this.map.geoObjects.add(marker);
 
             if (this.options.markerCluster.active) {
-                this.cluster.addLayer(marker);
-            } else {
-                marker.addTo(this.map);
+                this.cluster.add(marker);
             }
+            bounds = getLargestBounds(bounds, point);
         });
 
         // Center the map
-        this.map.fitBounds(bounds);
-
-
-        // TODO bind click on map toggle off all popup
+        this.map.setBounds(bounds);
     }
 
-    load(callback, loadingMask, clustered) {
-        let resources = [
-            domUtils.createScript('http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js'),
-            domUtils.createStyle('http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css'),
-            domUtils.createScript('http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU')
-        ];
+    load(callback, loadingMask, clustered, routing) {
+        if (window.ymaps && window.ymaps.Map) {
+            callback();
+            return;
+        }
 
-        domUtils.addResources(this.domElement, resources, () => {
-            Marker = require('./Marker');
-            TileLayer = require('./TileLayer');
+        window._yandexCallbackOnLoad = function() {
+            delete window._yandexCallbackOnLoad;
+            callback();
+        };
 
-            if (clustered) {
-                domUtils.addResources(this.domElement, [
-                    domUtils.createScript('https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/leaflet.markercluster.js'),
-                    domUtils.createStyle('https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.Default.css'),
-                    domUtils.createStyle('https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.css')
-                ], () => {
-                    MarkerCluster = require('./MarkerCluster');
-                    callback();
-                });
-            } else {
-                callback();
-            }
-        });
+        if (loadingMask) {
+            window._yandexCallbackOnLoad = loaderUtils.addLoader(this.domElement, loadingMask, window._yandexCallbackOnLoad);
+        }
+
+        domUtils.addScript(this.domElement, 'http://api-maps.yandex.ru/2.1/?load=package.standard&lang=ru-RU&onload=_yandexCallbackOnLoad');
     }
 
     clickOnMarker(markerId) {
@@ -88,9 +74,32 @@ class Yandex extends Map {
         });
 
         if (marker.length) {
-            marker[0].togglePopup();
+            marker[0].events.fire('click');
         }
     }
+
+    getDirections(origin, destination, options, callback) {
+        if (!directionsService) {
+            DirectionsService = require('./DirectionsService');
+
+            let map = new ymaps.Map(this.domElement, this.options.map);
+            directionsService = new DirectionsService(map);
+        }
+
+        directionsService.getRoute(origin, destination, options, callback);
+    }
+}
+
+function getLargestBounds(bounds, point) {
+    return [
+        [
+            bounds[0][0] ? Math.min(bounds[0][0], point.latitude) : point.latitude,
+            bounds[0][1] ? Math.min(bounds[0][1], point.longitude) : point.longitude
+        ], [
+            Math.max(bounds[1][0], point.latitude),
+            Math.max(bounds[1][1], point.longitude)
+        ]
+    ];
 }
 
 window.Map = Yandex;

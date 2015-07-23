@@ -57,9 +57,10 @@
 	var Map = __webpack_require__(1);
 	var domUtils = __webpack_require__(7);
 	var loaderUtils = __webpack_require__(8);
+	var DirectionsService = undefined;
 	var Marker = undefined;
-	var MarkerCluster = undefined;
-	var TileLayer = undefined;
+
+	var directionsService = undefined;
 
 	var Yandex = (function (_Map) {
 	    _inherits(Yandex, _Map);
@@ -84,15 +85,17 @@
 	        value: function render() {
 	            var _this = this;
 
+	            // Require yandex object here cause they're not loaded before
+	            Marker = __webpack_require__(15);
+
 	            // Init the map
-	            this.map = new L.Map(this.domElement, { center: new L.LatLng(67.6755, 33.936), zoom: 10, zoomAnimation: false });
-	            this.map.addLayer(new TileLayer());
-	            var bounds = L.latLngBounds([]);
+	            this.map = new ymaps.Map(this.domElement, this.options.map);
+	            var bounds = [[0, 0], [0, 0]];
 
 	            // Init the clustering if the option is set
 	            if (this.options.markerCluster.active) {
-	                this.cluster = new MarkerCluster(this.options.markerCluster);
-	                this.map.addLayer(this.cluster);
+	                this.cluster = new ymaps.Clusterer(this.options.markerCluster);
+	                this.map.geoObjects.add(this.cluster);
 	            }
 
 	            // Create a marker for each point
@@ -100,43 +103,35 @@
 	                var marker = new Marker(point, _this.options.marker);
 	                _this.markers.push(marker);
 
-	                // Bind the info window is the option is set
-	                if (_this.options.infoWindow.active) {
-	                    marker.bindPopup(L.popup(_this.options.infoWindow).setContent(_this.options.infoWindow.content(point.data)));
-	                }
-
-	                bounds.extend([point.latitude, point.longitude]);
+	                _this.map.geoObjects.add(marker);
 
 	                if (_this.options.markerCluster.active) {
-	                    _this.cluster.addLayer(marker);
-	                } else {
-	                    marker.addTo(_this.map);
+	                    _this.cluster.add(marker);
 	                }
+	                bounds = getLargestBounds(bounds, point);
 	            });
 
 	            // Center the map
-	            this.map.fitBounds(bounds);
+	            this.map.setBounds(bounds);
 	        }
 	    }, {
 	        key: 'load',
-	        value: function load(callback, loadingMask, clustered) {
-	            var _this2 = this;
+	        value: function load(callback, loadingMask, clustered, routing) {
+	            if (window.ymaps && window.ymaps.Map) {
+	                callback();
+	                return;
+	            }
 
-	            var resources = [domUtils.createScript('http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js'), domUtils.createStyle('http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css'), domUtils.createScript('http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU')];
+	            window._yandexCallbackOnLoad = function () {
+	                delete window._yandexCallbackOnLoad;
+	                callback();
+	            };
 
-	            domUtils.addResources(this.domElement, resources, function () {
-	                Marker = __webpack_require__(15);
-	                TileLayer = __webpack_require__(17);
+	            if (loadingMask) {
+	                window._yandexCallbackOnLoad = loaderUtils.addLoader(this.domElement, loadingMask, window._yandexCallbackOnLoad);
+	            }
 
-	                if (clustered) {
-	                    domUtils.addResources(_this2.domElement, [domUtils.createScript('https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/leaflet.markercluster.js'), domUtils.createStyle('https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.Default.css'), domUtils.createStyle('https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.css')], function () {
-	                        MarkerCluster = __webpack_require__(18);
-	                        callback();
-	                    });
-	                } else {
-	                    callback();
-	                }
-	            });
+	            domUtils.addScript(this.domElement, 'http://api-maps.yandex.ru/2.1/?load=package.standard&lang=ru-RU&onload=_yandexCallbackOnLoad');
 	        }
 	    }, {
 	        key: 'clickOnMarker',
@@ -147,13 +142,29 @@
 	            });
 
 	            if (marker.length) {
-	                marker[0].togglePopup();
+	                marker[0].events.fire('click');
 	            }
+	        }
+	    }, {
+	        key: 'getDirections',
+	        value: function getDirections(origin, destination, options, callback) {
+	            if (!directionsService) {
+	                DirectionsService = __webpack_require__(16);
+
+	                var map = new ymaps.Map(this.domElement, this.options.map);
+	                directionsService = new DirectionsService(map);
+	            }
+
+	            directionsService.getRoute(origin, destination, options, callback);
 	        }
 	    }]);
 
 	    return Yandex;
 	})(Map);
+
+	function getLargestBounds(bounds, point) {
+	    return [[bounds[0][0] ? Math.min(bounds[0][0], point.latitude) : point.latitude, bounds[0][1] ? Math.min(bounds[0][1], point.longitude) : point.longitude], [Math.max(bounds[1][0], point.latitude), Math.max(bounds[1][1], point.longitude)]];
+	}
 
 	window.Map = Yandex;
 
@@ -171,10 +182,10 @@
 	var objectAssign = __webpack_require__(6);
 
 	var Map = (function () {
-	    function Map(domElement, apiKey, options) {
+	    function Map(domSelector, apiKey, options) {
 	        _classCallCheck(this, Map);
 
-	        this.domElement = domElement;
+	        this.domElement = document.querySelector(domSelector);
 	        this.apiKey = apiKey;
 	        this.setOptions(options);
 	        this.provider = '[No provider defined]';
@@ -605,6 +616,10 @@
 	    addResources: function addResources(domElement, resources, callback) {
 	        var nbLoaded = 0;
 
+	        if (resources.length === 0) {
+	            callback();
+	        }
+
 	        resources.forEach(function (resource) {
 	            resource.addEventListener('load', function () {
 	                nbLoaded++;
@@ -682,29 +697,32 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
 	var objectAssign = __webpack_require__(6);
-	var Label = __webpack_require__(16);
 
-	var Marker = (function (_L$Marker) {
-	    _inherits(Marker, _L$Marker);
+	var Marker = (function (_ymaps$Placemark) {
+	    _inherits(Marker, _ymaps$Placemark);
 
 	    function Marker(point, options) {
 	        _classCallCheck(this, Marker);
 
-	        if (options.label) {
-	            _get(Object.getPrototypeOf(Marker.prototype), 'constructor', this).call(this, [point.latitude, point.longitude], objectAssign({}, options, {
-	                icon: new Label(options.label(point), options.icon)
-	            }));
-	        } else {
-	            _get(Object.getPrototypeOf(Marker.prototype), 'constructor', this).call(this, [point.latitude, point.longitude], objectAssign({}, options, {
-	                icon: L.icon(options.icon)
-	            }));
+	        var properties = {};
+
+	        if (options.properties) {
+	            if (options.properties.iconContent) {
+	                properties.iconContent = options.properties.iconContent(point);
+	            }
+
+	            if (options.properties.balloonContent) {
+	                properties.balloonContent = options.properties.balloonContent(point.data);
+	            }
 	        }
+
+	        _get(Object.getPrototypeOf(Marker.prototype), 'constructor', this).call(this, [point.latitude, point.longitude], properties, options.options);
 
 	        this.id = point.id;
 	    }
 
 	    return Marker;
-	})(L.Marker);
+	})(ymaps.Placemark);
 
 	module.exports = Marker;
 
@@ -716,276 +734,38 @@
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
 	var objectAssign = __webpack_require__(6);
 
-	var Label = (function (_L$Icon) {
-	    _inherits(Label, _L$Icon);
+	var DirectionsService = (function () {
+	    function DirectionsService(map) {
+	        _classCallCheck(this, DirectionsService);
 
-	    function Label(content, options) {
-	        _classCallCheck(this, Label);
-
-	        _get(Object.getPrototypeOf(Label.prototype), 'constructor', this).call(this, options);
-
-	        //this.point = point;
-	        this.content = content;
+	        this.map = map;
 	    }
 
-	    _createClass(Label, [{
-	        key: 'createIcon',
-	        value: function createIcon() {
-	            var label = document.createElement('div');
-	            var icon = _get(Object.getPrototypeOf(Label.prototype), 'createIcon', this).call(this);
+	    _createClass(DirectionsService, [{
+	        key: 'getRoute',
+	        value: function getRoute(origin, destination, options, callback) {
+	            var _this = this;
 
-	            label.appendChild(icon);
-	            label.innerHTML += this.content; //(this.point) || '';
-	            label.style.height = 0;
-
-	            return label;
+	            ymaps.route([origin, destination]).then(function (route) {
+	                _this.map.geoObjects.add(route);
+	                _this.map.setBounds(route.getWayPoints().getBounds());
+	                callback(route);
+	            }, function () {
+	                callback('Unable to calculate a driving itinerary for the destination: ' + destination);
+	            });
 	        }
 	    }]);
 
-	    return Label;
-	})(L.Icon);
+	    return DirectionsService;
+	})();
 
-	module.exports = Label;
+	// TODO display route text
 
-/***/ },
-/* 17 */
-/***/ function(module, exports) {
-
-	/*
-	 * L.TileLayer is used for standard xyz-numbered tile layers.
-	 */
-
-	/* global ymaps: true */
-
-	'use strict';
-
-	module.exports = L.Class.extend({
-	    includes: L.Mixin.Events,
-
-	    options: {
-	        minZoom: 0,
-	        maxZoom: 18,
-	        attribution: '',
-	        opacity: 1,
-	        traffic: false
-	    },
-
-	    possibleShortMapTypes: {
-	        schemaMap: 'map',
-	        satelliteMap: 'satellite',
-	        hybridMap: 'hybrid',
-	        publicMap: 'publicMap',
-	        publicMapInHybridView: 'publicMapHybrid'
-	    },
-
-	    _getPossibleMapType: function _getPossibleMapType(mapType) {
-	        var result = 'yandex#map';
-	        if (typeof mapType !== 'string') {
-	            return result;
-	        }
-	        for (var key in this.possibleShortMapTypes) {
-	            if (mapType === this.possibleShortMapTypes[key]) {
-	                result = 'yandex#' + mapType;
-	                break;
-	            }
-	            if (mapType === 'yandex#' + this.possibleShortMapTypes[key]) {
-	                result = mapType;
-	            }
-	        }
-	        return result;
-	    },
-
-	    // Possible types: yandex#map, yandex#satellite, yandex#hybrid, yandex#publicMap, yandex#publicMapHybrid
-	    // Or their short names: map, satellite, hybrid, publicMap, publicMapHybrid
-	    initialize: function initialize(type, options) {
-	        L.Util.setOptions(this, options);
-	        //Assigning an initial map type for the Yandex layer
-	        this._type = this._getPossibleMapType(type);
-	    },
-
-	    onAdd: function onAdd(map, insertAtTheBottom) {
-	        this._map = map;
-	        this._insertAtTheBottom = insertAtTheBottom;
-
-	        // create a container div for tiles
-	        this._initContainer();
-	        this._initMapObject();
-
-	        // set up events
-	        map.on('viewreset', this._resetCallback, this);
-
-	        this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
-	        map.on('move', this._update, this);
-
-	        map._controlCorners.bottomright.style.marginBottom = '3em';
-
-	        this._reset();
-	        this._update(true);
-	    },
-
-	    onRemove: function onRemove(map) {
-	        this._map._container.removeChild(this._container);
-
-	        this._map.off('viewreset', this._resetCallback, this);
-
-	        this._map.off('move', this._update, this);
-
-	        map._controlCorners.bottomright.style.marginBottom = '0em';
-	    },
-
-	    getAttribution: function getAttribution() {
-	        return this.options.attribution;
-	    },
-
-	    setOpacity: function setOpacity(opacity) {
-	        this.options.opacity = opacity;
-	        if (opacity < 1) {
-	            L.DomUtil.setOpacity(this._container, opacity);
-	        }
-	    },
-
-	    setElementSize: function setElementSize(e, size) {
-	        e.style.width = size.x + 'px';
-	        e.style.height = size.y + 'px';
-	    },
-
-	    _initContainer: function _initContainer() {
-	        var tilePane = this._map._container,
-	            first = tilePane.firstChild;
-
-	        if (!this._container) {
-	            this._container = L.DomUtil.create('div', 'leaflet-yandex-layer leaflet-top leaflet-left');
-	            this._container.id = '_YMapContainer_' + L.Util.stamp(this);
-	            this._container.style.zIndex = 'auto';
-	        }
-
-	        if (this.options.overlay) {
-	            first = this._map._container.getElementsByClassName('leaflet-map-pane')[0];
-	            first = first.nextSibling;
-	            // XXX: Bug with layer order
-	            if (L.Browser.opera) this._container.className += ' leaflet-objects-pane';
-	        }
-	        tilePane.insertBefore(this._container, first);
-
-	        this.setOpacity(this.options.opacity);
-	        this.setElementSize(this._container, this._map.getSize());
-	    },
-
-	    _initMapObject: function _initMapObject() {
-	        if (this._yandex) return;
-
-	        // Check that ymaps.Map is ready
-	        if (ymaps.Map === undefined) {
-	            return ymaps.load(['package.map'], this._initMapObject, this);
-	        }
-
-	        // If traffic layer is requested check if control.TrafficControl is ready
-	        if (this.options.traffic) if (ymaps.control === undefined || ymaps.control.TrafficControl === undefined) {
-	            return ymaps.load(['package.traffic', 'package.controls'], this._initMapObject, this);
-	        }
-	        //Creating ymaps map-object without any default controls on it
-	        var map = new ymaps.Map(this._container, { center: [0, 0], zoom: 0, behaviors: [], controls: [] });
-
-	        if (this.options.traffic) map.controls.add(new ymaps.control.TrafficControl({ shown: true }));
-
-	        if (this._type === 'yandex#null') {
-	            this._type = new ymaps.MapType('null', []);
-	            map.container.getElement().style.background = 'transparent';
-	        }
-	        map.setType(this._type);
-
-	        this._yandex = map;
-	        this._update(true);
-
-	        //Reporting that map-object was initialized
-	        this.fire('MapObjectInitialized', { mapObject: map });
-	    },
-
-	    _resetCallback: function _resetCallback(e) {
-	        this._reset(e.hard);
-	    },
-
-	    _reset: function _reset(clearOldContainer) {
-	        this._initContainer();
-	    },
-
-	    _update: function _update(force) {
-	        if (!this._yandex) return;
-	        this._resize(force);
-
-	        var center = this._map.getCenter();
-	        var _center = [center.lat, center.lng];
-	        var zoom = this._map.getZoom();
-
-	        if (force || this._yandex.getZoom() !== zoom) this._yandex.setZoom(zoom);
-	        this._yandex.panTo(_center, { duration: 0, delay: 0 });
-	    },
-
-	    _resize: function _resize(force) {
-	        var size = this._map.getSize(),
-	            style = this._container.style;
-	        if (style.width === size.x + 'px' && style.height === size.y + 'px') if (force !== true) return;
-	        this.setElementSize(this._container, size);
-	        var b = this._map.getBounds(),
-	            sw = b.getSouthWest(),
-	            ne = b.getNorthEast();
-	        this._yandex.container.fitToViewport();
-	    }
-	});
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
-
-	var Label = __webpack_require__(16);
-
-	var MarkerCluster = (function (_L$MarkerClusterGroup) {
-	    _inherits(MarkerCluster, _L$MarkerClusterGroup);
-
-	    function MarkerCluster(options) {
-	        _classCallCheck(this, MarkerCluster);
-
-	        // todo use Label instead of just icon if marker.label
-
-	        if (options.icon) {
-	            options.iconCreateFunction = function (cluster) {
-	                //return L.icon({
-	                //    iconUrl: './marker.png',
-	                //    iconAnchor: [0, 32],
-	                //    popupAnchor: [16, -32]
-	                //})
-
-	                var content = '<div class="' + options.labelClass + '"><span>' + cluster.getChildCount() + '</span></div>';
-
-	                //return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
-
-	                return new Label(content, options.icon);
-	            };
-	        }
-
-	        _get(Object.getPrototypeOf(MarkerCluster.prototype), 'constructor', this).call(this, options);
-	    }
-
-	    return MarkerCluster;
-	})(L.MarkerClusterGroup);
-
-	module.exports = MarkerCluster;
+	module.exports = DirectionsService;
 
 /***/ }
 /******/ ]);

@@ -1,20 +1,22 @@
 'use strict';
 
 let objectAssign = require('object-assign');
-let Label = require('./Label');
 
-class Marker extends L.Marker {
+class Marker extends ymaps.Placemark {
     constructor(point, options) {
+        let properties = {};
 
-        if (options.label) {
-            super([point.latitude, point.longitude], objectAssign({}, options, {
-                icon: new Label(options.label(point), options.icon)
-            }));
-        } else {
-            super([point.latitude, point.longitude], objectAssign({}, options, {
-                icon: L.icon(options.icon)
-            }));
+        if (options.properties) {
+            if (options.properties.iconContent) {
+                properties.iconContent = options.properties.iconContent(point);
+            }
+
+            if (options.properties.balloonContent) {
+                properties.balloonContent = options.properties.balloonContent(point.data);
+            }
         }
+
+        super([point.latitude, point.longitude], properties, options.options);
 
         this.id = point.id;
     }

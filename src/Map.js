@@ -4,8 +4,8 @@ require('./style.css');
 let objectAssign = require('object-assign');
 
 class Map {
-    constructor(domElement, apiKey, options) {
-        this.domElement = domElement;
+    constructor(domSelector, apiKey, options) {
+        this.domElement = document.querySelector(domSelector);
         this.apiKey = apiKey;
         this.setOptions(options);
         this.provider = '[No provider defined]';

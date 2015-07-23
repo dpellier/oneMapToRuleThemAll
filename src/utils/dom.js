@@ -12,6 +12,10 @@ module.exports = {
     addResources: function(domElement, resources, callback) {
         let nbLoaded = 0;
 
+        if (resources.length === 0) {
+            callback();
+        }
+
         resources.forEach((resource) => {
             resource.addEventListener('load', () => {
                 nbLoaded++;
