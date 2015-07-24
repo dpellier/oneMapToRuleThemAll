@@ -4,17 +4,17 @@
 ##### Advancement
 |  | Google Map | Bing Map | Baidu | Yandex | ViaMichelin |
 |-----|:----------:|:--------:|:-----:|:------:|:-----------:|
-| map customization | OK | OK | TODO | OK | TODO |
-| marker customization | OK | OK | TODO | OK | TODO |
-| cluster customization | OK | TODO | TODO | OK | TODO |
-| info window customization | OK | TODO | TODO | OK | TODO |
-| marker on click customization | OK | TODO | TODO | OK | TODO |
-| driving directions | OK | TODO | TODO | OK | TODO |
+| map customization | OK | OK | TODO | OK | OK |
+| marker customization | OK | OK | TODO | OK | OK |
+| cluster customization | OK | TODO | TODO | OK | OK |
+| info window customization | OK | TODO | TODO | OK | OK |
+| marker on click customization | OK | TODO | TODO | OK | OK |
+| driving directions | OK | TODO | TODO | OK | OK |
 
 ##### Compatibility
 | | Google Map | Bing Map | Baidu | Yandex | ViaMichelin |
 |-----|:----------:|:--------:|:-----:|:------:|:-----------:|
-| Chrome | OK | OK | ? | ? | ? |
+| Chrome | OK | OK | ? | OK | OK |
 | Firefox | OK | OK | ? | ? | ? |
 | Opera | ? | ? | ? | ? | ? |
 | Safari | ? | ? | ? | ? | ? |

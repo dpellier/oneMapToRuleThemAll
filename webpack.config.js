@@ -4,6 +4,7 @@ module.exports = {
     entry: {
         bingMap: "./src/providers/bingMap/BingMap.js",
         googleMap: "./src/providers/googleMap/GoogleMap.js",
+        viaMichelin: "./src/providers/viaMichelin/ViaMichelin.js",
         yandex: "./src/providers/yandex/Yandex.js"
     },
     output: {
