@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * Google Map v3
+ * API Documentation: https://developers.google.com/maps/documentation/javascript/
+ */
+
 let Map = require('../../Map');
 let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
@@ -12,7 +17,7 @@ class GoogleMap extends Map {
     constructor(...args) {
         super(...args);
 
-        this.provider = 'Google Map';
+        this.provider = 'Google';
         this.map = null;
         this.markers = [];
         this.infoWindow = null;

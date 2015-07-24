@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * Leaflet 0.7.3
+ * API Documentation: http://leafletjs.com/reference.html
+ */
+
 var Map = require('../../Map');
 var domUtils = require('../../utils/dom');
 var loaderUtils = require('../../utils/loader');

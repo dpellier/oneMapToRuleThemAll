@@ -54,7 +54,12 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
-	var Map = __webpack_require__(1);
+	/**
+	 * Google Map v3
+	 * API Documentation: https://developers.google.com/maps/documentation/javascript/
+	 */
+
+	var Map = __webpack_require__(2);
 	var domUtils = __webpack_require__(7);
 	var loaderUtils = __webpack_require__(8);
 	var InfoWindow = undefined;
@@ -74,7 +79,7 @@
 
 	        _get(Object.getPrototypeOf(GoogleMap.prototype), 'constructor', this).apply(this, args);
 
-	        this.provider = 'Google Map';
+	        this.provider = 'Google';
 	        this.map = null;
 	        this.markers = [];
 	        this.infoWindow = null;
@@ -153,8 +158,8 @@
 
 	            window._googleMapCallbackOnLoad = function () {
 	                // Require google object here cause they're not loaded before
-	                InfoWindow = __webpack_require__(10);
-	                Marker = __webpack_require__(11);
+	                InfoWindow = __webpack_require__(11);
+	                Marker = __webpack_require__(12);
 
 	                delete window._googleMapCallbackOnLoad;
 
@@ -197,7 +202,7 @@
 	    }, {
 	        key: 'getDirections',
 	        value: function getDirections(origin, destination, options, callback) {
-	            var DirectionsService = __webpack_require__(13);
+	            var DirectionsService = __webpack_require__(14);
 
 	            if (!directionsService) {
 	                var map = new google.maps.Map(this.domElement, this.options.map);
@@ -217,6 +222,51 @@
 
 /***/ },
 /* 1 */
+/***/ function(module, exports) {
+
+	'use strict';
+	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+	function ToObject(val) {
+		if (val == null) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+
+		return Object(val);
+	}
+
+	function ownEnumerableKeys(obj) {
+		var keys = Object.getOwnPropertyNames(obj);
+
+		if (Object.getOwnPropertySymbols) {
+			keys = keys.concat(Object.getOwnPropertySymbols(obj));
+		}
+
+		return keys.filter(function (key) {
+			return propIsEnumerable.call(obj, key);
+		});
+	}
+
+	module.exports = Object.assign || function (target, source) {
+		var from;
+		var keys;
+		var to = ToObject(target);
+
+		for (var s = 1; s < arguments.length; s++) {
+			from = arguments[s];
+			keys = ownEnumerableKeys(Object(from));
+
+			for (var i = 0; i < keys.length; i++) {
+				to[keys[i]] = from[keys[i]];
+			}
+		}
+
+		return to;
+	};
+
+
+/***/ },
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -225,8 +275,8 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	__webpack_require__(2);
-	var objectAssign = __webpack_require__(6);
+	__webpack_require__(3);
+	var objectAssign = __webpack_require__(1);
 
 	var Map = (function () {
 	    function Map(domSelector, apiKey, options) {
@@ -287,16 +337,16 @@
 	module.exports = Map;
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(3);
+	var content = __webpack_require__(4);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(5)(content, {});
+	var update = __webpack_require__(6)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -313,14 +363,14 @@
 	}
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(4)();
+	exports = module.exports = __webpack_require__(5)();
 	exports.push([module.id, ".one-map-to-rule-them-all__spinner {\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    content: '';\n    width: 50px;\n    height: 50px;\n    margin: auto;\n    padding: 50px 0 0 50px;\n    background-color: #333;\n\n    border-radius: 100%;\n    animation: scaleout 1.0s infinite ease-in-out;\n}\n\n@keyframes scaleout {\n    0% {\n        transform: scale(0.0);\n    } 100% {\n          transform: scale(1.0);\n          opacity: 0;\n      }\n}\n", ""]);
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	/*
@@ -376,7 +426,7 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -601,51 +651,6 @@
 
 
 /***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	'use strict';
-	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-	function ToObject(val) {
-		if (val == null) {
-			throw new TypeError('Object.assign cannot be called with null or undefined');
-		}
-
-		return Object(val);
-	}
-
-	function ownEnumerableKeys(obj) {
-		var keys = Object.getOwnPropertyNames(obj);
-
-		if (Object.getOwnPropertySymbols) {
-			keys = keys.concat(Object.getOwnPropertySymbols(obj));
-		}
-
-		return keys.filter(function (key) {
-			return propIsEnumerable.call(obj, key);
-		});
-	}
-
-	module.exports = Object.assign || function (target, source) {
-		var from;
-		var keys;
-		var to = ToObject(target);
-
-		for (var s = 1; s < arguments.length; s++) {
-			from = arguments[s];
-			keys = ownEnumerableKeys(Object(from));
-
-			for (var i = 0; i < keys.length; i++) {
-				to[keys[i]] = from[keys[i]];
-			}
-		}
-
-		return to;
-	};
-
-
-/***/ },
 /* 7 */
 /***/ function(module, exports) {
 
@@ -727,7 +732,8 @@
 
 /***/ },
 /* 9 */,
-/* 10 */
+/* 10 */,
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -740,7 +746,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
-	var objectAssign = __webpack_require__(6);
+	var objectAssign = __webpack_require__(1);
 
 	var InfoWindow = (function (_google$maps$InfoWindow) {
 	    _inherits(InfoWindow, _google$maps$InfoWindow);
@@ -785,7 +791,7 @@
 	module.exports = InfoWindow;
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -798,8 +804,8 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
-	var objectAssign = __webpack_require__(6);
-	var Label = __webpack_require__(12);
+	var objectAssign = __webpack_require__(1);
+	var Label = __webpack_require__(13);
 
 	var Marker = (function (_google$maps$Marker) {
 	    _inherits(Marker, _google$maps$Marker);
@@ -844,7 +850,7 @@
 	module.exports = Marker;
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -914,7 +920,7 @@
 	module.exports = Label;
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -927,7 +933,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
-	var objectAssign = __webpack_require__(6);
+	var objectAssign = __webpack_require__(1);
 
 	var DirectionsService = (function (_google$maps$DirectionsService) {
 	    _inherits(DirectionsService, _google$maps$DirectionsService);

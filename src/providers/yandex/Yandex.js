@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * Yandex Map 2.1
+ * API Documentation: https://tech.yandex.com/maps/doc/jsapi/2.1/quick-start/tasks/quick-start-docpage/
+ */
+
 let Map = require('../../Map');
 let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
