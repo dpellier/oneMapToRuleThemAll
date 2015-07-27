@@ -59,12 +59,16 @@
 	 * API Documentation: https://msdn.microsoft.com/en-us/library/dd877180.aspx
 	 */
 
-	var Map = __webpack_require__(2);
-	var domUtils = __webpack_require__(7);
-	var loaderUtils = __webpack_require__(8);
-	var objectAssign = __webpack_require__(1);
+	var Map = __webpack_require__(3);
+	var domUtils = __webpack_require__(8);
+	var loaderUtils = __webpack_require__(9);
+	var objectAssign = __webpack_require__(2);
+	var DirectionsService = undefined;
 	var InfoBox = undefined;
 	var Marker = undefined;
+	var MarkerClusterer = undefined;
+
+	var directionsService = undefined;
 
 	var BingMap = (function (_Map) {
 	    _inherits(BingMap, _Map);
@@ -92,6 +96,7 @@
 	                credentials: this.apiKey
 	            }, this.options.map));
 
+	            var clusterer = undefined;
 	            var infoBox = {};
 	            var dataLayer = new Microsoft.Maps.EntityCollection();
 	            map.entities.push(dataLayer);
@@ -99,15 +104,13 @@
 	            var bounds = [];
 
 	            // Init the info window is the option is set
-	            if (this.options.infoWindow) {
+	            if (this.options.infoWindow.active) {
 	                infoBox = new InfoBox(new Microsoft.Maps.Location(0, 0), this.options.infoWindow);
 	                map.entities.push(infoBox);
 	            }
 
 	            // Create a marker for each point
 	            this.points.forEach(function (point) {
-	                //let loc = new Microsoft.Maps.Location(point.latitude, point.longitude);
-	                //let marker = new Microsoft.Maps.Pushpin(loc, this.options.marker);
 	                var marker = new Marker(point, _this.options.marker);
 	                dataLayer.push(marker);
 
@@ -115,8 +118,8 @@
 
 	                // Bind the info window on pin click if the option is set
 	                if (_this.options.infoWindow.active) {
-	                    Microsoft.Maps.Events.addHandler(marker, 'click', function (e) {
-	                        infoBox.display(e.target.getLocation(), point.data);
+	                    Microsoft.Maps.Events.addHandler(marker, 'click', function () {
+	                        infoBox.display(marker.getLocation(), point.data);
 	                        map.setView({ center: marker.getLocation() });
 	                    });
 	                }
@@ -124,68 +127,78 @@
 	                bounds.push(marker.getLocation());
 	            });
 
+	            // Init the clustering if the option is set
+	            if (this.options.markerCluster.active) {
+	                clusterer = new MarkerClusterer(map, this.markers, this.options.markerCluster);
+	                clusterer.cluster(this.markers);
+	            }
+
 	            // Center the map
 	            if (bounds.length === 1) {
-	                map.setView({ center: bounds[0], zoom: 10 });
+	                map.setView({ center: bounds[0], zoom: 16 });
 	            } else {
 	                map.setView({ bounds: Microsoft.Maps.LocationRect.fromLocations(bounds) });
 	            }
-
-	            //function addPin(point, options) {
-	            //    let loc = new Microsoft.Maps.Location(point.latitude, point.longitude);
-	            //    let pin = new Microsoft.Maps.Pushpin(loc, options.marker);
-	            //
-	            //    dataLayer.push(pin);
-	            //
-	            //    // Bind the info window on pin click if the option is set
-	            //    if (options.infoWindow.active) {
-	            //        Microsoft.Maps.Events.addHandler(pin, 'click', (e) => {
-	            //            infoBox.display(e.target.getLocation(), point.data);
-	            //            map.setView({center: pin.getLocation()});
-	            //        });
-	            //    }
-	            //
-	            //    return pin.getLocation();
-	            //}
-
-	            //if (this.points.length > 1) {
-	            //    // Create a pin for each point
-	            //    let locations = this.points.map((point) => {
-	            //        return addPin(point, this.options);
-	            //    });
-	            //
-	            //    // Center the map
-	            //    let viewBoundaries = Microsoft.Maps.LocationRect.fromLocations(locations);
-	            //    map.setView({bounds: viewBoundaries});
-	            //
-	            //} else {
-	            //    let loc = addPin(this.points[0], this.options);
-	            //
-	            //    // Center the map
-	            //    map.setView({center: loc, zoom: 10});
-	            //}
 	        }
 	    }, {
 	        key: 'load',
-	        value: function load(callback, loadingMask) {
+	        value: function load(callback, loadingMask, clustered) {
 	            window._bingCallbackOnLoad = function () {
 	                // Require microsoft object here cause they're not loaded before
-	                InfoBox = __webpack_require__(9);
+	                InfoBox = __webpack_require__(1);
 	                Marker = __webpack_require__(10);
 
 	                delete window._bingCallbackOnLoad;
-	                callback();
+
+	                if (clustered) {
+	                    domUtils.addResources(document.body, [domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/pin_clusterer.js')], function () {
+	                        MarkerClusterer = __webpack_require__(11);
+	                        callback();
+	                    });
+	                } else {
+	                    callback();
+	                }
 	            };
 
 	            if (loadingMask) {
 	                window._bingCallbackOnLoad = loaderUtils.addLoader(this.domElement, loadingMask, window._bingCallbackOnLoad);
 	            }
 
-	            domUtils.addScript(this.domElement, 'http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad');
+	            domUtils.addScript(this.domElement, '//ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad');
 	        }
 	    }, {
 	        key: 'clickOnMarker',
-	        value: function clickOnMarker(markerId) {}
+	        value: function clickOnMarker(markerId) {
+	            markerId = markerId.toString();
+	            var marker = this.markers.filter(function (marker) {
+	                return marker.id.toString() === markerId;
+	            });
+
+	            if (marker.length) {
+	                Microsoft.Maps.Events.invoke(marker[0], 'click', {});
+	            }
+	        }
+	    }, {
+	        key: 'getDirections',
+	        value: function getDirections(origin, destination, options, _callback) {
+	            var _this2 = this;
+
+	            if (!directionsService) {
+	                Microsoft.Maps.loadModule('Microsoft.Maps.Directions', {
+	                    callback: function callback() {
+	                        var map = new Microsoft.Maps.Map(_this2.domElement, objectAssign({
+	                            credentials: _this2.apiKey
+	                        }, _this2.options.map));
+
+	                        DirectionsService = __webpack_require__(12);
+	                        directionsService = new DirectionsService(map);
+	                        directionsService.getRoute(origin, destination, options, _callback);
+	                    }
+	                });
+	            } else {
+	                directionsService.getRoute(origin, destination, options, _callback);
+	            }
+	        }
 	    }]);
 
 	    return BingMap;
@@ -193,29 +206,65 @@
 
 	window.Map = BingMap;
 
-	//markerId = markerId.toString();
-	//let marker = this.markers.filter((marker) => {
-	//    return marker.id.toString() === markerId;
-	//});
-	//
-	//if (marker.length) {
-	//    // If the marker is inside a cluster, we have to zoom to it before triggering the click
-	//    if (this.options.markerCluster.active && !marker[0].getMap()) {
-	//        this.map.setZoom(17);
-	//        this.map.panTo(marker[0].position);
-	//
-	//        // We trigger the info window only after the pan has finished
-	//        google.maps.event.addListenerOnce(this.map, 'idle', function() {
-	//            new google.maps.event.trigger(marker[0], 'click');
-	//        });
-	//
-	//    } else {
-	//        new google.maps.event.trigger(marker[0], 'click');
-	//    }
-	//}
-
 /***/ },
 /* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+	var objectAssign = __webpack_require__(2);
+
+	var InfoBox = (function (_Microsoft$Maps$Infobox) {
+	    _inherits(InfoBox, _Microsoft$Maps$Infobox);
+
+	    function InfoBox(location, options) {
+	        _classCallCheck(this, InfoBox);
+
+	        _get(Object.getPrototypeOf(InfoBox.prototype), 'constructor', this).call(this, location, objectAssign({ visible: false }, options, { description: '' })); //getDescription(options.description)));
+
+	        this._descriptionConfig = options.description;
+	    }
+
+	    _createClass(InfoBox, [{
+	        key: 'build',
+	        value: function build(data) {
+	            if (typeof this._descriptionConfig === 'string') {
+	                return this._descriptionConfig;
+	            }
+
+	            if (typeof this._descriptionConfig === 'function') {
+	                return this._descriptionConfig(data) || ' ';
+	            }
+
+	            console.error('Info Box description must be a string or a function that return a string');
+	        }
+	    }, {
+	        key: 'display',
+	        value: function display(location, data) {
+	            _get(Object.getPrototypeOf(InfoBox.prototype), 'setLocation', this).call(this, location);
+
+	            _get(Object.getPrototypeOf(InfoBox.prototype), 'setOptions', this).call(this, {
+	                visible: true,
+	                description: this.build(data)
+	            });
+	        }
+	    }]);
+
+	    return InfoBox;
+	})(Microsoft.Maps.Infobox);
+
+	module.exports = InfoBox;
+
+/***/ },
+/* 2 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -260,7 +309,7 @@
 
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -269,8 +318,8 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	__webpack_require__(3);
-	var objectAssign = __webpack_require__(1);
+	__webpack_require__(4);
+	var objectAssign = __webpack_require__(2);
 
 	var Map = (function () {
 	    function Map(domSelector, apiKey, options) {
@@ -331,16 +380,16 @@
 	module.exports = Map;
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(4);
+	var content = __webpack_require__(5);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(6)(content, {});
+	var update = __webpack_require__(7)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -357,14 +406,14 @@
 	}
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(5)();
+	exports = module.exports = __webpack_require__(6)();
 	exports.push([module.id, ".one-map-to-rule-them-all__spinner {\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    content: '';\n    width: 50px;\n    height: 50px;\n    margin: auto;\n    padding: 50px 0 0 50px;\n    background-color: #333;\n\n    border-radius: 100%;\n    animation: scaleout 1.0s infinite ease-in-out;\n}\n\n@keyframes scaleout {\n    0% {\n        transform: scale(0.0);\n    } 100% {\n          transform: scale(1.0);\n          opacity: 0;\n      }\n}\n", ""]);
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	/*
@@ -420,7 +469,7 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -645,7 +694,7 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -698,7 +747,7 @@
 	};
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -725,7 +774,108 @@
 	};
 
 /***/ },
-/* 9 */
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	var objectAssign = __webpack_require__(2);
+
+	var Marker = function Marker(point, options) {
+	    _classCallCheck(this, Marker);
+
+	    var opts = objectAssign({}, options);
+
+	    if (typeof options.text === 'function') {
+	        objectAssign(opts, {
+	            text: options.text(point)
+	        });
+	    }
+
+	    var location = new Microsoft.Maps.Location(point.latitude, point.longitude);
+	    var marker = new Microsoft.Maps.Pushpin(location, opts);
+
+	    marker.id = point.id;
+	    marker.latitude = point.latitude;
+	    marker.longitude = point.longitude;
+
+	    return marker;
+	};
+
+	module.exports = Marker;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	var objectAssign = __webpack_require__(2);
+
+	var MarkerClusterer = function MarkerClusterer(map, markers, options) {
+	    _classCallCheck(this, MarkerClusterer);
+
+	    var clusterer = new PinClusterer(map);
+
+	    clusterer.setOptions({
+	        onClusterToMap: function onClusterToMap(center) {
+	            if (isCluster(center)) {
+	                center.setOptions(options);
+
+	                // We hide all markers included in the cluster
+	                clusterer._clusters.forEach(function (cluster) {
+	                    if (JSON.stringify(cluster.center.location) === JSON.stringify(center.getLocation())) {
+	                        cluster.locations.forEach(function (location) {
+	                            var matchingMarker = findByCoords(markers, location);
+
+	                            if (matchingMarker.length) {
+	                                matchingMarker[0].setOptions({
+	                                    visible: false
+	                                });
+	                            }
+	                        });
+	                    }
+	                });
+	            } else {
+	                // We hide the clusterer marker to use our own
+	                center.setOptions({
+	                    visible: false
+	                });
+
+	                var matchingMarker = findByCoords(markers, center.getLocation());
+
+	                if (matchingMarker.length) {
+	                    matchingMarker[0].setOptions({
+	                        visible: true
+	                    });
+	                }
+	            }
+	        }
+	    });
+
+	    return clusterer;
+	};
+
+	function isCluster(point) {
+	    return point.getTypeName() === 'pin_clusterer cluster';
+	}
+
+	function findByCoords(list, coords) {
+	    var jsonCoords = JSON.stringify(coords);
+
+	    return list.filter(function (item) {
+	        return jsonCoords === JSON.stringify(item.getLocation());
+	    });
+	}
+
+	module.exports = MarkerClusterer;
+
+/***/ },
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -738,75 +888,58 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
-	var objectAssign = __webpack_require__(1);
+	var objectAssign = __webpack_require__(2);
 
-	var InfoBox = (function (_Microsoft$Maps$Infobox) {
-	    _inherits(InfoBox, _Microsoft$Maps$Infobox);
+	var DirectionsService = (function (_Microsoft$Maps$Directions$DirectionsManager) {
+	    _inherits(DirectionsService, _Microsoft$Maps$Directions$DirectionsManager);
 
-	    function InfoBox(location, options) {
-	        _classCallCheck(this, InfoBox);
+	    function DirectionsService(map) {
+	        _classCallCheck(this, DirectionsService);
 
-	        _get(Object.getPrototypeOf(InfoBox.prototype), 'constructor', this).call(this, location, objectAssign({ visible: false }, options, { description: '' })); //getDescription(options.description)));
+	        _get(Object.getPrototypeOf(DirectionsService.prototype), 'constructor', this).call(this, map);
 
-	        this._descriptionConfig = options.description;
+	        this.setRequestOptions({
+	            routeMode: Microsoft.Maps.Directions.RouteMode.driving
+	        });
 	    }
 
-	    _createClass(InfoBox, [{
-	        key: 'build',
-	        value: function build(data) {
-	            if (typeof this._descriptionConfig === 'string') {
-	                return this._descriptionConfig;
+	    _createClass(DirectionsService, [{
+	        key: 'getRoute',
+	        value: function getRoute(origin, destination, options, callback) {
+	            var _this = this;
+
+	            this.resetDirections();
+
+	            var start = new Microsoft.Maps.Directions.Waypoint({ address: origin });
+	            var end = new Microsoft.Maps.Directions.Waypoint({ address: destination });
+
+	            this.addWaypoint(start);
+	            this.addWaypoint(end);
+
+	            if (options.panelSelector) {
+	                this.setRenderOptions({
+	                    itineraryContainer: document.querySelector(options.panelSelector)
+	                });
 	            }
 
-	            if (typeof this._descriptionConfig === 'function') {
-	                return this._descriptionConfig(data) || ' ';
-	            }
-
-	            console.error('Info Box description must be a string or a function that return a string');
-	        }
-	    }, {
-	        key: 'display',
-	        value: function display(location, data) {
-	            _get(Object.getPrototypeOf(InfoBox.prototype), 'setLocation', this).call(this, location);
-
-	            _get(Object.getPrototypeOf(InfoBox.prototype), 'setOptions', this).call(this, {
-	                visible: true,
-	                description: this.build(data)
+	            Microsoft.Maps.Events.addHandler(this, 'directionsUpdated', function (route) {
+	                _this.dispose();
+	                callback(route);
 	            });
+
+	            Microsoft.Maps.Events.addHandler(this, 'directionsError', function () {
+	                _this.dispose();
+	                callback('Unable to calculate a driving itinerary for the destination: ' + destination);
+	            });
+
+	            this.calculateDirections();
 	        }
 	    }]);
 
-	    return InfoBox;
-	})(Microsoft.Maps.Infobox);
+	    return DirectionsService;
+	})(Microsoft.Maps.Directions.DirectionsManager);
 
-	module.exports = InfoBox;
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
-
-	var Marker = (function (_Microsoft$Maps$Pushpin) {
-	    _inherits(Marker, _Microsoft$Maps$Pushpin);
-
-	    function Marker(point, options) {
-	        _classCallCheck(this, Marker);
-
-	        var location = new Microsoft.Maps.Location(point.latitude, point.longitude);
-	        _get(Object.getPrototypeOf(Marker.prototype), 'constructor', this).call(this, location, options);
-	    }
-
-	    return Marker;
-	})(Microsoft.Maps.Pushpin);
-
-	module.exports = Marker;
+	module.exports = DirectionsService;
 
 /***/ }
 /******/ ]);

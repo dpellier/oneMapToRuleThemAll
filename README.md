@@ -6,16 +6,16 @@
 |-----|:----------:|:--------:|:-----:|:------:|:-----------:|
 | map customization | OK | OK | TODO | OK | OK |
 | marker customization | OK | OK | TODO | OK | OK |
-| cluster customization | OK | TODO | TODO | OK | OK |
-| info window customization | OK | TODO | TODO | OK | OK |
-| marker on click customization | OK | TODO | TODO | OK | OK |
-| driving directions | OK | TODO | TODO | OK | OK |
+| cluster customization | OK | OK | TODO | OK | OK |
+| info window customization | OK | OK | TODO | OK | OK |
+| marker on click customization | OK | OK | TODO | OK | OK |
+| driving directions | OK | OK | TODO | OK | OK |
 
 ##### Compatibility
 | | Google Map | Bing Map | Baidu | Yandex | ViaMichelin |
 |-----|:----------:|:--------:|:-----:|:------:|:-----------:|
 | Chrome | OK | OK | ? | OK | OK |
-| Firefox | OK | OK | ? | ? | ? |
+| Firefox | ? | ? | ? | ? | ? |
 | Opera | ? | ? | ? | ? | ? |
 | Safari | ? | ? | ? | ? | ? |
 | IE10 | ? | ? | ? | ? | ? |

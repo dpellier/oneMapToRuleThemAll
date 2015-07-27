@@ -9,8 +9,12 @@ let Map = require('../../Map');
 let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
 let objectAssign = require('object-assign');
+let DirectionsService;
 let InfoBox;
 let Marker;
+let MarkerClusterer;
+
+let directionsService;
 
 class BingMap extends Map {
     constructor(...args) {
@@ -26,6 +30,7 @@ class BingMap extends Map {
             credentials: this.apiKey
         }, this.options.map));
 
+        let clusterer;
         let infoBox = {};
         let dataLayer = new Microsoft.Maps.EntityCollection();
         map.entities.push(dataLayer);
@@ -33,15 +38,13 @@ class BingMap extends Map {
         let bounds = [];
 
         // Init the info window is the option is set
-        if (this.options.infoWindow) {
+        if (this.options.infoWindow.active) {
             infoBox = new InfoBox(new Microsoft.Maps.Location(0, 0), this.options.infoWindow);
             map.entities.push(infoBox);
         }
 
         // Create a marker for each point
         this.points.forEach((point) => {
-            //let loc = new Microsoft.Maps.Location(point.latitude, point.longitude);
-            //let marker = new Microsoft.Maps.Pushpin(loc, this.options.marker);
             let marker = new Marker(point, this.options.marker);
             dataLayer.push(marker);
 
@@ -49,8 +52,8 @@ class BingMap extends Map {
 
             // Bind the info window on pin click if the option is set
             if (this.options.infoWindow.active) {
-                Microsoft.Maps.Events.addHandler(marker, 'click', (e) => {
-                    infoBox.display(e.target.getLocation(), point.data);
+                Microsoft.Maps.Events.addHandler(marker, 'click', () => {
+                    infoBox.display(marker.getLocation(), point.data);
                     map.setView({center: marker.getLocation()});
                 });
             }
@@ -58,86 +61,74 @@ class BingMap extends Map {
             bounds.push(marker.getLocation());
         });
 
+        // Init the clustering if the option is set
+        if (this.options.markerCluster.active) {
+            clusterer = new MarkerClusterer(map, this.markers, this.options.markerCluster);
+            clusterer.cluster(this.markers);
+        }
+
         // Center the map
         if (bounds.length === 1) {
-            map.setView({center: bounds[0], zoom: 10});
+            map.setView({center: bounds[0], zoom: 16});
         } else {
             map.setView({bounds: Microsoft.Maps.LocationRect.fromLocations(bounds)});
         }
-
-        //function addPin(point, options) {
-        //    let loc = new Microsoft.Maps.Location(point.latitude, point.longitude);
-        //    let pin = new Microsoft.Maps.Pushpin(loc, options.marker);
-        //
-        //    dataLayer.push(pin);
-        //
-        //    // Bind the info window on pin click if the option is set
-        //    if (options.infoWindow.active) {
-        //        Microsoft.Maps.Events.addHandler(pin, 'click', (e) => {
-        //            infoBox.display(e.target.getLocation(), point.data);
-        //            map.setView({center: pin.getLocation()});
-        //        });
-        //    }
-        //
-        //    return pin.getLocation();
-        //}
-
-        //if (this.points.length > 1) {
-        //    // Create a pin for each point
-        //    let locations = this.points.map((point) => {
-        //        return addPin(point, this.options);
-        //    });
-        //
-        //    // Center the map
-        //    let viewBoundaries = Microsoft.Maps.LocationRect.fromLocations(locations);
-        //    map.setView({bounds: viewBoundaries});
-        //
-        //} else {
-        //    let loc = addPin(this.points[0], this.options);
-        //
-        //    // Center the map
-        //    map.setView({center: loc, zoom: 10});
-        //}
     }
 
-    load(callback, loadingMask) {
+    load(callback, loadingMask, clustered) {
         window._bingCallbackOnLoad = function() {
             // Require microsoft object here cause they're not loaded before
             InfoBox = require('./InfoBox');
             Marker = require('./Marker');
 
             delete window._bingCallbackOnLoad;
-            callback();
+
+            if (clustered) {
+                domUtils.addResources(document.body, [
+                    domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/pin_clusterer.js')
+                ], () => {
+                    MarkerClusterer = require('./MarkerClusterer');
+                    callback();
+                });
+            } else {
+                callback();
+            }
         };
 
         if (loadingMask) {
             window._bingCallbackOnLoad = loaderUtils.addLoader(this.domElement, loadingMask, window._bingCallbackOnLoad);
         }
 
-        domUtils.addScript(this.domElement, 'http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad');
+        domUtils.addScript(this.domElement, '//ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad');
     }
 
     clickOnMarker(markerId) {
-        //markerId = markerId.toString();
-        //let marker = this.markers.filter((marker) => {
-        //    return marker.id.toString() === markerId;
-        //});
-        //
-        //if (marker.length) {
-        //    // If the marker is inside a cluster, we have to zoom to it before triggering the click
-        //    if (this.options.markerCluster.active && !marker[0].getMap()) {
-        //        this.map.setZoom(17);
-        //        this.map.panTo(marker[0].position);
-        //
-        //        // We trigger the info window only after the pan has finished
-        //        google.maps.event.addListenerOnce(this.map, 'idle', function() {
-        //            new google.maps.event.trigger(marker[0], 'click');
-        //        });
-        //
-        //    } else {
-        //        new google.maps.event.trigger(marker[0], 'click');
-        //    }
-        //}
+        markerId = markerId.toString();
+        let marker = this.markers.filter((marker) => {
+            return marker.id.toString() === markerId;
+        });
+
+        if (marker.length) {
+            Microsoft.Maps.Events.invoke(marker[0], 'click', {});
+        }
+    }
+
+    getDirections(origin, destination, options, callback) {
+        if (!directionsService) {
+            Microsoft.Maps.loadModule('Microsoft.Maps.Directions', {
+                callback: () => {
+                    let map = new Microsoft.Maps.Map(this.domElement, objectAssign({
+                        credentials: this.apiKey
+                    }, this.options.map));
+
+                    DirectionsService = require('./DirectionsService');
+                    directionsService = new DirectionsService(map);
+                    directionsService.getRoute(origin, destination, options, callback);
+                }
+            });
+        } else {
+            directionsService.getRoute(origin, destination, options, callback);
+        }
     }
 }
 

@@ -59,9 +59,9 @@
 	 * API Documentation: https://tech.yandex.com/maps/doc/jsapi/2.1/quick-start/tasks/quick-start-docpage/
 	 */
 
-	var Map = __webpack_require__(2);
-	var domUtils = __webpack_require__(7);
-	var loaderUtils = __webpack_require__(8);
+	var Map = __webpack_require__(3);
+	var domUtils = __webpack_require__(8);
+	var loaderUtils = __webpack_require__(9);
 	var DirectionsService = undefined;
 	var Marker = undefined;
 
@@ -126,7 +126,7 @@
 
 	            window._yandexCallbackOnLoad = function () {
 	                // Require yandex object here cause they're not loaded before
-	                Marker = __webpack_require__(18);
+	                Marker = __webpack_require__(20);
 
 	                delete window._yandexCallbackOnLoad;
 	                callback();
@@ -154,7 +154,7 @@
 	        key: 'getDirections',
 	        value: function getDirections(origin, destination, options, callback) {
 	            if (!directionsService) {
-	                DirectionsService = __webpack_require__(19);
+	                DirectionsService = __webpack_require__(21);
 
 	                var map = new ymaps.Map(this.domElement, this.options.map);
 	                directionsService = new DirectionsService(map);
@@ -174,7 +174,8 @@
 	window.Map = Yandex;
 
 /***/ },
-/* 1 */
+/* 1 */,
+/* 2 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -219,7 +220,7 @@
 
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -228,8 +229,8 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	__webpack_require__(3);
-	var objectAssign = __webpack_require__(1);
+	__webpack_require__(4);
+	var objectAssign = __webpack_require__(2);
 
 	var Map = (function () {
 	    function Map(domSelector, apiKey, options) {
@@ -290,16 +291,16 @@
 	module.exports = Map;
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(4);
+	var content = __webpack_require__(5);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(6)(content, {});
+	var update = __webpack_require__(7)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -316,14 +317,14 @@
 	}
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(5)();
+	exports = module.exports = __webpack_require__(6)();
 	exports.push([module.id, ".one-map-to-rule-them-all__spinner {\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    content: '';\n    width: 50px;\n    height: 50px;\n    margin: auto;\n    padding: 50px 0 0 50px;\n    background-color: #333;\n\n    border-radius: 100%;\n    animation: scaleout 1.0s infinite ease-in-out;\n}\n\n@keyframes scaleout {\n    0% {\n        transform: scale(0.0);\n    } 100% {\n          transform: scale(1.0);\n          opacity: 0;\n      }\n}\n", ""]);
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	/*
@@ -379,7 +380,7 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -604,7 +605,7 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -657,7 +658,7 @@
 	};
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -684,7 +685,6 @@
 	};
 
 /***/ },
-/* 9 */,
 /* 10 */,
 /* 11 */,
 /* 12 */,
@@ -693,7 +693,9 @@
 /* 15 */,
 /* 16 */,
 /* 17 */,
-/* 18 */
+/* 18 */,
+/* 19 */,
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -704,7 +706,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
-	var objectAssign = __webpack_require__(1);
+	var objectAssign = __webpack_require__(2);
 
 	var Marker = (function (_ymaps$Placemark) {
 	    _inherits(Marker, _ymaps$Placemark);
@@ -735,7 +737,7 @@
 	module.exports = Marker;
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -744,7 +746,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var objectAssign = __webpack_require__(1);
+	var objectAssign = __webpack_require__(2);
 
 	var DirectionsService = (function () {
 	    function DirectionsService(map) {
@@ -770,8 +772,6 @@
 
 	    return DirectionsService;
 	})();
-
-	// TODO display route text
 
 	module.exports = DirectionsService;
 

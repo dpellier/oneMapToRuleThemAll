@@ -1,9 +1,25 @@
 'use strict';
 
-class Marker extends Microsoft.Maps.Pushpin {
+let objectAssign = require('object-assign');
+
+class Marker {
     constructor(point, options) {
+        let opts = objectAssign({}, options);
+
+        if (typeof options.text === 'function') {
+            objectAssign(opts, {
+                text: options.text(point)
+            });
+        }
+
         let location = new Microsoft.Maps.Location(point.latitude, point.longitude);
-        super(location, options);
+        let marker = new Microsoft.Maps.Pushpin(location, opts);
+
+        marker.id = point.id;
+        marker.latitude = point.latitude;
+        marker.longitude = point.longitude;
+
+        return marker;
     }
 }
 

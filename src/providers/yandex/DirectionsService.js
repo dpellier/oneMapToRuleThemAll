@@ -18,6 +18,4 @@ class DirectionsService {
     }
 }
 
-// TODO display route text
-
 module.exports = DirectionsService;
