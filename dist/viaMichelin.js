@@ -106,7 +106,7 @@
 	                onSuccess: function onSuccess() {
 	                    // Create a marker for each point
 	                    self.points.forEach(function (point) {
-	                        var marker = new Marker(point, self.options.marker);
+	                        var marker = new Marker(point, self.options.marker, self.options.activeInfoWindow);
 	                        self.markers.push(marker);
 
 	                        map.addLayer(marker);
@@ -118,7 +118,7 @@
 	                    map.drawMap({ geoBoundaries: { no: { lon: bounds[0][1], lat: bounds[0][0] }, se: { lon: bounds[1][1], lat: bounds[1][0] } } }, 16);
 
 	                    // Init the clustering if the option is set
-	                    if (self.options.markerCluster.active) {
+	                    if (self.options.activeCluster) {
 	                        new MarkerClusterer(map, self.markers, self.options.markerCluster);
 	                    }
 	                }
@@ -694,15 +694,19 @@
 
 	var objectAssign = __webpack_require__(2);
 
-	var Marker = function Marker(point, options) {
+	var Marker = function Marker(point, options, infoWindow) {
 	    _classCallCheck(this, Marker);
 
 	    var opts = objectAssign({}, options);
 
-	    if (typeof options.htm === 'function') {
-	        objectAssign(opts, {
-	            htm: options.htm(point.data) || ''
-	        });
+	    if (infoWindow) {
+	        if (typeof options.htm === 'function') {
+	            objectAssign(opts, {
+	                htm: options.htm(point.data) || ''
+	            });
+	        }
+	    } else {
+	        delete opts.htm;
 	    }
 
 	    if (options.overlayText && typeof options.overlayText.text === 'function') {

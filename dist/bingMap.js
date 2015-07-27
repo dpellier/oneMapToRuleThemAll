@@ -104,7 +104,7 @@
 	            var bounds = [];
 
 	            // Init the info window is the option is set
-	            if (this.options.infoWindow.active) {
+	            if (this.options.activeInfoWindow) {
 	                infoBox = new InfoBox(new Microsoft.Maps.Location(0, 0), this.options.infoWindow);
 	                map.entities.push(infoBox);
 	            }
@@ -117,7 +117,7 @@
 	                _this.markers.push(marker);
 
 	                // Bind the info window on pin click if the option is set
-	                if (_this.options.infoWindow.active) {
+	                if (_this.options.activeInfoWindow) {
 	                    Microsoft.Maps.Events.addHandler(marker, 'click', function () {
 	                        infoBox.display(marker.getLocation(), point.data);
 	                        map.setView({ center: marker.getLocation() });
@@ -128,7 +128,7 @@
 	            });
 
 	            // Init the clustering if the option is set
-	            if (this.options.markerCluster.active) {
+	            if (this.options.activeCluster) {
 	                clusterer = new MarkerClusterer(map, this.markers, this.options.markerCluster);
 	                clusterer.cluster(this.markers);
 	            }

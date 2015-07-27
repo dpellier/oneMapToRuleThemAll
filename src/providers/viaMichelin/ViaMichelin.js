@@ -42,7 +42,7 @@ class ViaMichelinMap extends Map {
             onSuccess: function() {
                 // Create a marker for each point
                 self.points.forEach((point) => {
-                    let marker = new Marker(point, self.options.marker);
+                    let marker = new Marker(point, self.options.marker, self.options.activeInfoWindow);
                     self.markers.push(marker);
 
                     map.addLayer(marker);
@@ -54,7 +54,7 @@ class ViaMichelinMap extends Map {
                 map.drawMap({geoBoundaries: {no: {lon: bounds[0][1], lat: bounds[0][0]}, se:{lon: bounds[1][1], lat: bounds[1][0]}}}, 16);
 
                 // Init the clustering if the option is set
-                if (self.options.markerCluster.active) {
+                if (self.options.activeCluster) {
                     new MarkerClusterer(map, self.markers, self.options.markerCluster);
                 }
             }

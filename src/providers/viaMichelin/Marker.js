@@ -3,13 +3,17 @@
 let objectAssign = require('object-assign');
 
 class Marker {
-    constructor(point, options) {
+    constructor(point, options, infoWindow) {
         let opts = objectAssign({}, options);
 
-        if (typeof options.htm === 'function') {
-            objectAssign(opts, {
-                htm: options.htm(point.data) || ''
-            });
+        if (infoWindow) {
+            if (typeof options.htm === 'function') {
+                objectAssign(opts, {
+                    htm: options.htm(point.data) || ''
+                });
+            }
+        } else {
+            delete opts.htm;
         }
 
         if (options.overlayText && typeof options.overlayText.text === 'function') {

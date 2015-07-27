@@ -3,7 +3,7 @@
 let objectAssign = require('object-assign');
 
 class Marker extends ymaps.Placemark {
-    constructor(point, options) {
+    constructor(point, options, infoWindow) {
         let properties = {};
 
         if (options.properties) {
@@ -14,6 +14,10 @@ class Marker extends ymaps.Placemark {
             if (options.properties.balloonContent) {
                 properties.balloonContent = options.properties.balloonContent(point.data);
             }
+        }
+
+        if (!infoWindow) {
+            options.options.hasBalloon = false;
         }
 
         super([point.latitude, point.longitude], properties, options.options);

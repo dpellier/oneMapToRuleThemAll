@@ -29,19 +29,19 @@ class Yandex extends Map {
         let bounds = [[0, 0], [0, 0]];
 
         // Init the clustering if the option is set
-        if (this.options.markerCluster.active) {
+        if (this.options.activeCluster) {
             this.cluster = new ymaps.Clusterer(this.options.markerCluster);
             this.map.geoObjects.add(this.cluster);
         }
 
         // Create a marker for each point
         this.points.forEach((point) => {
-            let marker = new Marker(point, this.options.marker);
+            let marker = new Marker(point, this.options.marker, this.options.activeInfoWindow);
             this.markers.push(marker);
 
             this.map.geoObjects.add(marker);
 
-            if (this.options.markerCluster.active) {
+            if (this.options.activeCluster) {
                 this.cluster.add(marker);
             }
             bounds = getLargestBounds(bounds, point);

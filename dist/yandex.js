@@ -95,19 +95,19 @@
 	            var bounds = [[0, 0], [0, 0]];
 
 	            // Init the clustering if the option is set
-	            if (this.options.markerCluster.active) {
+	            if (this.options.activeCluster) {
 	                this.cluster = new ymaps.Clusterer(this.options.markerCluster);
 	                this.map.geoObjects.add(this.cluster);
 	            }
 
 	            // Create a marker for each point
 	            this.points.forEach(function (point) {
-	                var marker = new Marker(point, _this.options.marker);
+	                var marker = new Marker(point, _this.options.marker, _this.options.activeInfoWindow);
 	                _this.markers.push(marker);
 
 	                _this.map.geoObjects.add(marker);
 
-	                if (_this.options.markerCluster.active) {
+	                if (_this.options.activeCluster) {
 	                    _this.cluster.add(marker);
 	                }
 	                bounds = getLargestBounds(bounds, point);
@@ -711,7 +711,7 @@
 	var Marker = (function (_ymaps$Placemark) {
 	    _inherits(Marker, _ymaps$Placemark);
 
-	    function Marker(point, options) {
+	    function Marker(point, options, infoWindow) {
 	        _classCallCheck(this, Marker);
 
 	        var properties = {};
@@ -724,6 +724,10 @@
 	            if (options.properties.balloonContent) {
 	                properties.balloonContent = options.properties.balloonContent(point.data);
 	            }
+	        }
+
+	        if (!infoWindow) {
+	            options.options.hasBalloon = false;
 	        }
 
 	        _get(Object.getPrototypeOf(Marker.prototype), 'constructor', this).call(this, [point.latitude, point.longitude], properties, options.options);

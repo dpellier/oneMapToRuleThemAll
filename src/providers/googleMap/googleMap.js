@@ -30,7 +30,7 @@ class GoogleMap extends Map {
         let bounds = new google.maps.LatLngBounds();
 
         // Init the info window is the option is set
-        if (this.options.infoWindow.active) {
+        if (this.options.activeInfoWindow) {
             this.infoWindow = new InfoWindow(this.options.infoWindow);
         }
 
@@ -42,7 +42,7 @@ class GoogleMap extends Map {
             this.markers.push(marker);
 
             // Bind the info window on marker click if the option is set
-            if (this.options.infoWindow.active) {
+            if (this.options.activeInfoWindow) {
                 google.maps.event.addListener(marker, 'click', () => {
                     if (this.infoWindow.anchor && this.infoWindow.anchor.id === marker.id) {
                         this.infoWindow.close();
@@ -64,7 +64,7 @@ class GoogleMap extends Map {
         this.map.fitBounds(bounds);
 
         // Init the clustering if the option is set
-        if (this.options.markerCluster.active) {
+        if (this.options.activeCluster) {
             this.markerClusterer = new MarkerClusterer(this.map, this.markers, this.options.markerCluster);
 
             google.maps.event.addListener(this.markerClusterer, 'clusteringend', function(clusterer) {
@@ -120,7 +120,7 @@ class GoogleMap extends Map {
 
         if (marker.length) {
             // If the marker is inside a cluster, we have to zoom to it before triggering the click
-            if (this.options.markerCluster.active && !marker[0].getMap()) {
+            if (this.options.activeCluster && !marker[0].getMap()) {
                 this.map.setZoom(17);
                 this.map.panTo(marker[0].position);
 
