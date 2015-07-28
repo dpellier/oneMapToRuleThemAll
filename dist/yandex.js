@@ -64,6 +64,7 @@
 	var loaderUtils = __webpack_require__(9);
 	var DirectionsService = undefined;
 	var Marker = undefined;
+	var YandexMap = undefined;
 
 	var directionsService = undefined;
 
@@ -91,7 +92,7 @@
 	            var _this = this;
 
 	            // Init the map
-	            this.map = new ymaps.Map(this.domElement, this.options.map);
+	            this.map = new YandexMap(this.domElement, this.options.map);
 	            var bounds = [[0, 0], [0, 0]];
 
 	            // Init the clustering if the option is set
@@ -126,7 +127,8 @@
 
 	            window._yandexCallbackOnLoad = function () {
 	                // Require yandex object here cause they're not loaded before
-	                Marker = __webpack_require__(20);
+	                YandexMap = __webpack_require__(20);
+	                Marker = __webpack_require__(21);
 
 	                delete window._yandexCallbackOnLoad;
 	                callback();
@@ -154,9 +156,9 @@
 	        key: 'getDirections',
 	        value: function getDirections(origin, destination, options, callback) {
 	            if (!directionsService) {
-	                DirectionsService = __webpack_require__(21);
+	                DirectionsService = __webpack_require__(22);
 
-	                var map = new ymaps.Map(this.domElement, this.options.map);
+	                var map = new YandexMap(this.domElement, this.options.map);
 	                directionsService = new DirectionsService(map);
 	            }
 
@@ -708,6 +710,39 @@
 
 	var objectAssign = __webpack_require__(2);
 
+	var Map = (function (_ymaps$Map) {
+	    _inherits(Map, _ymaps$Map);
+
+	    function Map(domElement, options) {
+	        _classCallCheck(this, Map);
+
+	        var defaultOptions = {
+	            center: [0, 0],
+	            zoom: 10
+	        };
+
+	        _get(Object.getPrototypeOf(Map.prototype), 'constructor', this).call(this, domElement, objectAssign({}, defaultOptions, options));
+	    }
+
+	    return Map;
+	})(ymaps.Map);
+
+	module.exports = Map;
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+	var objectAssign = __webpack_require__(2);
+
 	var Marker = (function (_ymaps$Placemark) {
 	    _inherits(Marker, _ymaps$Placemark);
 
@@ -741,7 +776,7 @@
 	module.exports = Marker;
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

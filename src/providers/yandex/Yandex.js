@@ -10,6 +10,7 @@ let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
 let DirectionsService;
 let Marker;
+let YandexMap;
 
 let directionsService;
 
@@ -25,7 +26,7 @@ class Yandex extends Map {
 
     render() {
         // Init the map
-        this.map = new ymaps.Map(this.domElement, this.options.map);
+        this.map = new YandexMap(this.domElement, this.options.map);
         let bounds = [[0, 0], [0, 0]];
 
         // Init the clustering if the option is set
@@ -59,6 +60,7 @@ class Yandex extends Map {
 
         window._yandexCallbackOnLoad = function() {
             // Require yandex object here cause they're not loaded before
+            YandexMap = require('./Map');
             Marker = require('./Marker');
 
             delete window._yandexCallbackOnLoad;
@@ -87,7 +89,7 @@ class Yandex extends Map {
         if (!directionsService) {
             DirectionsService = require('./DirectionsService');
 
-            let map = new ymaps.Map(this.domElement, this.options.map);
+            let map = new YandexMap(this.domElement, this.options.map);
             directionsService = new DirectionsService(map);
         }
 

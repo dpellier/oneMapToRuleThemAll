@@ -800,6 +800,9 @@
 	                    onSuccess: callback,
 	                    onError: function onError() {
 	                        callback('Unable to calculate a driving itinerary for the destination: ' + destination);
+	                    },
+	                    onInitError: function onInitError(err) {
+	                        console.error(err.errorCode + ': ' + err.errorMsg);
 	                    }
 	                });
 	            });
@@ -810,7 +813,8 @@
 	            var self = this;
 
 	            if (!self.map) {
-	                VMLaunch('ViaMichelin.Api.Map', {
+
+	                ViaMichelin.Api.Map({
 	                    container: self.domElement,
 	                    center: ViaMichelin.Api.Constants.Map.DELAY_LOADING
 	                }, {
@@ -819,8 +823,26 @@
 	                    },
 	                    onSuccess: function onSuccess() {
 	                        callback();
+	                    },
+	                    onInitError: function onInitError(err) {
+	                        console.error(err.errorCode + ': ' + err.errorMsg);
 	                    }
 	                });
+
+	                //VMLaunch('ViaMichelin.Api.Map', {
+	                //    container : self.domElement,
+	                //    center : ViaMichelin.Api.Constants.Map.DELAY_LOADING
+	                //}, {
+	                //    onInit: function(serviceMap) {
+	                //        self.map = serviceMap;
+	                //    },
+	                //    onSuccess: function() {
+	                //        callback();
+	                //    },
+	                //    onInitError: function(err) {
+	                //        console.error(err.errorCode +': ' + err.errorMsg);
+	                //    }
+	                //});
 	            } else {
 	                self.map.removeAllLayers();
 
