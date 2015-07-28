@@ -14,49 +14,38 @@ let Marker;
 let MarkerClusterer;
 
 let directionsService;
+let vmService;
 
 class ViaMichelinMap extends Map {
     constructor(...args) {
         super(...args);
 
         this.provider = 'ViaMichelin';
-        this.map = '';
         this.markers = [];
-        this.cluster = null;
     }
 
     render() {
-        let map = '';
         let self = this;
         let bounds = [[0, 0], [0, 0]];
 
-        // Init the map
-        VMLaunch('ViaMichelin.Api.Map', objectAssign({}, this.options.map, {
-            container: this.domElement
-        }), {
-            onInit: function(newMap) {
-                map = newMap;
-                Marker = require('./Marker');
-                MarkerClusterer = require('./MarkerClusterer');
-            },
-            onSuccess: function() {
-                // Create a marker for each point
-                self.points.forEach((point) => {
-                    let marker = new Marker(point, self.options.marker, self.options.activeInfoWindow);
-                    self.markers.push(marker);
+        vmService.mapInstance(this.domElement, this.options.map, (map) => {
 
-                    map.addLayer(marker);
+            // Create a marker for each point
+            self.points.forEach((point) => {
+                let marker = new Marker(point, self.options.marker, self.options.activeInfoWindow);
+                self.markers.push(marker);
 
-                    bounds = getLargestBounds(bounds, point);
-                });
+                map.addLayer(marker);
 
-                // Center the map
-                map.drawMap({geoBoundaries: {no: {lon: bounds[0][1], lat: bounds[0][0]}, se:{lon: bounds[1][1], lat: bounds[1][0]}}}, 16);
+                bounds = getLargestBounds(bounds, point);
+            });
 
-                // Init the clustering if the option is set
-                if (self.options.activeCluster) {
-                    new MarkerClusterer(map, self.markers, self.options.markerCluster);
-                }
+            // Center the map
+            map.drawMap({geoBoundaries: {no: {lon: bounds[0][1], lat: bounds[0][0]}, se:{lon: bounds[1][1], lat: bounds[1][0]}}}, 16);
+
+            // Init the clustering if the option is set
+            if (self.options.activeCluster) {
+                new MarkerClusterer(map, self.markers, self.options.markerCluster);
             }
         });
     }
@@ -68,7 +57,12 @@ class ViaMichelinMap extends Map {
 
         domUtils.addResources(this.domElement, [
             domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=fra')
-        ], callback);
+        ], () => {
+            Marker = require('./Marker');
+            MarkerClusterer = require('./MarkerClusterer');
+            vmService = require('./vmService');
+            callback();
+        });
     }
 
     clickOnMarker(markerId) {
@@ -88,7 +82,7 @@ class ViaMichelinMap extends Map {
             directionsService = new DirectionsService(this.domElement, options.panelSelector);
         }
 
-        directionsService.getRoute(origin, destination, options, callback);
+        directionsService.getRoute(origin, destination, this.options.map, options, callback);
     }
 }
 

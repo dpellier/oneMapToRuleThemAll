@@ -68,6 +68,7 @@
 	var MarkerClusterer = undefined;
 
 	var directionsService = undefined;
+	var vmService = undefined;
 
 	var ViaMichelinMap = (function (_Map) {
 	    _inherits(ViaMichelinMap, _Map);
@@ -82,45 +83,33 @@
 	        _get(Object.getPrototypeOf(ViaMichelinMap.prototype), 'constructor', this).apply(this, args);
 
 	        this.provider = 'ViaMichelin';
-	        this.map = '';
 	        this.markers = [];
-	        this.cluster = null;
 	    }
 
 	    _createClass(ViaMichelinMap, [{
 	        key: 'render',
 	        value: function render() {
-	            var map = '';
 	            var self = this;
 	            var bounds = [[0, 0], [0, 0]];
 
-	            // Init the map
-	            VMLaunch('ViaMichelin.Api.Map', objectAssign({}, this.options.map, {
-	                container: this.domElement
-	            }), {
-	                onInit: function onInit(newMap) {
-	                    map = newMap;
-	                    Marker = __webpack_require__(17);
-	                    MarkerClusterer = __webpack_require__(18);
-	                },
-	                onSuccess: function onSuccess() {
-	                    // Create a marker for each point
-	                    self.points.forEach(function (point) {
-	                        var marker = new Marker(point, self.options.marker, self.options.activeInfoWindow);
-	                        self.markers.push(marker);
+	            vmService.mapInstance(this.domElement, this.options.map, function (map) {
 
-	                        map.addLayer(marker);
+	                // Create a marker for each point
+	                self.points.forEach(function (point) {
+	                    var marker = new Marker(point, self.options.marker, self.options.activeInfoWindow);
+	                    self.markers.push(marker);
 
-	                        bounds = getLargestBounds(bounds, point);
-	                    });
+	                    map.addLayer(marker);
 
-	                    // Center the map
-	                    map.drawMap({ geoBoundaries: { no: { lon: bounds[0][1], lat: bounds[0][0] }, se: { lon: bounds[1][1], lat: bounds[1][0] } } }, 16);
+	                    bounds = getLargestBounds(bounds, point);
+	                });
 
-	                    // Init the clustering if the option is set
-	                    if (self.options.activeCluster) {
-	                        new MarkerClusterer(map, self.markers, self.options.markerCluster);
-	                    }
+	                // Center the map
+	                map.drawMap({ geoBoundaries: { no: { lon: bounds[0][1], lat: bounds[0][0] }, se: { lon: bounds[1][1], lat: bounds[1][0] } } }, 16);
+
+	                // Init the clustering if the option is set
+	                if (self.options.activeCluster) {
+	                    new MarkerClusterer(map, self.markers, self.options.markerCluster);
 	                }
 	            });
 	        }
@@ -131,7 +120,12 @@
 	                callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
 	            }
 
-	            domUtils.addResources(this.domElement, [domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=fra')], callback);
+	            domUtils.addResources(this.domElement, [domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=fra')], function () {
+	                Marker = __webpack_require__(17);
+	                MarkerClusterer = __webpack_require__(18);
+	                vmService = __webpack_require__(19);
+	                callback();
+	            });
 	        }
 	    }, {
 	        key: 'clickOnMarker',
@@ -149,11 +143,11 @@
 	        key: 'getDirections',
 	        value: function getDirections(origin, destination, options, callback) {
 	            if (!directionsService) {
-	                DirectionsService = __webpack_require__(19);
+	                DirectionsService = __webpack_require__(20);
 	                directionsService = new DirectionsService(this.domElement, options.panelSelector);
 	            }
 
-	            directionsService.getRoute(origin, destination, options, callback);
+	            directionsService.getRoute(origin, destination, this.options.map, options, callback);
 	        }
 	    }]);
 
@@ -759,11 +753,59 @@
 
 	'use strict';
 
+	var objectAssign = __webpack_require__(2);
+
+	module.exports = {
+	    mapInstance: function mapInstance(domElement, options, onSuccess) {
+	        var defaultOptions = {
+	            center: { coords: { lon: 0, lat: 0 } }
+	        };
+
+	        VMLaunch('ViaMichelin.Api.Map', objectAssign(defaultOptions, options, {
+	            container: domElement
+	        }), {
+	            onSuccess: onSuccess
+	        });
+	    },
+
+	    itineraryInstance: function itineraryInstance(origin, destination, domElement, panelElement, options, callback) {
+	        VMLaunch('ViaMichelin.Api.Itinerary', {
+	            map: {
+	                container: domElement,
+	                focus: true
+	            },
+	            roadsheet: panelElement,
+	            steps: [{
+	                address: {
+	                    city: origin,
+	                    countryISOCode: options.region || 'FRA'
+	                }
+	            }, {
+	                address: {
+	                    city: destination,
+	                    countryISOCode: options.region || 'FRA'
+	                }
+	            }]
+	        }, {
+	            onSuccess: callback
+	        });
+	    }
+	};
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 	var objectAssign = __webpack_require__(2);
+	var vmService = __webpack_require__(19);
+
+	var itineraryService = undefined;
 
 	var DirectionsService = (function () {
 	    function DirectionsService(domElement, panelSelector) {
@@ -775,81 +817,25 @@
 
 	    _createClass(DirectionsService, [{
 	        key: 'getRoute',
-	        value: function getRoute(origin, destination, options, callback) {
-	            var self = this;
-
-	            this.initMap(function () {
-	                VMLaunch('ViaMichelin.Api.Itinerary', {
-	                    map: {
-	                        container: self.domElement,
-	                        focus: true
-	                    },
-	                    roadsheet: self.panelElement,
-	                    steps: [{
-	                        address: {
-	                            city: origin,
-	                            countryISOCode: options.region || 'FRA'
-	                        }
-	                    }, {
-	                        address: {
-	                            city: destination,
-	                            countryISOCode: options.region || 'FRA'
-	                        }
-	                    }]
-	                }, {
-	                    onSuccess: callback,
-	                    onError: function onError() {
-	                        callback('Unable to calculate a driving itinerary for the destination: ' + destination);
-	                    },
-	                    onInitError: function onInitError(err) {
-	                        console.error(err.errorCode + ': ' + err.errorMsg);
-	                    }
-	                });
-	            });
-	        }
-	    }, {
-	        key: 'initMap',
-	        value: function initMap(callback) {
+	        value: function getRoute(origin, destination, mapOptions, options, callback) {
 	            var self = this;
 
 	            if (!self.map) {
+	                vmService.mapInstance(this.domElement, objectAssign({}, mapOptions, { center: ViaMichelin.Api.Constants.Map.DELAY_LOADING }), function (map) {
+	                    self.map = map;
 
-	                ViaMichelin.Api.Map({
-	                    container: self.domElement,
-	                    center: ViaMichelin.Api.Constants.Map.DELAY_LOADING
-	                }, {
-	                    onInit: function onInit(serviceMap) {
-	                        self.map = serviceMap;
-	                    },
-	                    onSuccess: function onSuccess() {
-	                        callback();
-	                    },
-	                    onInitError: function onInitError(err) {
-	                        console.error(err.errorCode + ': ' + err.errorMsg);
-	                    }
+	                    vmService.itineraryInstance(origin, destination, self.domElement, self.panelElement, options, function (itinerary) {
+	                        callback(itinerary);
+	                    });
 	                });
-
-	                //VMLaunch('ViaMichelin.Api.Map', {
-	                //    container : self.domElement,
-	                //    center : ViaMichelin.Api.Constants.Map.DELAY_LOADING
-	                //}, {
-	                //    onInit: function(serviceMap) {
-	                //        self.map = serviceMap;
-	                //    },
-	                //    onSuccess: function() {
-	                //        callback();
-	                //    },
-	                //    onInitError: function(err) {
-	                //        console.error(err.errorCode +': ' + err.errorMsg);
-	                //    }
-	                //});
 	            } else {
+	                // TODO fix: does nothing
 	                self.map.removeAllLayers();
-
-	                self.domElement.innerHTML = '';
 	                self.panelElement.innerHTML = '';
 
-	                callback();
+	                vmService.itineraryInstance(origin, destination, self.domElement, self.panelElement, options, function (itinerary) {
+	                    callback(itinerary);
+	                });
 	            }
 	        }
 	    }]);

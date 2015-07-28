@@ -1,6 +1,9 @@
 'use strict';
 
 let objectAssign = require('object-assign');
+let vmService = require('./vmService');
+
+let itineraryService;
 
 class DirectionsService {
     constructor(domElement, panelSelector) {
@@ -8,58 +11,25 @@ class DirectionsService {
         this.panelElement = document.querySelector(panelSelector);
     }
 
-    getRoute(origin, destination, options, callback) {
-        let self = this;
-
-        this.initMap(() => {
-            VMLaunch('ViaMichelin.Api.Itinerary', {
-                map: {
-                    container: self.domElement,
-                    focus: true
-                },
-                roadsheet: self.panelElement,
-                steps: [{
-                    address: {
-                        city: origin,
-                        countryISOCode: options.region || 'FRA'
-                    }
-                }, {
-                    address: {
-                        city: destination,
-                        countryISOCode: options.region || 'FRA'
-                    }
-                }]
-            }, {
-                onSuccess: callback,
-                onError: function() {
-                    callback('Unable to calculate a driving itinerary for the destination: ' + destination);
-                }
-            });
-        });
-    }
-
-    initMap(callback) {
+    getRoute(origin, destination, mapOptions, options, callback) {
         let self = this;
 
         if (!self.map) {
-            VMLaunch('ViaMichelin.Api.Map', {
-                container : self.domElement,
-                center : ViaMichelin.Api.Constants.Map.DELAY_LOADING
-            }, {
-                onInit: function(serviceMap) {
-                    self.map = serviceMap;
-                },
-                onSuccess: function() {
-                    callback();
-                }
+            vmService.mapInstance(this.domElement, objectAssign({}, mapOptions, {center : ViaMichelin.Api.Constants.Map.DELAY_LOADING}), (map) => {
+                self.map = map;
+
+                vmService.itineraryInstance(origin, destination, self.domElement, self.panelElement, options, (itinerary) => {
+                    callback(itinerary);
+                });
             });
         } else {
+            // TODO fix: does nothing
             self.map.removeAllLayers();
-
-            self.domElement.innerHTML = "";
             self.panelElement.innerHTML = '';
 
-            callback();
+            vmService.itineraryInstance(origin, destination, self.domElement, self.panelElement, options, (itinerary) => {
+                callback(itinerary);
+            });
         }
     }
 }

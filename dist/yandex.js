@@ -127,8 +127,8 @@
 
 	            window._yandexCallbackOnLoad = function () {
 	                // Require yandex object here cause they're not loaded before
-	                YandexMap = __webpack_require__(20);
-	                Marker = __webpack_require__(21);
+	                YandexMap = __webpack_require__(21);
+	                Marker = __webpack_require__(22);
 
 	                delete window._yandexCallbackOnLoad;
 	                callback();
@@ -156,7 +156,7 @@
 	        key: 'getDirections',
 	        value: function getDirections(origin, destination, options, callback) {
 	            if (!directionsService) {
-	                DirectionsService = __webpack_require__(22);
+	                DirectionsService = __webpack_require__(23);
 
 	                var map = new YandexMap(this.domElement, this.options.map);
 	                directionsService = new DirectionsService(map);
@@ -697,7 +697,8 @@
 /* 17 */,
 /* 18 */,
 /* 19 */,
-/* 20 */
+/* 20 */,
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -730,7 +731,7 @@
 	module.exports = Map;
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -776,7 +777,7 @@
 	module.exports = Marker;
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
