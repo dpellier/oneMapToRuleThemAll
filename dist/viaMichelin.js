@@ -59,10 +59,10 @@
 	 * API Documentation: http://dev.viamichelin.fr/viamichelin-javascript-api.html
 	 */
 
-	var Map = __webpack_require__(3);
-	var domUtils = __webpack_require__(8);
-	var loaderUtils = __webpack_require__(9);
-	var objectAssign = __webpack_require__(2);
+	var Map = __webpack_require__(1);
+	var domUtils = __webpack_require__(7);
+	var loaderUtils = __webpack_require__(8);
+	var objectAssign = __webpack_require__(6);
 	var DirectionsService = undefined;
 	var Marker = undefined;
 	var MarkerClusterer = undefined;
@@ -121,9 +121,9 @@
 	            }
 
 	            domUtils.addResources(this.domElement, [domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=fra')], function () {
-	                Marker = __webpack_require__(17);
-	                MarkerClusterer = __webpack_require__(18);
-	                vmService = __webpack_require__(19);
+	                Marker = __webpack_require__(19);
+	                MarkerClusterer = __webpack_require__(20);
+	                vmService = __webpack_require__(21);
 	                callback();
 	            });
 	        }
@@ -143,7 +143,7 @@
 	        key: 'getDirections',
 	        value: function getDirections(origin, destination, options, callback) {
 	            if (!directionsService) {
-	                DirectionsService = __webpack_require__(20);
+	                DirectionsService = __webpack_require__(22);
 	                directionsService = new DirectionsService(this.domElement, options.panelSelector);
 	            }
 
@@ -161,53 +161,7 @@
 	window.Map = ViaMichelinMap;
 
 /***/ },
-/* 1 */,
-/* 2 */
-/***/ function(module, exports) {
-
-	'use strict';
-	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-	function ToObject(val) {
-		if (val == null) {
-			throw new TypeError('Object.assign cannot be called with null or undefined');
-		}
-
-		return Object(val);
-	}
-
-	function ownEnumerableKeys(obj) {
-		var keys = Object.getOwnPropertyNames(obj);
-
-		if (Object.getOwnPropertySymbols) {
-			keys = keys.concat(Object.getOwnPropertySymbols(obj));
-		}
-
-		return keys.filter(function (key) {
-			return propIsEnumerable.call(obj, key);
-		});
-	}
-
-	module.exports = Object.assign || function (target, source) {
-		var from;
-		var keys;
-		var to = ToObject(target);
-
-		for (var s = 1; s < arguments.length; s++) {
-			from = arguments[s];
-			keys = ownEnumerableKeys(Object(from));
-
-			for (var i = 0; i < keys.length; i++) {
-				to[keys[i]] = from[keys[i]];
-			}
-		}
-
-		return to;
-	};
-
-
-/***/ },
-/* 3 */
+/* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -216,8 +170,8 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	__webpack_require__(4);
-	var objectAssign = __webpack_require__(2);
+	__webpack_require__(2);
+	var objectAssign = __webpack_require__(6);
 
 	var Map = (function () {
 	    function Map(domSelector, apiKey, options) {
@@ -278,16 +232,16 @@
 	module.exports = Map;
 
 /***/ },
-/* 4 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(5);
+	var content = __webpack_require__(3);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(7)(content, {});
+	var update = __webpack_require__(5)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -304,14 +258,14 @@
 	}
 
 /***/ },
-/* 5 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(6)();
+	exports = module.exports = __webpack_require__(4)();
 	exports.push([module.id, ".one-map-to-rule-them-all__spinner {\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    content: '';\n    width: 50px;\n    height: 50px;\n    margin: auto;\n    padding: 50px 0 0 50px;\n    background-color: #333;\n\n    border-radius: 100%;\n    animation: scaleout 1.0s infinite ease-in-out;\n}\n\n@keyframes scaleout {\n    0% {\n        transform: scale(0.0);\n    } 100% {\n          transform: scale(1.0);\n          opacity: 0;\n      }\n}\n", ""]);
 
 /***/ },
-/* 6 */
+/* 4 */
 /***/ function(module, exports) {
 
 	/*
@@ -367,7 +321,7 @@
 
 
 /***/ },
-/* 7 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -592,7 +546,52 @@
 
 
 /***/ },
-/* 8 */
+/* 6 */
+/***/ function(module, exports) {
+
+	'use strict';
+	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+	function ToObject(val) {
+		if (val == null) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+
+		return Object(val);
+	}
+
+	function ownEnumerableKeys(obj) {
+		var keys = Object.getOwnPropertyNames(obj);
+
+		if (Object.getOwnPropertySymbols) {
+			keys = keys.concat(Object.getOwnPropertySymbols(obj));
+		}
+
+		return keys.filter(function (key) {
+			return propIsEnumerable.call(obj, key);
+		});
+	}
+
+	module.exports = Object.assign || function (target, source) {
+		var from;
+		var keys;
+		var to = ToObject(target);
+
+		for (var s = 1; s < arguments.length; s++) {
+			from = arguments[s];
+			keys = ownEnumerableKeys(Object(from));
+
+			for (var i = 0; i < keys.length; i++) {
+				to[keys[i]] = from[keys[i]];
+			}
+		}
+
+		return to;
+	};
+
+
+/***/ },
+/* 7 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -645,7 +644,7 @@
 	};
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -672,6 +671,7 @@
 	};
 
 /***/ },
+/* 9 */,
 /* 10 */,
 /* 11 */,
 /* 12 */,
@@ -679,14 +679,16 @@
 /* 14 */,
 /* 15 */,
 /* 16 */,
-/* 17 */
+/* 17 */,
+/* 18 */,
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var objectAssign = __webpack_require__(2);
+	var objectAssign = __webpack_require__(6);
 
 	var Marker = function Marker(point, options, infoWindow) {
 	    _classCallCheck(this, Marker);
@@ -723,14 +725,14 @@
 	module.exports = Marker;
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var objectAssign = __webpack_require__(2);
+	var objectAssign = __webpack_require__(6);
 
 	var MarkerClusterer = function MarkerClusterer(map, markers, options) {
 	    _classCallCheck(this, MarkerClusterer);
@@ -748,12 +750,12 @@
 	module.exports = MarkerClusterer;
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var objectAssign = __webpack_require__(2);
+	var objectAssign = __webpack_require__(6);
 
 	module.exports = {
 	    mapInstance: function mapInstance(domElement, options, onSuccess) {
@@ -793,7 +795,7 @@
 	};
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -802,8 +804,8 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var objectAssign = __webpack_require__(2);
-	var vmService = __webpack_require__(19);
+	var objectAssign = __webpack_require__(6);
+	var vmService = __webpack_require__(21);
 
 	var itineraryService = undefined;
 

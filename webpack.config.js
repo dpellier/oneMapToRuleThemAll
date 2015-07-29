@@ -2,6 +2,7 @@ var path = require('path');
 
 module.exports = {
     entry: {
+        baidu: "./src/providers/baidu/baidu.js",
         bingMap: "./src/providers/bingMap/BingMap.js",
         googleMap: "./src/providers/googleMap/GoogleMap.js",
         viaMichelin: "./src/providers/viaMichelin/ViaMichelin.js",

@@ -55,116 +55,92 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
 	/**
-	 * Bing Map v7
-	 * API Documentation: https://msdn.microsoft.com/en-us/library/dd877180.aspx
+	 * Baidu Map 2.0
+	 * API Documentation: http://developer.baidu.com/map/index.php?title=jspopular
+	 * Demo: http://developer.baidu.com/map/jsdemo.htm
 	 */
 
 	var Map = __webpack_require__(1);
 	var domUtils = __webpack_require__(7);
 	var loaderUtils = __webpack_require__(8);
-	var objectAssign = __webpack_require__(6);
-	var DirectionsService = undefined;
-	var InfoBox = undefined;
+	//let DirectionsService;
 	var Marker = undefined;
-	var MarkerClusterer = undefined;
+	var BaiduMap = undefined;
 
-	var directionsService = undefined;
+	//let directionsService;
 
-	var BingMap = (function (_Map) {
-	    _inherits(BingMap, _Map);
+	var Baidu = (function (_Map) {
+	    _inherits(Baidu, _Map);
 
-	    function BingMap() {
-	        _classCallCheck(this, BingMap);
+	    function Baidu() {
+	        _classCallCheck(this, Baidu);
 
 	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 	            args[_key] = arguments[_key];
 	        }
 
-	        _get(Object.getPrototypeOf(BingMap.prototype), 'constructor', this).apply(this, args);
+	        _get(Object.getPrototypeOf(Baidu.prototype), 'constructor', this).apply(this, args);
 
-	        this.provider = 'Bing';
+	        this.provider = 'Baidu';
+	        this.map = '';
 	        this.markers = [];
 	    }
 
-	    _createClass(BingMap, [{
+	    _createClass(Baidu, [{
 	        key: 'render',
 	        value: function render() {
 	            var _this = this;
 
 	            // Init the map
-	            var map = new Microsoft.Maps.Map(this.domElement, objectAssign({
-	                credentials: this.apiKey
-	            }, this.options.map));
-
-	            var clusterer = undefined;
-	            var infoBox = {};
-	            var dataLayer = new Microsoft.Maps.EntityCollection();
-	            map.entities.push(dataLayer);
-
-	            var bounds = [];
-
-	            // Init the info window is the option is set
-	            if (this.options.activeInfoWindow) {
-	                infoBox = new InfoBox(new Microsoft.Maps.Location(0, 0), this.options.infoWindow);
-	                map.entities.push(infoBox);
-	            }
+	            this.map = new BaiduMap(this.domElement, this.options.map);
 
 	            // Create a marker for each point
 	            this.points.forEach(function (point) {
-	                var marker = new Marker(point, _this.options.marker);
-	                dataLayer.push(marker);
-
+	                var marker = new Marker(point, _this.options.marker, _this.options.markerLabel);
+	                _this.map.addOverlay(marker);
 	                _this.markers.push(marker);
 
-	                // Bind the info window on pin click if the option is set
+	                // Bind the info window on marker click if the option is set
 	                if (_this.options.activeInfoWindow) {
-	                    Microsoft.Maps.Events.addHandler(marker, 'click', function () {
-	                        infoBox.display(marker.getLocation(), point.data);
-	                        map.setView({ center: marker.getLocation() });
+	                    marker.addEventListener('click', function (e) {
+	                        var infoWindow = new BMap.InfoWindow(_this.options.infoWindow.message(point.data) || '', _this.options.infoWindow);
+
+	                        _this.map.openInfoWindow(infoWindow, e.target.getPosition());
 	                    });
 	                }
-
-	                bounds.push(marker.getLocation());
 	            });
+
+	            // Center the map
+	            this.map.setViewport(this.markers.map(function (marker) {
+	                return marker.getPosition();
+	            }));
 
 	            // Init the clustering if the option is set
 	            if (this.options.activeCluster) {
-	                clusterer = new MarkerClusterer(map, this.markers, this.options.markerCluster);
-	                clusterer.cluster(this.markers);
-	            }
+	                var markerClusterer = new BMapLib.MarkerClusterer(this.map, { markers: this.markers });
 
-	            // Center the map
-	            if (bounds.length === 1) {
-	                map.setView({ center: bounds[0], zoom: 16 });
-	            } else {
-	                map.setView({ bounds: Microsoft.Maps.LocationRect.fromLocations(bounds) });
+	                markerClusterer.setStyles([this.options.markerCluster.style]);
 	            }
 	        }
 	    }, {
 	        key: 'load',
 	        value: function load(callback, loadingMask, clustered) {
-	            window._bingCallbackOnLoad = function () {
-	                // Require microsoft object here cause they're not loaded before
-	                InfoBox = __webpack_require__(11);
-	                Marker = __webpack_require__(12);
+	            var _this2 = this;
 
-	                delete window._bingCallbackOnLoad;
+	            if (loadingMask) {
+	                callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
+	            }
+
+	            domUtils.addResources(this.domElement, [domUtils.createScript('//api.map.baidu.com/getscript?v=2.0&ak=' + this.apiKey + '&t=' + new Date().getTime())], function () {
+	                BaiduMap = __webpack_require__(9);
+	                Marker = __webpack_require__(10);
 
 	                if (clustered) {
-	                    domUtils.addResources(document.body, [domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/pin_clusterer.js')], function () {
-	                        MarkerClusterer = __webpack_require__(13);
-	                        callback();
-	                    });
+	                    domUtils.addResources(_this2.domElement, [domUtils.createScript('//api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js'), domUtils.createScript('//api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js')], callback);
 	                } else {
 	                    callback();
 	                }
-	            };
-
-	            if (loadingMask) {
-	                window._bingCallbackOnLoad = loaderUtils.addLoader(this.domElement, loadingMask, window._bingCallbackOnLoad);
-	            }
-
-	            domUtils.addScript(this.domElement, '//ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad');
+	            });
 	        }
 	    }, {
 	        key: 'clickOnMarker',
@@ -175,36 +151,27 @@
 	            });
 
 	            if (marker.length) {
-	                Microsoft.Maps.Events.invoke(marker[0], 'click', {});
+	                marker[0].dispatchEvent('click');
 	            }
 	        }
-	    }, {
-	        key: 'getDirections',
-	        value: function getDirections(origin, destination, options, _callback) {
-	            var _this2 = this;
 
-	            if (!directionsService) {
-	                Microsoft.Maps.loadModule('Microsoft.Maps.Directions', {
-	                    callback: function callback() {
-	                        var map = new Microsoft.Maps.Map(_this2.domElement, objectAssign({
-	                            credentials: _this2.apiKey
-	                        }, _this2.options.map));
+	        //getDirections(origin, destination, options, callback) {
+	        //    if (!directionsService) {
+	        //        DirectionsService = require('./DirectionsService');
+	        //
+	        //        let map = new YandexMap(this.domElement, this.options.map);
+	        //        directionsService = new DirectionsService(map);
+	        //    }
+	        //
+	        //    directionsService.getRoute(origin, destination, options, callback);
+	        //}
 
-	                        DirectionsService = __webpack_require__(14);
-	                        directionsService = new DirectionsService(map);
-	                        directionsService.getRoute(origin, destination, options, _callback);
-	                    }
-	                });
-	            } else {
-	                directionsService.getRoute(origin, destination, options, _callback);
-	            }
-	        }
 	    }]);
 
-	    return BingMap;
+	    return Baidu;
 	})(Map);
 
-	window.Map = BingMap;
+	window.Map = Baidu;
 
 /***/ },
 /* 1 */
@@ -717,14 +684,10 @@
 	};
 
 /***/ },
-/* 9 */,
-/* 10 */,
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/* 9 */
+/***/ function(module, exports) {
 
 	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
@@ -732,216 +695,72 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
-	var objectAssign = __webpack_require__(6);
+	var Map = (function (_BMap$Map) {
+	    _inherits(Map, _BMap$Map);
 
-	var InfoBox = (function (_Microsoft$Maps$Infobox) {
-	    _inherits(InfoBox, _Microsoft$Maps$Infobox);
+	    function Map(domElement, options) {
+	        _classCallCheck(this, Map);
 
-	    function InfoBox(location, options) {
-	        _classCallCheck(this, InfoBox);
+	        _get(Object.getPrototypeOf(Map.prototype), 'constructor', this).call(this, domElement, options);
 
-	        _get(Object.getPrototypeOf(InfoBox.prototype), 'constructor', this).call(this, location, objectAssign({ visible: false }, options, { description: '' })); //getDescription(options.description)));
+	        // Default centering
+	        this.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
 
-	        this._descriptionConfig = options.description;
+	        // Option like enableScrollWheelZoom must be set using the setter method
+	        for (var opt in options) {
+	            if (typeof this[opt] === 'function') {
+	                this[opt](options[opt]);
+	            }
+	        }
 	    }
 
-	    _createClass(InfoBox, [{
-	        key: 'build',
-	        value: function build(data) {
-	            if (typeof this._descriptionConfig === 'string') {
-	                return this._descriptionConfig;
-	            }
+	    return Map;
+	})(BMap.Map);
 
-	            if (typeof this._descriptionConfig === 'function') {
-	                return this._descriptionConfig(data) || ' ';
-	            }
-
-	            console.error('Info Box description must be a string or a function that return a string');
-	        }
-	    }, {
-	        key: 'display',
-	        value: function display(location, data) {
-	            _get(Object.getPrototypeOf(InfoBox.prototype), 'setLocation', this).call(this, location);
-
-	            _get(Object.getPrototypeOf(InfoBox.prototype), 'setOptions', this).call(this, {
-	                visible: true,
-	                description: this.build(data)
-	            });
-	        }
-	    }]);
-
-	    return InfoBox;
-	})(Microsoft.Maps.Infobox);
-
-	module.exports = InfoBox;
+	module.exports = Map;
 
 /***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
+/* 10 */
+/***/ function(module, exports) {
 
 	'use strict';
 
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var objectAssign = __webpack_require__(6);
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
-	var Marker = function Marker(point, options) {
-	    _classCallCheck(this, Marker);
+	var Marker = (function (_BMap$Marker) {
+	    _inherits(Marker, _BMap$Marker);
 
-	    var opts = objectAssign({}, options);
+	    function Marker(point, options, label) {
+	        _classCallCheck(this, Marker);
 
-	    if (typeof options.text === 'function') {
-	        objectAssign(opts, {
-	            text: options.text(point)
-	        });
+	        _get(Object.getPrototypeOf(Marker.prototype), 'constructor', this).call(this, new BMap.Point(point.longitude, point.latitude), options);
+
+	        if (label) {
+	            var content = '';
+
+	            if (typeof label.content === 'function') {
+	                content = label.content(point);
+	            } else {
+	                content = label.content || '';
+	            }
+
+	            var markerLabel = new BMap.Label(content, label.options);
+	            markerLabel.setStyle(label.style);
+
+	            this.setLabel(markerLabel);
+	        }
+
+	        this.id = point.id;
 	    }
 
-	    var location = new Microsoft.Maps.Location(point.latitude, point.longitude);
-	    var marker = new Microsoft.Maps.Pushpin(location, opts);
-
-	    marker.id = point.id;
-	    marker.latitude = point.latitude;
-	    marker.longitude = point.longitude;
-
-	    return marker;
-	};
+	    return Marker;
+	})(BMap.Marker);
 
 	module.exports = Marker;
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	var objectAssign = __webpack_require__(6);
-
-	var MarkerClusterer = function MarkerClusterer(map, markers, options) {
-	    _classCallCheck(this, MarkerClusterer);
-
-	    var clusterer = new PinClusterer(map);
-
-	    clusterer.setOptions({
-	        onClusterToMap: function onClusterToMap(center) {
-	            if (isCluster(center)) {
-	                center.setOptions(options);
-
-	                // We hide all markers included in the cluster
-	                clusterer._clusters.forEach(function (cluster) {
-	                    if (JSON.stringify(cluster.center.location) === JSON.stringify(center.getLocation())) {
-	                        cluster.locations.forEach(function (location) {
-	                            var matchingMarker = findByCoords(markers, location);
-
-	                            if (matchingMarker.length) {
-	                                matchingMarker[0].setOptions({
-	                                    visible: false
-	                                });
-	                            }
-	                        });
-	                    }
-	                });
-	            } else {
-	                // We hide the clusterer marker to use our own
-	                center.setOptions({
-	                    visible: false
-	                });
-
-	                var matchingMarker = findByCoords(markers, center.getLocation());
-
-	                if (matchingMarker.length) {
-	                    matchingMarker[0].setOptions({
-	                        visible: true
-	                    });
-	                }
-	            }
-	        }
-	    });
-
-	    return clusterer;
-	};
-
-	function isCluster(point) {
-	    return point.getTypeName() === 'pin_clusterer cluster';
-	}
-
-	function findByCoords(list, coords) {
-	    var jsonCoords = JSON.stringify(coords);
-
-	    return list.filter(function (item) {
-	        return jsonCoords === JSON.stringify(item.getLocation());
-	    });
-	}
-
-	module.exports = MarkerClusterer;
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
-
-	var objectAssign = __webpack_require__(6);
-
-	var DirectionsService = (function (_Microsoft$Maps$Directions$DirectionsManager) {
-	    _inherits(DirectionsService, _Microsoft$Maps$Directions$DirectionsManager);
-
-	    function DirectionsService(map) {
-	        _classCallCheck(this, DirectionsService);
-
-	        _get(Object.getPrototypeOf(DirectionsService.prototype), 'constructor', this).call(this, map);
-
-	        this.setRequestOptions({
-	            routeMode: Microsoft.Maps.Directions.RouteMode.driving
-	        });
-	    }
-
-	    _createClass(DirectionsService, [{
-	        key: 'getRoute',
-	        value: function getRoute(origin, destination, options, callback) {
-	            var _this = this;
-
-	            this.resetDirections();
-
-	            var start = new Microsoft.Maps.Directions.Waypoint({ address: origin });
-	            var end = new Microsoft.Maps.Directions.Waypoint({ address: destination });
-
-	            this.addWaypoint(start);
-	            this.addWaypoint(end);
-
-	            if (options.panelSelector) {
-	                this.setRenderOptions({
-	                    itineraryContainer: document.querySelector(options.panelSelector)
-	                });
-	            }
-
-	            Microsoft.Maps.Events.addHandler(this, 'directionsUpdated', function (route) {
-	                _this.dispose();
-	                callback(route);
-	            });
-
-	            Microsoft.Maps.Events.addHandler(this, 'directionsError', function () {
-	                _this.dispose();
-	                callback('Unable to calculate a driving itinerary for the destination: ' + destination);
-	            });
-
-	            this.calculateDirections();
-	        }
-	    }]);
-
-	    return DirectionsService;
-	})(Microsoft.Maps.Directions.DirectionsManager);
-
-	module.exports = DirectionsService;
 
 /***/ }
 /******/ ]);
