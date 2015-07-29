@@ -1,7 +1,5 @@
 'use strict';
 
-let objectAssign = require('object-assign');
-
 class DirectionsService {
     constructor(map) {
         this.map = map;

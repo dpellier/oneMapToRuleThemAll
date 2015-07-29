@@ -5,13 +5,15 @@
  * API Documentation: http://dev.viamichelin.fr/viamichelin-javascript-api.html
  */
 
+/*jshint -W079 */
 let Map = require('../../Map');
+/* jshint +W079 */
+
 let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
-let objectAssign = require('object-assign');
 let DirectionsService;
 let Marker;
-let MarkerClusterer;
+let markerClusterer;
 
 let directionsService;
 let vmService;
@@ -45,7 +47,8 @@ class ViaMichelinMap extends Map {
 
             // Init the clustering if the option is set
             if (self.options.activeCluster) {
-                new MarkerClusterer(map, self.markers, self.options.markerCluster);
+                //let markerClusterer = new MarkerClusterer(map, self.markers, self.options.markerCluster);
+                markerClusterer.init(map, self.markers, self.options.markerCluster);
             }
         });
     }
@@ -59,7 +62,7 @@ class ViaMichelinMap extends Map {
             domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=fra')
         ], () => {
             Marker = require('./Marker');
-            MarkerClusterer = require('./MarkerClusterer');
+            markerClusterer = require('./markerClusterer');
             vmService = require('./vmService');
             callback();
         });

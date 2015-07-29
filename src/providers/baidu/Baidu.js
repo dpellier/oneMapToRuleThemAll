@@ -6,7 +6,10 @@
  * Demo: http://developer.baidu.com/map/jsdemo.htm
  */
 
+/*jshint -W079 */
 let Map = require('../../Map');
+/* jshint +W079 */
+
 let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
 //let DirectionsService;

@@ -5,7 +5,10 @@
  * API Documentation: https://tech.yandex.com/maps/doc/jsapi/2.1/quick-start/tasks/quick-start-docpage/
  */
 
+/*jshint -W079 */
 let Map = require('../../Map');
+/* jshint +W079 */
+
 let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
 let DirectionsService;

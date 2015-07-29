@@ -1,7 +1,5 @@
 'use strict';
 
-let objectAssign = require('object-assign');
-
 class MarkerClusterer {
     constructor(map, markers, options) {
         let clusterer = new PinClusterer(map);

@@ -60,7 +60,10 @@
 	 * Demo: http://developer.baidu.com/map/jsdemo.htm
 	 */
 
+	/*jshint -W079 */
 	var Map = __webpack_require__(1);
+	/* jshint +W079 */
+
 	var domUtils = __webpack_require__(7);
 	var loaderUtils = __webpack_require__(8);
 	//let DirectionsService;

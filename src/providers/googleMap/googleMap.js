@@ -5,7 +5,10 @@
  * API Documentation: https://developers.google.com/maps/documentation/javascript/
  */
 
+/*jshint -W079 */
 let Map = require('../../Map');
+/* jshint +W079 */
+
 let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
 let InfoWindow;
@@ -69,14 +72,14 @@ class GoogleMap extends Map {
 
             google.maps.event.addListener(this.markerClusterer, 'clusteringend', function(clusterer) {
                 clusterer.getClusters().forEach(function(cluster) {
-                    var markers = cluster.getMarkers();
+                    let markers = cluster.getMarkers();
 
                     if (markers.length > 1) {
                         markers.forEach(function(marker) {
                             marker.hideLabel();
                         });
                     }
-                })
+                });
             });
         }
     }
@@ -126,11 +129,11 @@ class GoogleMap extends Map {
 
                 // We trigger the info window only after the pan has finished
                 google.maps.event.addListenerOnce(this.map, 'idle', function() {
-                    new google.maps.event.trigger(marker[0], 'click');
+                    google.maps.event.trigger(marker[0], 'click');
                 });
 
             } else {
-                new google.maps.event.trigger(marker[0], 'click');
+                google.maps.event.trigger(marker[0], 'click');
             }
         }
     }

@@ -1,7 +1,5 @@
 'use strict';
 
-let objectAssign = require('object-assign');
-
 class Marker extends ymaps.Placemark {
     constructor(point, options, infoWindow) {
         let properties = {};

@@ -2,6 +2,7 @@
 
 let objectAssign = require('object-assign');
 
+/* jshint newcap: false */
 module.exports = {
     mapInstance: function(domElement, options, onSuccess) {
         let defaultOptions = {

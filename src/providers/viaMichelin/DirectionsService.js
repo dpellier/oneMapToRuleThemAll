@@ -3,8 +3,6 @@
 let objectAssign = require('object-assign');
 let vmService = require('./vmService');
 
-let itineraryService;
-
 class DirectionsService {
     constructor(domElement, panelSelector) {
         this.domElement = domElement;

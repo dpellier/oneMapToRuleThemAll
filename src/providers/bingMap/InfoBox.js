@@ -1,6 +1,6 @@
 'use strict';
 
-var objectAssign = require('object-assign');
+let objectAssign = require('object-assign');
 
 class InfoBox extends Microsoft.Maps.Infobox {
     constructor(location, options) {

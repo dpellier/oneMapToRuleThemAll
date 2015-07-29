@@ -1,6 +1,6 @@
 'use strict';
 
-var objectAssign = require('object-assign');
+let objectAssign = require('object-assign');
 
 class InfoWindow extends google.maps.InfoWindow {
     constructor(options) {

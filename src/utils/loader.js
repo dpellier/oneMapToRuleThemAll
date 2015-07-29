@@ -9,7 +9,7 @@ module.exports = {
         if (typeof loadingMask === 'string') {
             loader.className = loadingMask;
         } else {
-            loader.className = defaultLoaderClass
+            loader.className = defaultLoaderClass;
         }
 
         domElement.appendChild(loader);

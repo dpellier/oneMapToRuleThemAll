@@ -59,7 +59,10 @@
 	 * API Documentation: https://developers.google.com/maps/documentation/javascript/
 	 */
 
+	/*jshint -W079 */
 	var Map = __webpack_require__(1);
+	/* jshint +W079 */
+
 	var domUtils = __webpack_require__(7);
 	var loaderUtils = __webpack_require__(8);
 	var InfoWindow = undefined;
@@ -192,10 +195,10 @@
 
 	                    // We trigger the info window only after the pan has finished
 	                    google.maps.event.addListenerOnce(this.map, 'idle', function () {
-	                        new google.maps.event.trigger(marker[0], 'click');
+	                        google.maps.event.trigger(marker[0], 'click');
 	                    });
 	                } else {
-	                    new google.maps.event.trigger(marker[0], 'click');
+	                    google.maps.event.trigger(marker[0], 'click');
 	                }
 	            }
 	        }

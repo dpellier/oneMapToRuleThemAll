@@ -5,7 +5,10 @@
  * API Documentation: https://msdn.microsoft.com/en-us/library/dd877180.aspx
  */
 
+/*jshint -W079 */
 let Map = require('../../Map');
+/* jshint +W079 */
+
 let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
 let objectAssign = require('object-assign');

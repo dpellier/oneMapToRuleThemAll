@@ -2,8 +2,8 @@
 
 let objectAssign = require('object-assign');
 
-class MarkerClusterer {
-    constructor(map, markers, options) {
+module.exports = {
+    init: function(map, markers, options) {
         let opts = objectAssign({
             gridSize: 70
         }, options);
@@ -13,6 +13,4 @@ class MarkerClusterer {
             markers: markers
         }));
     }
-}
-
-module.exports = MarkerClusterer;
+};

@@ -59,7 +59,10 @@
 	 * API Documentation: https://msdn.microsoft.com/en-us/library/dd877180.aspx
 	 */
 
+	/*jshint -W079 */
 	var Map = __webpack_require__(1);
+	/* jshint +W079 */
+
 	var domUtils = __webpack_require__(7);
 	var loaderUtils = __webpack_require__(8);
 	var objectAssign = __webpack_require__(6);
@@ -810,13 +813,11 @@
 
 /***/ },
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	var objectAssign = __webpack_require__(6);
 
 	var MarkerClusterer = function MarkerClusterer(map, markers, options) {
 	    _classCallCheck(this, MarkerClusterer);
@@ -878,7 +879,7 @@
 
 /***/ },
 /* 14 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 
@@ -889,8 +890,6 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
-
-	var objectAssign = __webpack_require__(6);
 
 	var DirectionsService = (function (_Microsoft$Maps$Directions$DirectionsManager) {
 	    _inherits(DirectionsService, _Microsoft$Maps$Directions$DirectionsManager);

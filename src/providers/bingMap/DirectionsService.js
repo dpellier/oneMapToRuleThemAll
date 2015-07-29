@@ -1,7 +1,5 @@
 'use strict';
 
-let objectAssign = require('object-assign');
-
 class DirectionsService extends Microsoft.Maps.Directions.DirectionsManager {
     constructor(map) {
         super(map);
