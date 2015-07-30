@@ -1,20 +1,28 @@
 'use strict';
 
-let objectAssign = require('object-assign');
-
 class DirectionsService {
-    constructor(map) {
+    constructor(map, panelSelector) {
         this.map = map;
+        this.map.centerAndZoom(new BMap.Point(116.404, 39.915), 14);
+        this.panelElement = document.querySelector(panelSelector);
     }
 
-    getRoute(origin, destination, options, callback) {
-        ymaps.route([origin, destination]).then((route) => {
-            this.map.geoObjects.add(route);
-            this.map.setBounds(route.getWayPoints().getBounds());
-            callback(route);
-        }, () => {
-            callback('Unable to calculate a driving itinerary for the destination: ' + destination);
+    getRoute(origin, destination, callback) {
+        let driving = new BMap.DrivingRoute(this.map, {
+            renderOptions: {
+                map: this.map,
+                autoViewport: true,
+                selectFirstResult: true,
+                panel: this.panelElement
+            },
+            onSearchComplete: function(results) {
+                if (driving.getStatus() === BMAP_STATUS_SUCCESS) {
+                    callback(results);
+                }
+            }
         });
+
+        driving.search(origin, destination);
     }
 }
 

@@ -53,6 +53,7 @@ module.exports = {
         globals: {
             BMap: true,
             BMapLib: true,
+            BMAP_STATUS_SUCCESS: true,
             console: true,
             google: true,
             MarkerClusterer: true,

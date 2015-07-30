@@ -60,12 +60,12 @@
 	 */
 
 	/*jshint -W079 */
-	var Map = __webpack_require__(1);
+	var Map = __webpack_require__(2);
 	/* jshint +W079 */
 
-	var domUtils = __webpack_require__(7);
-	var loaderUtils = __webpack_require__(8);
-	var objectAssign = __webpack_require__(6);
+	var domUtils = __webpack_require__(8);
+	var loaderUtils = __webpack_require__(9);
+	var objectAssign = __webpack_require__(7);
 	var DirectionsService = undefined;
 	var InfoBox = undefined;
 	var Marker = undefined;
@@ -148,14 +148,14 @@
 	        value: function load(callback, loadingMask, clustered) {
 	            window._bingCallbackOnLoad = function () {
 	                // Require microsoft object here cause they're not loaded before
-	                InfoBox = __webpack_require__(11);
-	                Marker = __webpack_require__(12);
+	                InfoBox = __webpack_require__(12);
+	                Marker = __webpack_require__(13);
 
 	                delete window._bingCallbackOnLoad;
 
 	                if (clustered) {
 	                    domUtils.addResources(document.body, [domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/pin_clusterer.js')], function () {
-	                        MarkerClusterer = __webpack_require__(13);
+	                        MarkerClusterer = __webpack_require__(14);
 	                        callback();
 	                    });
 	                } else {
@@ -193,7 +193,7 @@
 	                            credentials: _this2.apiKey
 	                        }, _this2.options.map));
 
-	                        DirectionsService = __webpack_require__(14);
+	                        DirectionsService = __webpack_require__(15);
 	                        directionsService = new DirectionsService(map);
 	                        directionsService.getRoute(origin, destination, options, _callback);
 	                    }
@@ -210,7 +210,8 @@
 	window.Map = BingMap;
 
 /***/ },
-/* 1 */
+/* 1 */,
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -219,8 +220,8 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	__webpack_require__(2);
-	var objectAssign = __webpack_require__(6);
+	__webpack_require__(3);
+	var objectAssign = __webpack_require__(7);
 
 	var Map = (function () {
 	    function Map(domSelector, apiKey, options) {
@@ -281,16 +282,16 @@
 	module.exports = Map;
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(3);
+	var content = __webpack_require__(4);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(5)(content, {});
+	var update = __webpack_require__(6)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -307,14 +308,14 @@
 	}
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(4)();
+	exports = module.exports = __webpack_require__(5)();
 	exports.push([module.id, ".one-map-to-rule-them-all__spinner {\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    content: '';\n    width: 50px;\n    height: 50px;\n    margin: auto;\n    padding: 50px 0 0 50px;\n    background-color: #333;\n\n    border-radius: 100%;\n    animation: scaleout 1.0s infinite ease-in-out;\n}\n\n@keyframes scaleout {\n    0% {\n        transform: scale(0.0);\n    } 100% {\n          transform: scale(1.0);\n          opacity: 0;\n      }\n}\n", ""]);
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	/*
@@ -370,7 +371,7 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -595,7 +596,7 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -640,7 +641,7 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -693,7 +694,7 @@
 	};
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -720,9 +721,9 @@
 	};
 
 /***/ },
-/* 9 */,
 /* 10 */,
-/* 11 */
+/* 11 */,
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -735,7 +736,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
-	var objectAssign = __webpack_require__(6);
+	var objectAssign = __webpack_require__(7);
 
 	var InfoBox = (function (_Microsoft$Maps$Infobox) {
 	    _inherits(InfoBox, _Microsoft$Maps$Infobox);
@@ -779,14 +780,14 @@
 	module.exports = InfoBox;
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var objectAssign = __webpack_require__(6);
+	var objectAssign = __webpack_require__(7);
 
 	var Marker = function Marker(point, options) {
 	    _classCallCheck(this, Marker);
@@ -812,7 +813,7 @@
 	module.exports = Marker;
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -878,7 +879,7 @@
 	module.exports = MarkerClusterer;
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';

@@ -61,16 +61,16 @@
 	 */
 
 	/*jshint -W079 */
-	var Map = __webpack_require__(1);
+	var Map = __webpack_require__(2);
 	/* jshint +W079 */
 
-	var domUtils = __webpack_require__(7);
-	var loaderUtils = __webpack_require__(8);
-	//let DirectionsService;
+	var domUtils = __webpack_require__(8);
+	var loaderUtils = __webpack_require__(9);
+	var DirectionsService = undefined;
 	var Marker = undefined;
 	var BaiduMap = undefined;
 
-	//let directionsService;
+	var directionsService = undefined;
 
 	var Baidu = (function (_Map) {
 	    _inherits(Baidu, _Map);
@@ -128,22 +128,32 @@
 	    }, {
 	        key: 'load',
 	        value: function load(callback, loadingMask, clustered) {
-	            var _this2 = this;
-
-	            if (loadingMask) {
-	                callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
+	            if (window.BMap && (!clustered || window.BMapLib)) {
+	                callback();
+	                return;
 	            }
 
-	            domUtils.addResources(this.domElement, [domUtils.createScript('//api.map.baidu.com/getscript?v=2.0&ak=' + this.apiKey + '&t=' + new Date().getTime())], function () {
-	                BaiduMap = __webpack_require__(9);
+	            var domElement = this.domElement;
+
+	            window._baiduCallbackOnLoad = function () {
+	                // Require baidu object here cause they're not loaded before
+	                BaiduMap = __webpack_require__(1);
 	                Marker = __webpack_require__(10);
 
+	                delete window._baiduCallbackOnLoad;
+
 	                if (clustered) {
-	                    domUtils.addResources(_this2.domElement, [domUtils.createScript('//api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js'), domUtils.createScript('//api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js')], callback);
+	                    domUtils.addResources(domElement, [domUtils.createScript('//api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js'), domUtils.createScript('//api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js')], callback);
 	                } else {
 	                    callback();
 	                }
-	            });
+	            };
+
+	            if (loadingMask) {
+	                callback = loaderUtils.addLoader(domElement, loadingMask, callback);
+	            }
+
+	            domUtils.addScript(domElement, '//api.map.baidu.com/api?v=2.0&callback=_baiduCallbackOnLoad&ak=' + this.apiKey);
 	        }
 	    }, {
 	        key: 'clickOnMarker',
@@ -157,18 +167,18 @@
 	                marker[0].dispatchEvent('click');
 	            }
 	        }
+	    }, {
+	        key: 'getDirections',
+	        value: function getDirections(origin, destination, options, callback) {
+	            if (!directionsService) {
+	                DirectionsService = __webpack_require__(11);
 
-	        //getDirections(origin, destination, options, callback) {
-	        //    if (!directionsService) {
-	        //        DirectionsService = require('./DirectionsService');
-	        //
-	        //        let map = new YandexMap(this.domElement, this.options.map);
-	        //        directionsService = new DirectionsService(map);
-	        //    }
-	        //
-	        //    directionsService.getRoute(origin, destination, options, callback);
-	        //}
+	                var map = new BMap.Map(this.domElement);
+	                directionsService = new DirectionsService(map, options.panelSelector);
+	            }
 
+	            directionsService.getRoute(origin, destination, callback);
+	        }
 	    }]);
 
 	    return Baidu;
@@ -178,6 +188,42 @@
 
 /***/ },
 /* 1 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+	var Map = (function (_BMap$Map) {
+	    _inherits(Map, _BMap$Map);
+
+	    function Map(domElement, options) {
+	        _classCallCheck(this, Map);
+
+	        _get(Object.getPrototypeOf(Map.prototype), 'constructor', this).call(this, domElement, options);
+
+	        // Default centering
+	        this.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
+
+	        // Option like enableScrollWheelZoom must be set using the setter method
+	        for (var opt in options) {
+	            if (typeof this[opt] === 'function') {
+	                this[opt](options[opt]);
+	            }
+	        }
+	    }
+
+	    return Map;
+	})(BMap.Map);
+
+	module.exports = Map;
+
+/***/ },
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -186,8 +232,8 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	__webpack_require__(2);
-	var objectAssign = __webpack_require__(6);
+	__webpack_require__(3);
+	var objectAssign = __webpack_require__(7);
 
 	var Map = (function () {
 	    function Map(domSelector, apiKey, options) {
@@ -248,16 +294,16 @@
 	module.exports = Map;
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(3);
+	var content = __webpack_require__(4);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(5)(content, {});
+	var update = __webpack_require__(6)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -274,14 +320,14 @@
 	}
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(4)();
+	exports = module.exports = __webpack_require__(5)();
 	exports.push([module.id, ".one-map-to-rule-them-all__spinner {\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    content: '';\n    width: 50px;\n    height: 50px;\n    margin: auto;\n    padding: 50px 0 0 50px;\n    background-color: #333;\n\n    border-radius: 100%;\n    animation: scaleout 1.0s infinite ease-in-out;\n}\n\n@keyframes scaleout {\n    0% {\n        transform: scale(0.0);\n    } 100% {\n          transform: scale(1.0);\n          opacity: 0;\n      }\n}\n", ""]);
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	/*
@@ -337,7 +383,7 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -562,7 +608,7 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -607,7 +653,7 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -660,7 +706,7 @@
 	};
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -685,42 +731,6 @@
 	        };
 	    }
 	};
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
-
-	var Map = (function (_BMap$Map) {
-	    _inherits(Map, _BMap$Map);
-
-	    function Map(domElement, options) {
-	        _classCallCheck(this, Map);
-
-	        _get(Object.getPrototypeOf(Map.prototype), 'constructor', this).call(this, domElement, options);
-
-	        // Default centering
-	        this.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
-
-	        // Option like enableScrollWheelZoom must be set using the setter method
-	        for (var opt in options) {
-	            if (typeof this[opt] === 'function') {
-	                this[opt](options[opt]);
-	            }
-	        }
-	    }
-
-	    return Map;
-	})(BMap.Map);
-
-	module.exports = Map;
 
 /***/ },
 /* 10 */
@@ -764,6 +774,51 @@
 	})(BMap.Marker);
 
 	module.exports = Marker;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	var DirectionsService = (function () {
+	    function DirectionsService(map, panelSelector) {
+	        _classCallCheck(this, DirectionsService);
+
+	        this.map = map;
+	        this.map.centerAndZoom(new BMap.Point(116.404, 39.915), 14);
+	        this.panelElement = document.querySelector(panelSelector);
+	    }
+
+	    _createClass(DirectionsService, [{
+	        key: 'getRoute',
+	        value: function getRoute(origin, destination, callback) {
+	            var driving = new BMap.DrivingRoute(this.map, {
+	                renderOptions: {
+	                    map: this.map,
+	                    autoViewport: true,
+	                    selectFirstResult: true,
+	                    panel: this.panelElement
+	                },
+	                onSearchComplete: function onSearchComplete(results) {
+	                    if (driving.getStatus() === BMAP_STATUS_SUCCESS) {
+	                        callback(results);
+	                    }
+	                }
+	            });
+
+	            driving.search(origin, destination);
+	        }
+	    }]);
+
+	    return DirectionsService;
+	})();
+
+	module.exports = DirectionsService;
 
 /***/ }
 /******/ ]);

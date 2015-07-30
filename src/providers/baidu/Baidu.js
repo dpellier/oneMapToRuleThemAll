@@ -12,11 +12,11 @@ let Map = require('../../Map');
 
 let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
-//let DirectionsService;
+let DirectionsService;
 let Marker;
 let BaiduMap;
 
-//let directionsService;
+let directionsService;
 
 class Baidu extends Map {
     constructor(...args) {
@@ -61,25 +61,35 @@ class Baidu extends Map {
     }
 
     load(callback, loadingMask, clustered) {
-        if (loadingMask) {
-            callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
+        if (window.BMap && (!clustered || window.BMapLib)) {
+            callback();
+            return;
         }
 
-        domUtils.addResources(this.domElement, [
-            domUtils.createScript('//api.map.baidu.com/getscript?v=2.0&ak=' + this.apiKey + '&t=' + new Date().getTime())
-        ], () => {
+        let domElement = this.domElement;
+
+        window._baiduCallbackOnLoad = function() {
+            // Require baidu object here cause they're not loaded before
             BaiduMap = require('./Map');
             Marker = require('./Marker');
 
+            delete window._baiduCallbackOnLoad;
+
             if (clustered) {
-                domUtils.addResources(this.domElement, [
+                domUtils.addResources(domElement, [
                     domUtils.createScript('//api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js'),
                     domUtils.createScript('//api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js')
                 ], callback);
             } else {
                 callback();
             }
-        });
+        };
+
+        if (loadingMask) {
+            callback = loaderUtils.addLoader(domElement, loadingMask, callback);
+        }
+
+        domUtils.addScript(domElement, '//api.map.baidu.com/api?v=2.0&callback=_baiduCallbackOnLoad&ak=' + this.apiKey);
     }
 
     clickOnMarker(markerId) {
@@ -93,16 +103,16 @@ class Baidu extends Map {
         }
     }
 
-    //getDirections(origin, destination, options, callback) {
-    //    if (!directionsService) {
-    //        DirectionsService = require('./DirectionsService');
-    //
-    //        let map = new YandexMap(this.domElement, this.options.map);
-    //        directionsService = new DirectionsService(map);
-    //    }
-    //
-    //    directionsService.getRoute(origin, destination, options, callback);
-    //}
+    getDirections(origin, destination, options, callback) {
+        if (!directionsService) {
+            DirectionsService = require('./DirectionsService');
+
+            let map = new BMap.Map(this.domElement);
+            directionsService = new DirectionsService(map, options.panelSelector);
+        }
+
+        directionsService.getRoute(origin, destination, callback);
+    }
 }
 
 window.Map = Baidu;
