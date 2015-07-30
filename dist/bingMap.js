@@ -146,6 +146,11 @@
 	    }, {
 	        key: 'load',
 	        value: function load(callback, loadingMask, clustered) {
+	            if (window.Microsoft && window.Microsoft.Maps && (!clustered || window.PinClusterer)) {
+	                callback();
+	                return;
+	            }
+
 	            window._bingCallbackOnLoad = function () {
 	                // Require microsoft object here cause they're not loaded before
 	                InfoBox = __webpack_require__(12);
@@ -194,12 +199,12 @@
 	                        }, _this2.options.map));
 
 	                        DirectionsService = __webpack_require__(15);
-	                        directionsService = new DirectionsService(map);
-	                        directionsService.getRoute(origin, destination, options, _callback);
+	                        directionsService = new DirectionsService(map, options, _callback);
+	                        directionsService.getRoute(origin, destination);
 	                    }
 	                });
 	            } else {
-	                directionsService.getRoute(origin, destination, options, _callback);
+	                directionsService.getRoute(origin, destination);
 	            }
 	        }
 	    }]);
@@ -895,7 +900,7 @@
 	var DirectionsService = (function (_Microsoft$Maps$Directions$DirectionsManager) {
 	    _inherits(DirectionsService, _Microsoft$Maps$Directions$DirectionsManager);
 
-	    function DirectionsService(map) {
+	    function DirectionsService(map, options, callback) {
 	        _classCallCheck(this, DirectionsService);
 
 	        _get(Object.getPrototypeOf(DirectionsService.prototype), 'constructor', this).call(this, map);
@@ -903,14 +908,24 @@
 	        this.setRequestOptions({
 	            routeMode: Microsoft.Maps.Directions.RouteMode.driving
 	        });
+
+	        if (options.panelSelector) {
+	            this.setRenderOptions({
+	                itineraryContainer: document.querySelector(options.panelSelector)
+	            });
+	        }
+
+	        Microsoft.Maps.Events.addHandler(this, 'directionsUpdated', callback);
+
+	        Microsoft.Maps.Events.addHandler(this, 'directionsError', function (err) {
+	            callback('Unable to calculate a driving itinerary for your destination: ' + err.message);
+	        });
 	    }
 
 	    _createClass(DirectionsService, [{
 	        key: 'getRoute',
-	        value: function getRoute(origin, destination, options, callback) {
-	            var _this = this;
-
-	            this.resetDirections();
+	        value: function getRoute(origin, destination) {
+	            this.reset();
 
 	            var start = new Microsoft.Maps.Directions.Waypoint({ address: origin });
 	            var end = new Microsoft.Maps.Directions.Waypoint({ address: destination });
@@ -918,23 +933,18 @@
 	            this.addWaypoint(start);
 	            this.addWaypoint(end);
 
-	            if (options.panelSelector) {
-	                this.setRenderOptions({
-	                    itineraryContainer: document.querySelector(options.panelSelector)
-	                });
-	            }
-
-	            Microsoft.Maps.Events.addHandler(this, 'directionsUpdated', function (route) {
-	                _this.dispose();
-	                callback(route);
-	            });
-
-	            Microsoft.Maps.Events.addHandler(this, 'directionsError', function () {
-	                _this.dispose();
-	                callback('Unable to calculate a driving itinerary for the destination: ' + destination);
-	            });
-
 	            this.calculateDirections();
+	        }
+	    }, {
+	        key: 'reset',
+	        value: function reset() {
+	            this.getMap().entities.clear();
+
+	            this.resetDirections({
+	                removeAllWaypoints: true,
+	                resetRenderOptions: false,
+	                resetRequestOptions: false
+	            });
 	        }
 	    }]);
 

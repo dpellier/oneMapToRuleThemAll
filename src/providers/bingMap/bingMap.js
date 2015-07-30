@@ -79,6 +79,11 @@ class BingMap extends Map {
     }
 
     load(callback, loadingMask, clustered) {
+        if (window.Microsoft && window.Microsoft.Maps && (!clustered || window.PinClusterer)) {
+            callback();
+            return;
+        }
+
         window._bingCallbackOnLoad = function() {
             // Require microsoft object here cause they're not loaded before
             InfoBox = require('./InfoBox');
@@ -125,12 +130,12 @@ class BingMap extends Map {
                     }, this.options.map));
 
                     DirectionsService = require('./DirectionsService');
-                    directionsService = new DirectionsService(map);
-                    directionsService.getRoute(origin, destination, options, callback);
+                    directionsService = new DirectionsService(map, options, callback);
+                    directionsService.getRoute(origin, destination);
                 }
             });
         } else {
-            directionsService.getRoute(origin, destination, options, callback);
+            directionsService.getRoute(origin, destination);
         }
     }
 }

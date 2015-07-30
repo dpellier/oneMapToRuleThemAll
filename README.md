@@ -15,9 +15,9 @@
 | | Google Map | Bing Map | Baidu | Yandex | ViaMichelin |
 |-----|:----------:|:--------:|:-----:|:------:|:-----------:|
 | Chrome | OK | OK | OK | OK | OK |
-| Firefox | OK | ? | OK | OK | ? |
+| Firefox | OK | OK | OK | OK | ? |
 | Opera | OK | OK | OK | OK | OK |
-| Safari | OK | ? | OK | OK | ? |
+| Safari | OK | OK | OK | OK | ? |
 | IE11 | ? | ? | ? | ? | ? |
 | IE10 | ? | ? | ? | ? | ? |
 | IE9 | ? | ? | ? | ? | ? |
