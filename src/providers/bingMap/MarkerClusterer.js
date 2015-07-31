@@ -50,10 +50,8 @@ function isCluster(point) {
 }
 
 function findByCoords(list, coords) {
-    let jsonCoords = JSON.stringify(coords);
-
     return list.filter((item) => {
-        return jsonCoords === JSON.stringify(item.getLocation());
+        return item.latitude === coords.latitude && item.longitude === coords.longitude;
     });
 }
 
