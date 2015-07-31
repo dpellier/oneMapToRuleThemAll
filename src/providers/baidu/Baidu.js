@@ -11,6 +11,7 @@ let Map = require('../../Map');
 /* jshint +W079 */
 
 let domUtils = require('../../utils/dom');
+let ieUtils = require('../../utils/ie');
 let loaderUtils = require('../../utils/loader');
 let DirectionsService;
 let Marker;
@@ -39,7 +40,7 @@ class Baidu extends Map {
 
             // Bind the info window on marker click if the option is set
             if (this.options.activeInfoWindow) {
-                marker.addEventListener('click', (e) => {
+                ieUtils.addEventListener(marker, 'click', (e) => {
                     let infoWindow = new BMap.InfoWindow(this.options.infoWindow.message(point.data) || '', this.options.infoWindow);
 
                     this.map.openInfoWindow(infoWindow, e.target.getPosition());
@@ -73,7 +74,7 @@ class Baidu extends Map {
             BaiduMap = require('./Map');
             Marker = require('./Marker');
 
-            delete window._baiduCallbackOnLoad;
+            ieUtils.delete(window, '_baiduCallbackOnLoad');
 
             if (clustered) {
                 domUtils.addResources(domElement, [

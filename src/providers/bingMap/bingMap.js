@@ -10,6 +10,7 @@ let Map = require('../../Map');
 /* jshint +W079 */
 
 let domUtils = require('../../utils/dom');
+let ieUtils = require('../../utils/ie');
 let loaderUtils = require('../../utils/loader');
 let objectAssign = require('object-assign');
 let DirectionsService;
@@ -89,7 +90,7 @@ class BingMap extends Map {
             InfoBox = require('./InfoBox');
             Marker = require('./Marker');
 
-            delete window._bingCallbackOnLoad;
+            ieUtils.delete(window, '_bingCallbackOnLoad');
 
             if (clustered) {
                 domUtils.addResources(document.body, [
@@ -104,7 +105,7 @@ class BingMap extends Map {
         };
 
         if (loadingMask) {
-            window._bingCallbackOnLoad = loaderUtils.addLoader(this.domElement, loadingMask, window._bingCallbackOnLoad);
+            callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
         }
 
         domUtils.addScript(this.domElement, '//ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad');

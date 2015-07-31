@@ -1,5 +1,7 @@
 'use strict';
 
+let ieUtils = require('./ie');
+
 module.exports = {
     addScript: function(domElement, src) {
         domElement.appendChild(this.createScript(src));
@@ -17,13 +19,13 @@ module.exports = {
         }
 
         resources.forEach((resource) => {
-            resource.addEventListener('load', () => {
+            ieUtils.addLoadListener(resource, () => {
                 nbLoaded++;
 
                 if (nbLoaded === resources.length) {
                     callback();
                 }
-            }, false);
+            });
 
             domElement.appendChild(resource);
         });

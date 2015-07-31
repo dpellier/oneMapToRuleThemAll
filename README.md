@@ -18,7 +18,9 @@
 | Firefox | OK | OK | OK | OK | ? |
 | Opera | OK | OK | OK | OK | OK |
 | Safari | OK | OK | OK | OK | ? |
-| IE11 | ? | ? | ? | ? | ? |
-| IE10 | ? | ? | ? | ? | ? |
-| IE9 | ? | ? | ? | ? | ? |
-| IE8 | ? | ? | ? | ? | ? |
+| IE11 | OK | ? | OK | OK | ? |
+| IE10 | OK | ? | OK | OK | ? |
+| IE9 | OK | ? | OK | OK | ? |
+| IE8* | OK | KO | OK | OK | ? |
+
+* need to include es5-shim && es5-sham

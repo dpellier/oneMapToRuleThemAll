@@ -10,6 +10,7 @@ let Map = require('../../Map');
 /* jshint +W079 */
 
 let domUtils = require('../../utils/dom');
+let ieUtils = require('../../utils/ie');
 let loaderUtils = require('../../utils/loader');
 let DirectionsService;
 let Marker;
@@ -66,12 +67,12 @@ class Yandex extends Map {
             YandexMap = require('./Map');
             Marker = require('./Marker');
 
-            delete window._yandexCallbackOnLoad;
+            ieUtils.delete(window, '_yandexCallbackOnLoad');
             callback();
         };
 
         if (loadingMask) {
-            window._yandexCallbackOnLoad = loaderUtils.addLoader(this.domElement, loadingMask, window._yandexCallbackOnLoad);
+            callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
         }
 
         domUtils.addScript(this.domElement, 'http://api-maps.yandex.ru/2.1/?load=package.standard&lang=ru-RU&onload=_yandexCallbackOnLoad');

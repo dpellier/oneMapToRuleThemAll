@@ -10,6 +10,7 @@ let Map = require('../../Map');
 /* jshint +W079 */
 
 let domUtils = require('../../utils/dom');
+let ieUtils = require('../../utils/ie');
 let loaderUtils = require('../../utils/loader');
 let InfoWindow;
 let Marker;
@@ -97,7 +98,7 @@ class GoogleMap extends Map {
             InfoWindow = require('./InfoWindow');
             Marker = require('./Marker');
 
-            delete window._googleMapCallbackOnLoad;
+            ieUtils.delete(window, '_googleMapCallbackOnLoad');
 
             if (clustered) {
                 domUtils.addResources(domElement, [
@@ -109,7 +110,7 @@ class GoogleMap extends Map {
         };
 
         if (loadingMask) {
-            window._googleMapCallbackOnLoad = loaderUtils.addLoader(this.domElement, loadingMask, window._googleMapCallbackOnLoad);
+            callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
         }
 
         domUtils.addScript(this.domElement, '//maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey);

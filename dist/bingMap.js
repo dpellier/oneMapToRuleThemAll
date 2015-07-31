@@ -60,12 +60,13 @@
 	 */
 
 	/*jshint -W079 */
-	var Map = __webpack_require__(2);
+	var Map = __webpack_require__(1);
 	/* jshint +W079 */
 
-	var domUtils = __webpack_require__(8);
+	var domUtils = __webpack_require__(7);
+	var ieUtils = __webpack_require__(8);
 	var loaderUtils = __webpack_require__(9);
-	var objectAssign = __webpack_require__(7);
+	var objectAssign = __webpack_require__(6);
 	var DirectionsService = undefined;
 	var InfoBox = undefined;
 	var Marker = undefined;
@@ -153,14 +154,14 @@
 
 	            window._bingCallbackOnLoad = function () {
 	                // Require microsoft object here cause they're not loaded before
-	                InfoBox = __webpack_require__(12);
-	                Marker = __webpack_require__(13);
+	                InfoBox = __webpack_require__(13);
+	                Marker = __webpack_require__(14);
 
-	                delete window._bingCallbackOnLoad;
+	                ieUtils['delete'](window, '_bingCallbackOnLoad');
 
 	                if (clustered) {
 	                    domUtils.addResources(document.body, [domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/pin_clusterer.js')], function () {
-	                        MarkerClusterer = __webpack_require__(14);
+	                        MarkerClusterer = __webpack_require__(15);
 	                        callback();
 	                    });
 	                } else {
@@ -169,7 +170,7 @@
 	            };
 
 	            if (loadingMask) {
-	                window._bingCallbackOnLoad = loaderUtils.addLoader(this.domElement, loadingMask, window._bingCallbackOnLoad);
+	                callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
 	            }
 
 	            domUtils.addScript(this.domElement, '//ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad');
@@ -198,7 +199,7 @@
 	                            credentials: _this2.apiKey
 	                        }, _this2.options.map));
 
-	                        DirectionsService = __webpack_require__(15);
+	                        DirectionsService = __webpack_require__(16);
 	                        directionsService = new DirectionsService(map, options, _callback);
 	                        directionsService.getRoute(origin, destination);
 	                    }
@@ -215,8 +216,7 @@
 	window.Map = BingMap;
 
 /***/ },
-/* 1 */,
-/* 2 */
+/* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -225,8 +225,8 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	__webpack_require__(3);
-	var objectAssign = __webpack_require__(7);
+	__webpack_require__(2);
+	var objectAssign = __webpack_require__(6);
 
 	var Map = (function () {
 	    function Map(domSelector, apiKey, options) {
@@ -287,16 +287,16 @@
 	module.exports = Map;
 
 /***/ },
-/* 3 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(4);
+	var content = __webpack_require__(3);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(6)(content, {});
+	var update = __webpack_require__(5)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -313,14 +313,14 @@
 	}
 
 /***/ },
-/* 4 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(5)();
+	exports = module.exports = __webpack_require__(4)();
 	exports.push([module.id, ".one-map-to-rule-them-all__spinner {\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    content: '';\n    width: 50px;\n    height: 50px;\n    margin: auto;\n    padding: 50px 0 0 50px;\n    background-color: #333;\n\n    border-radius: 100%;\n    animation: scaleout 1.0s infinite ease-in-out;\n}\n\n@keyframes scaleout {\n    0% {\n        transform: scale(0.0);\n    } 100% {\n          transform: scale(1.0);\n          opacity: 0;\n      }\n}\n", ""]);
 
 /***/ },
-/* 5 */
+/* 4 */
 /***/ function(module, exports) {
 
 	/*
@@ -376,7 +376,7 @@
 
 
 /***/ },
-/* 6 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -601,7 +601,7 @@
 
 
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -646,10 +646,12 @@
 
 
 /***/ },
-/* 8 */
-/***/ function(module, exports) {
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+
+	var ieUtils = __webpack_require__(8);
 
 	module.exports = {
 	    addScript: function addScript(domElement, src) {
@@ -668,13 +670,13 @@
 	        }
 
 	        resources.forEach(function (resource) {
-	            resource.addEventListener('load', function () {
+	            ieUtils.addLoadListener(resource, function () {
 	                nbLoaded++;
 
 	                if (nbLoaded === resources.length) {
 	                    callback();
 	                }
-	            }, false);
+	            });
 
 	            domElement.appendChild(resource);
 	        });
@@ -695,6 +697,37 @@
 	        style.href = href;
 
 	        return style;
+	    }
+	};
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = {
+	    'delete': function _delete(obj, key) {
+	        try {
+	            delete obj[key];
+	        } catch (e) {
+	            obj[key] = undefined;
+	        }
+	    },
+	    addEventListener: function addEventListener(domElement, event, callback, useCapture) {
+	        if (domElement.addEventListener) {
+	            domElement.addEventListener(event, callback, useCapture);
+	        } else {
+	            domElement.attachEvent('on' + event, callback);
+	        }
+	    },
+	    addLoadListener: function addLoadListener(resource, callback) {
+	        resource.onreadystatechange = function () {
+	            if (this.readyState === 'complete') {
+	                callback();
+	            }
+	        };
+	        resource.onload = callback;
 	    }
 	};
 
@@ -728,7 +761,8 @@
 /***/ },
 /* 10 */,
 /* 11 */,
-/* 12 */
+/* 12 */,
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -741,7 +775,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
-	var objectAssign = __webpack_require__(7);
+	var objectAssign = __webpack_require__(6);
 
 	var InfoBox = (function (_Microsoft$Maps$Infobox) {
 	    _inherits(InfoBox, _Microsoft$Maps$Infobox);
@@ -785,14 +819,14 @@
 	module.exports = InfoBox;
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var objectAssign = __webpack_require__(7);
+	var objectAssign = __webpack_require__(6);
 
 	var Marker = function Marker(point, options) {
 	    _classCallCheck(this, Marker);
@@ -818,7 +852,7 @@
 	module.exports = Marker;
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -884,7 +918,7 @@
 	module.exports = MarkerClusterer;
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	'use strict';
