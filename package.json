@@ -1,6 +1,6 @@
 {
   "name": "oneMapToRuleThemAll",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Unique interface above multiple map providers",
   "dependencies": {},
   "devDependencies": {
@@ -18,7 +18,7 @@
   "scripts": {
     "build": "webpack -p && find dist/ -maxdepth 1 -mindepth 1 -type f -name '*.js' | sed 's/.js$//' | xargs -I{} mv {}.js {}.min.js && webpack",
     "version": "npm run build && git add -A dist",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push origin master && git push --tags"
   },
   "repository": {
     "type": "git",
