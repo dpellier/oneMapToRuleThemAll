@@ -16,7 +16,9 @@
     "webpack": "^1.9.10"
   },
   "scripts": {
-    "build": "webpack -p && find dist/ -maxdepth 1 -mindepth 1 -type f -name '*.js' | sed 's/.js$//' | xargs -I{} mv {}.js {}.min.js && webpack"
+    "build": "webpack -p && find dist/ -maxdepth 1 -mindepth 1 -type f -name '*.js' | sed 's/.js$//' | xargs -I{} mv {}.js {}.min.js && webpack",
+    "version": "npm run build && git add -A dist",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
