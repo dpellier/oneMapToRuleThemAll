@@ -1,7 +1,6 @@
 {
     "name": "oneMapToRuleThemAll",
     "version": "0.1.2",
-    "main": "dist/googleMap.js",
     "ignore": [
         "src",
         ".editorconfig",
