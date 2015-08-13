@@ -1,1 +1,989 @@
-!function(e){function t(r){if(n[r])return n[r].exports;var o=n[r]={exports:{},id:r,loaded:!1};return e[r].call(o.exports,o,o.exports,t),o.loaded=!0,o.exports}var n={};return t.m=e,t.c=n,t.p="",t(0)}([function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function o(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(e.__proto__=t)}var i=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),a=function(e,t,n){for(var r=!0;r;){var o=e,i=t,a=n;s=u=c=void 0,r=!1,null===o&&(o=Function.prototype);var s=Object.getOwnPropertyDescriptor(o,i);if(void 0!==s){if("value"in s)return s.value;var c=s.get;return void 0===c?void 0:c.call(a)}var u=Object.getPrototypeOf(o);if(null===u)return void 0;e=u,t=i,n=a,r=!0}},s=n(3),c=n(4),u=n(2),l=n(5),p=n(1),f=void 0,d=void 0,h=void 0,v=void 0,m=void 0,y=function(e){function t(){r(this,t);for(var e=arguments.length,n=Array(e),o=0;e>o;o++)n[o]=arguments[o];a(Object.getPrototypeOf(t.prototype),"constructor",this).apply(this,n),this.provider="Bing",this.markers=[]}return o(t,e),i(t,[{key:"render",value:function(){var e=this,t=new Microsoft.Maps.Map(this.domElement,p({credentials:this.apiKey},this.options.map)),n=void 0,r={},o=new Microsoft.Maps.EntityCollection;t.entities.push(o);var i=[];this.options.activeInfoWindow&&(r=new d(new Microsoft.Maps.Location(0,0),this.options.infoWindow),t.entities.push(r)),this.points.forEach(function(n){var a=new h(n,e.options.marker);o.push(a),e.markers.push(a),e.options.activeInfoWindow&&Microsoft.Maps.Events.addHandler(a,"click",function(){r.display(a.getLocation(),n.data),t.setView({center:a.getLocation()})}),i.push(a.getLocation())}),this.options.activeCluster&&(n=new v(t,this.markers,this.options.markerCluster),n.cluster(this.markers)),1===i.length?t.setView({center:i[0],zoom:16}):t.setView({bounds:Microsoft.Maps.LocationRect.fromLocations(i)})}},{key:"load",value:function(e,t,r){return window.Microsoft&&window.Microsoft.Maps&&(!r||window.PinClusterer)?void e():(window._bingCallbackOnLoad=function(){d=n(15),h=n(16),u["delete"](window,"_bingCallbackOnLoad"),r?c.addResources(document.body,[c.createScript("//d11lbkprc85eyb.cloudfront.net/pin_clusterer.js")],function(){v=n(17),e()}):e()},t&&(e=l.addLoader(this.domElement,t,e)),void c.addScript(this.domElement,"//ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad"))}},{key:"clickOnMarker",value:function(e){e=e.toString();var t=this.markers.filter(function(t){return t.id.toString()===e});t.length&&Microsoft.Maps.Events.invoke(t[0],"click",{})}},{key:"getDirections",value:function(e,t,r,o){var i=this;m?m.getRoute(e,t):Microsoft.Maps.loadModule("Microsoft.Maps.Directions",{callback:function(){var a=new Microsoft.Maps.Map(i.domElement,p({credentials:i.apiKey},i.options.map));f=n(14),m=new f(a,r,o),m.getRoute(e,t)}})}}]),t}(s);window.Map=y},function(e,t){"use strict";function n(e){if(null==e)throw new TypeError("Object.assign cannot be called with null or undefined");return Object(e)}function r(e){var t=Object.getOwnPropertyNames(e);return Object.getOwnPropertySymbols&&(t=t.concat(Object.getOwnPropertySymbols(e))),t.filter(function(t){return o.call(e,t)})}var o=Object.prototype.propertyIsEnumerable;e.exports=Object.assign||function(e,t){for(var o,i,a=n(e),s=1;s<arguments.length;s++){o=arguments[s],i=r(Object(o));for(var c=0;c<i.length;c++)a[i[c]]=o[i[c]]}return a}},function(e,t){"use strict";e.exports={"delete":function(e,t){try{delete e[t]}catch(n){e[t]=void 0}},addEventListener:function(e,t,n,r){e.addEventListener?e.addEventListener(t,n,r):e.attachEvent("on"+t,n)},addLoadListener:function(e,t){e.onreadystatechange=function(){"complete"===this.readyState&&t()},e.onload=t}}},function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}();n(9);var i=n(1),a=function(){function e(t,n,o){r(this,e),this.domElement=document.querySelector(t),this.apiKey=n,this.setOptions(o),this.provider="[No provider defined]"}return o(e,[{key:"setPoints",value:function(e){"[object Array]"===Object.prototype.toString.call(e)?this.points=e:this.points=[e]}},{key:"setOptions",value:function(e){var t={map:{},marker:{},markerCluster:{},infoWindow:{}};this.options=i(t,e)}},{key:"render",value:function(){console.error(this.provider+" has no render method implemented")}},{key:"load",value:function(){console.error(this.provider+" has no load method implemented")}},{key:"clickOnMarker",value:function(){console.error(this.provider+" has no clickOnMarker method implemented")}},{key:"getDirections",value:function(){console.error(this.provider+" has no getDirections method implemented")}}]),e}();e.exports=a},function(e,t,n){"use strict";var r=n(2);e.exports={addScript:function(e,t){e.appendChild(this.createScript(t))},addStyle:function(e,t){e.appendChild(this.createStyle(t))},addResources:function(e,t,n){var o=0;0===t.length&&n(),t.forEach(function(i){r.addLoadListener(i,function(){o++,o===t.length&&n()}),e.appendChild(i)})},createScript:function(e){var t=document.createElement("script");return t.type="text/javascript",t.src=e,t.async=!0,t},createStyle:function(e){var t=document.createElement("link");return t.rel="stylesheet",t.href=e,t}}},function(e,t){"use strict";var n="one-map-to-rule-them-all__spinner";e.exports={addLoader:function(e,t,r){var o=document.createElement("div");return"string"==typeof t?o.className=t:o.className=n,e.appendChild(o),function(){e.removeChild(o),r()}}}},function(e,t,n){t=e.exports=n(7)(),t.push([e.id,".one-map-to-rule-them-all__spinner{position:absolute;top:0;right:0;bottom:0;left:0;content:'';width:50px;height:50px;margin:auto;padding:50px 0 0 50px;background-color:#333;border-radius:100%;animation:scaleout 1s infinite ease-in-out}@keyframes scaleout{0%{transform:scale(0)}100%{transform:scale(1);opacity:0}}",""])},function(e,t){e.exports=function(){var e=[];return e.toString=function(){for(var e=[],t=0;t<this.length;t++){var n=this[t];n[2]?e.push("@media "+n[2]+"{"+n[1]+"}"):e.push(n[1])}return e.join("")},e.i=function(t,n){"string"==typeof t&&(t=[[null,t,""]]);for(var r={},o=0;o<this.length;o++){var i=this[o][0];"number"==typeof i&&(r[i]=!0)}for(o=0;o<t.length;o++){var a=t[o];"number"==typeof a[0]&&r[a[0]]||(n&&!a[2]?a[2]=n:n&&(a[2]="("+a[2]+") and ("+n+")"),e.push(a))}},e}},function(e,t,n){function r(e,t){for(var n=0;n<e.length;n++){var r=e[n],o=p[r.id];if(o){o.refs++;for(var i=0;i<o.parts.length;i++)o.parts[i](r.parts[i]);for(;i<r.parts.length;i++)o.parts.push(s(r.parts[i],t))}else{for(var a=[],i=0;i<r.parts.length;i++)a.push(s(r.parts[i],t));p[r.id]={id:r.id,refs:1,parts:a}}}}function o(e){for(var t=[],n={},r=0;r<e.length;r++){var o=e[r],i=o[0],a=o[1],s=o[2],c=o[3],u={css:a,media:s,sourceMap:c};n[i]?n[i].parts.push(u):t.push(n[i]={id:i,parts:[u]})}return t}function i(){var e=document.createElement("style"),t=h();return e.type="text/css",t.appendChild(e),e}function a(){var e=document.createElement("link"),t=h();return e.rel="stylesheet",t.appendChild(e),e}function s(e,t){var n,r,o;if(t.singleton){var s=m++;n=v||(v=i()),r=c.bind(null,n,s,!1),o=c.bind(null,n,s,!0)}else e.sourceMap&&"function"==typeof URL&&"function"==typeof URL.createObjectURL&&"function"==typeof URL.revokeObjectURL&&"function"==typeof Blob&&"function"==typeof btoa?(n=a(),r=l.bind(null,n),o=function(){n.parentNode.removeChild(n),n.href&&URL.revokeObjectURL(n.href)}):(n=i(),r=u.bind(null,n),o=function(){n.parentNode.removeChild(n)});return r(e),function(t){if(t){if(t.css===e.css&&t.media===e.media&&t.sourceMap===e.sourceMap)return;r(e=t)}else o()}}function c(e,t,n,r){var o=n?"":r.css;if(e.styleSheet)e.styleSheet.cssText=y(t,o);else{var i=document.createTextNode(o),a=e.childNodes;a[t]&&e.removeChild(a[t]),a.length?e.insertBefore(i,a[t]):e.appendChild(i)}}function u(e,t){var n=t.css,r=t.media;t.sourceMap;if(r&&e.setAttribute("media",r),e.styleSheet)e.styleSheet.cssText=n;else{for(;e.firstChild;)e.removeChild(e.firstChild);e.appendChild(document.createTextNode(n))}}function l(e,t){var n=t.css,r=(t.media,t.sourceMap);r&&(n+="\n/*# sourceMappingURL=data:application/json;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(r))))+" */");var o=new Blob([n],{type:"text/css"}),i=e.href;e.href=URL.createObjectURL(o),i&&URL.revokeObjectURL(i)}var p={},f=function(e){var t;return function(){return"undefined"==typeof t&&(t=e.apply(this,arguments)),t}},d=f(function(){return/msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase())}),h=f(function(){return document.head||document.getElementsByTagName("head")[0]}),v=null,m=0;e.exports=function(e,t){t=t||{},"undefined"==typeof t.singleton&&(t.singleton=d());var n=o(e);return r(n,t),function(e){for(var i=[],a=0;a<n.length;a++){var s=n[a],c=p[s.id];c.refs--,i.push(c)}if(e){var u=o(e);r(u,t)}for(var a=0;a<i.length;a++){var c=i[a];if(0===c.refs){for(var l=0;l<c.parts.length;l++)c.parts[l]();delete p[c.id]}}}};var y=function(){var e=[];return function(t,n){return e[t]=n,e.filter(Boolean).join("\n")}}()},function(e,t,n){var r=n(6);"string"==typeof r&&(r=[[e.id,r,""]]);n(8)(r,{});r.locals&&(e.exports=r.locals)},,,,,function(e,t){"use strict";function n(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function r(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(e.__proto__=t)}var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i=function(e,t,n){for(var r=!0;r;){var o=e,i=t,a=n;s=u=c=void 0,r=!1,null===o&&(o=Function.prototype);var s=Object.getOwnPropertyDescriptor(o,i);if(void 0!==s){if("value"in s)return s.value;var c=s.get;return void 0===c?void 0:c.call(a)}var u=Object.getPrototypeOf(o);if(null===u)return void 0;e=u,t=i,n=a,r=!0}},a=function(e){function t(e,r,o){n(this,t),i(Object.getPrototypeOf(t.prototype),"constructor",this).call(this,e),this.setRequestOptions({routeMode:Microsoft.Maps.Directions.RouteMode.driving}),r.panelSelector&&this.setRenderOptions({itineraryContainer:document.querySelector(r.panelSelector)}),Microsoft.Maps.Events.addHandler(this,"directionsUpdated",o),Microsoft.Maps.Events.addHandler(this,"directionsError",function(e){o("Unable to calculate a driving itinerary for your destination: "+e.message)})}return r(t,e),o(t,[{key:"getRoute",value:function(e,t){this.reset();var n=new Microsoft.Maps.Directions.Waypoint({address:e}),r=new Microsoft.Maps.Directions.Waypoint({address:t});this.addWaypoint(n),this.addWaypoint(r),this.calculateDirections()}},{key:"reset",value:function(){this.getMap().entities.clear(),this.resetDirections({removeAllWaypoints:!0,resetRenderOptions:!1,resetRequestOptions:!1})}}]),t}(Microsoft.Maps.Directions.DirectionsManager);e.exports=a},function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function o(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(e.__proto__=t)}var i=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),a=function(e,t,n){for(var r=!0;r;){var o=e,i=t,a=n;s=u=c=void 0,r=!1,null===o&&(o=Function.prototype);var s=Object.getOwnPropertyDescriptor(o,i);if(void 0!==s){if("value"in s)return s.value;var c=s.get;return void 0===c?void 0:c.call(a)}var u=Object.getPrototypeOf(o);if(null===u)return void 0;e=u,t=i,n=a,r=!0}},s=n(1),c=function(e){function t(e,n){r(this,t),a(Object.getPrototypeOf(t.prototype),"constructor",this).call(this,e,s({visible:!1},n,{description:""})),this._descriptionConfig=n.description}return o(t,e),i(t,[{key:"build",value:function(e){return"string"==typeof this._descriptionConfig?this._descriptionConfig:"function"==typeof this._descriptionConfig?this._descriptionConfig(e)||" ":void console.error("Info Box description must be a string or a function that return a string")}},{key:"display",value:function(e,n){a(Object.getPrototypeOf(t.prototype),"setLocation",this).call(this,e),a(Object.getPrototypeOf(t.prototype),"setOptions",this).call(this,{visible:!0,description:this.build(n)})}}]),t}(Microsoft.Maps.Infobox);e.exports=c},function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var o=n(1),i=function a(e,t){r(this,a);var n=o({},t);"function"==typeof t.text&&o(n,{text:t.text(e)});var i=new Microsoft.Maps.Location(e.latitude,e.longitude),s=new Microsoft.Maps.Pushpin(i,n);return s.id=e.id,s.latitude=e.latitude,s.longitude=e.longitude,s};e.exports=i},function(e,t){"use strict";function n(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function r(e){return"pin_clusterer cluster"===e.getTypeName()}function o(e,t){return e.filter(function(e){return e.latitude===t.latitude&&e.longitude===t.longitude})}var i=function a(e,t,i){n(this,a);var s=new PinClusterer(e);return s.setOptions({onClusterToMap:function(e){if(r(e))e.setOptions(i),s._clusters.forEach(function(n){JSON.stringify(n.center.location)===JSON.stringify(e.getLocation())&&n.locations.forEach(function(e){var n=o(t,e);n.length&&n[0].setOptions({visible:!1})})});else{e.setOptions({visible:!1});var n=o(t,e.getLocation());n.length&&n[0].setOptions({visible:!0})}}}),s};e.exports=i}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+
+
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+	/**
+	 * Bing Map v7
+	 * API Documentation: https://msdn.microsoft.com/en-us/library/dd877180.aspx
+	 */
+
+	/*jshint -W079 */
+	var Map = __webpack_require__(1);
+	/* jshint +W079 */
+
+	var domUtils = __webpack_require__(7);
+	var ieUtils = __webpack_require__(8);
+	var loaderUtils = __webpack_require__(9);
+	var objectAssign = __webpack_require__(6);
+	var DirectionsService = undefined;
+	var InfoBox = undefined;
+	var Marker = undefined;
+	var MarkerClusterer = undefined;
+
+	var directionsService = undefined;
+
+	var BingMap = (function (_Map) {
+	    _inherits(BingMap, _Map);
+
+	    function BingMap() {
+	        _classCallCheck(this, BingMap);
+
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+
+	        _get(Object.getPrototypeOf(BingMap.prototype), 'constructor', this).apply(this, args);
+
+	        this.provider = 'Bing';
+	        this.markers = [];
+	    }
+
+	    _createClass(BingMap, [{
+	        key: 'render',
+	        value: function render() {
+	            var _this = this;
+
+	            // Init the map
+	            var map = new Microsoft.Maps.Map(this.domElement, objectAssign({
+	                credentials: this.apiKey
+	            }, this.options.map));
+
+	            var clusterer = undefined;
+	            var infoBox = {};
+	            var dataLayer = new Microsoft.Maps.EntityCollection();
+	            map.entities.push(dataLayer);
+
+	            var bounds = [];
+
+	            // Init the info window is the option is set
+	            if (this.options.activeInfoWindow) {
+	                infoBox = new InfoBox(new Microsoft.Maps.Location(0, 0), this.options.infoWindow);
+	                map.entities.push(infoBox);
+	            }
+
+	            // Create a marker for each point
+	            this.points.forEach(function (point) {
+	                var marker = new Marker(point, _this.options.marker);
+	                dataLayer.push(marker);
+
+	                _this.markers.push(marker);
+
+	                // Bind the info window on pin click if the option is set
+	                if (_this.options.activeInfoWindow) {
+	                    Microsoft.Maps.Events.addHandler(marker, 'click', function () {
+	                        infoBox.display(marker.getLocation(), point.data);
+	                        map.setView({ center: marker.getLocation() });
+	                    });
+	                }
+
+	                bounds.push(marker.getLocation());
+	            });
+
+	            // Init the clustering if the option is set
+	            if (this.options.activeCluster) {
+	                clusterer = new MarkerClusterer(map, this.markers, this.options.markerCluster);
+	                clusterer.cluster(this.markers);
+	            }
+
+	            // Center the map
+	            if (bounds.length === 1) {
+	                map.setView({ center: bounds[0], zoom: 16 });
+	            } else {
+	                map.setView({ bounds: Microsoft.Maps.LocationRect.fromLocations(bounds) });
+	            }
+	        }
+	    }, {
+	        key: 'load',
+	        value: function load(callback, loadingMask, clustered) {
+	            if (window.Microsoft && window.Microsoft.Maps && (!clustered || window.PinClusterer)) {
+	                callback();
+	                return;
+	            }
+
+	            window._bingCallbackOnLoad = function () {
+	                // Require microsoft object here cause they're not loaded before
+	                InfoBox = __webpack_require__(13);
+	                Marker = __webpack_require__(14);
+
+	                ieUtils['delete'](window, '_bingCallbackOnLoad');
+
+	                if (clustered) {
+	                    domUtils.addResources(document.body, [domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/pin_clusterer.js')], function () {
+	                        MarkerClusterer = __webpack_require__(15);
+	                        callback();
+	                    });
+	                } else {
+	                    callback();
+	                }
+	            };
+
+	            if (loadingMask) {
+	                callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
+	            }
+
+	            domUtils.addScript(this.domElement, '//ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad');
+	        }
+	    }, {
+	        key: 'clickOnMarker',
+	        value: function clickOnMarker(markerId) {
+	            markerId = markerId.toString();
+	            var marker = this.markers.filter(function (marker) {
+	                return marker.id.toString() === markerId;
+	            });
+
+	            if (marker.length) {
+	                Microsoft.Maps.Events.invoke(marker[0], 'click', {});
+	            }
+	        }
+	    }, {
+	        key: 'getDirections',
+	        value: function getDirections(origin, destination, options, _callback) {
+	            var _this2 = this;
+
+	            if (!directionsService) {
+	                Microsoft.Maps.loadModule('Microsoft.Maps.Directions', {
+	                    callback: function callback() {
+	                        var map = new Microsoft.Maps.Map(_this2.domElement, objectAssign({
+	                            credentials: _this2.apiKey
+	                        }, _this2.options.map));
+
+	                        DirectionsService = __webpack_require__(16);
+	                        directionsService = new DirectionsService(map, options, _callback);
+	                        directionsService.getRoute(origin, destination);
+	                    }
+	                });
+	            } else {
+	                directionsService.getRoute(origin, destination);
+	            }
+	        }
+	    }]);
+
+	    return BingMap;
+	})(Map);
+
+	window.Map = BingMap;
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	__webpack_require__(2);
+	var objectAssign = __webpack_require__(6);
+
+	var Map = (function () {
+	    function Map(domSelector, apiKey, options) {
+	        _classCallCheck(this, Map);
+
+	        this.domElement = document.querySelector(domSelector);
+	        this.apiKey = apiKey;
+	        this.setOptions(options);
+	        this.provider = '[No provider defined]';
+	    }
+
+	    _createClass(Map, [{
+	        key: 'setPoints',
+	        value: function setPoints(points) {
+	            if (Object.prototype.toString.call(points) === '[object Array]') {
+	                this.points = points;
+	            } else {
+	                this.points = [points];
+	            }
+	        }
+	    }, {
+	        key: 'setOptions',
+	        value: function setOptions(options) {
+	            var defaultOptions = {
+	                map: {},
+	                marker: {},
+	                markerCluster: {},
+	                infoWindow: {}
+	            };
+
+	            this.options = objectAssign(defaultOptions, options);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            console.error(this.provider + ' has no render method implemented');
+	        }
+	    }, {
+	        key: 'load',
+	        value: function load() {
+	            console.error(this.provider + ' has no load method implemented');
+	        }
+	    }, {
+	        key: 'clickOnMarker',
+	        value: function clickOnMarker() {
+	            console.error(this.provider + ' has no clickOnMarker method implemented');
+	        }
+	    }, {
+	        key: 'getDirections',
+	        value: function getDirections() {
+	            console.error(this.provider + ' has no getDirections method implemented');
+	        }
+	    }]);
+
+	    return Map;
+	})();
+
+	module.exports = Map;
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(3);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(5)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./style.css", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./style.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(4)();
+	exports.push([module.id, ".one-map-to-rule-them-all__spinner {\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    content: '';\n    width: 50px;\n    height: 50px;\n    margin: auto;\n    padding: 50px 0 0 50px;\n    background-color: #333;\n\n    border-radius: 100%;\n    animation: scaleout 1.0s infinite ease-in-out;\n}\n\n@keyframes scaleout {\n    0% {\n        transform: scale(0.0);\n    } 100% {\n          transform: scale(1.0);\n          opacity: 0;\n      }\n}\n", ""]);
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0;
+
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+
+	function createStyleElement() {
+		var styleElement = document.createElement("style");
+		var head = getHeadElement();
+		styleElement.type = "text/css";
+		head.appendChild(styleElement);
+		return styleElement;
+	}
+
+	function createLinkElement() {
+		var linkElement = document.createElement("link");
+		var head = getHeadElement();
+		linkElement.rel = "stylesheet";
+		head.appendChild(linkElement);
+		return linkElement;
+	}
+
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement());
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement();
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				styleElement.parentNode.removeChild(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement();
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				styleElement.parentNode.removeChild(styleElement);
+			};
+		}
+
+		update(obj);
+
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+
+	var replaceText = (function () {
+		var textStore = [];
+
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		var sourceMap = obj.sourceMap;
+
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		var sourceMap = obj.sourceMap;
+
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+
+		var blob = new Blob([css], { type: "text/css" });
+
+		var oldSrc = linkElement.href;
+
+		linkElement.href = URL.createObjectURL(blob);
+
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	'use strict';
+	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+	function ToObject(val) {
+		if (val == null) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+
+		return Object(val);
+	}
+
+	function ownEnumerableKeys(obj) {
+		var keys = Object.getOwnPropertyNames(obj);
+
+		if (Object.getOwnPropertySymbols) {
+			keys = keys.concat(Object.getOwnPropertySymbols(obj));
+		}
+
+		return keys.filter(function (key) {
+			return propIsEnumerable.call(obj, key);
+		});
+	}
+
+	module.exports = Object.assign || function (target, source) {
+		var from;
+		var keys;
+		var to = ToObject(target);
+
+		for (var s = 1; s < arguments.length; s++) {
+			from = arguments[s];
+			keys = ownEnumerableKeys(Object(from));
+
+			for (var i = 0; i < keys.length; i++) {
+				to[keys[i]] = from[keys[i]];
+			}
+		}
+
+		return to;
+	};
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var ieUtils = __webpack_require__(8);
+
+	module.exports = {
+	    addScript: function addScript(domElement, src) {
+	        domElement.appendChild(this.createScript(src));
+	    },
+
+	    addStyle: function addStyle(domElement, href) {
+	        domElement.appendChild(this.createStyle(href));
+	    },
+
+	    addResources: function addResources(domElement, resources, callback) {
+	        var nbLoaded = 0;
+
+	        if (resources.length === 0) {
+	            callback();
+	        }
+
+	        resources.forEach(function (resource) {
+	            ieUtils.addLoadListener(resource, function () {
+	                nbLoaded++;
+
+	                if (nbLoaded === resources.length) {
+	                    callback();
+	                }
+	            });
+
+	            domElement.appendChild(resource);
+	        });
+	    },
+
+	    createScript: function createScript(src) {
+	        var script = document.createElement('script');
+	        script.type = 'text/javascript';
+	        script.src = src;
+	        script.async = true;
+
+	        return script;
+	    },
+
+	    createStyle: function createStyle(href) {
+	        var style = document.createElement('link');
+	        style.rel = 'stylesheet';
+	        style.href = href;
+
+	        return style;
+	    }
+	};
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = {
+	    'delete': function _delete(obj, key) {
+	        try {
+	            delete obj[key];
+	        } catch (e) {
+	            obj[key] = undefined;
+	        }
+	    },
+	    addEventListener: function addEventListener(domElement, event, callback, useCapture) {
+	        if (domElement.addEventListener) {
+	            domElement.addEventListener(event, callback, useCapture);
+	        } else {
+	            domElement.attachEvent('on' + event, callback);
+	        }
+	    },
+	    addLoadListener: function addLoadListener(resource, callback) {
+	        resource.onreadystatechange = function () {
+	            if (this.readyState === 'complete') {
+	                callback();
+	            }
+	        };
+	        resource.onload = callback;
+	    }
+	};
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var defaultLoaderClass = 'one-map-to-rule-them-all__spinner';
+
+	module.exports = {
+	    addLoader: function addLoader(domElement, loadingMask, callbackToWrap) {
+	        var loader = document.createElement('div');
+
+	        if (typeof loadingMask === 'string') {
+	            loader.className = loadingMask;
+	        } else {
+	            loader.className = defaultLoaderClass;
+	        }
+
+	        domElement.appendChild(loader);
+
+	        return function () {
+	            domElement.removeChild(loader);
+	            callbackToWrap();
+	        };
+	    }
+	};
+
+/***/ },
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+	var objectAssign = __webpack_require__(6);
+
+	var InfoBox = (function (_Microsoft$Maps$Infobox) {
+	    _inherits(InfoBox, _Microsoft$Maps$Infobox);
+
+	    function InfoBox(location, options) {
+	        _classCallCheck(this, InfoBox);
+
+	        _get(Object.getPrototypeOf(InfoBox.prototype), 'constructor', this).call(this, location, objectAssign({ visible: false }, options, { description: '' })); //getDescription(options.description)));
+
+	        this._descriptionConfig = options.description;
+	    }
+
+	    _createClass(InfoBox, [{
+	        key: 'build',
+	        value: function build(data) {
+	            if (typeof this._descriptionConfig === 'string') {
+	                return this._descriptionConfig;
+	            }
+
+	            if (typeof this._descriptionConfig === 'function') {
+	                return this._descriptionConfig(data) || ' ';
+	            }
+
+	            console.error('Info Box description must be a string or a function that return a string');
+	        }
+	    }, {
+	        key: 'display',
+	        value: function display(location, data) {
+	            _get(Object.getPrototypeOf(InfoBox.prototype), 'setLocation', this).call(this, location);
+
+	            _get(Object.getPrototypeOf(InfoBox.prototype), 'setOptions', this).call(this, {
+	                visible: true,
+	                description: this.build(data)
+	            });
+	        }
+	    }]);
+
+	    return InfoBox;
+	})(Microsoft.Maps.Infobox);
+
+	module.exports = InfoBox;
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	var objectAssign = __webpack_require__(6);
+
+	var Marker = function Marker(point, options) {
+	    _classCallCheck(this, Marker);
+
+	    var opts = objectAssign({}, options);
+
+	    if (typeof options.text === 'function') {
+	        objectAssign(opts, {
+	            text: options.text(point)
+	        });
+	    }
+
+	    var location = new Microsoft.Maps.Location(point.latitude, point.longitude);
+	    var marker = new Microsoft.Maps.Pushpin(location, opts);
+
+	    marker.id = point.id;
+	    marker.latitude = point.latitude;
+	    marker.longitude = point.longitude;
+
+	    return marker;
+	};
+
+	module.exports = Marker;
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	var MarkerClusterer = function MarkerClusterer(map, markers, options) {
+	    _classCallCheck(this, MarkerClusterer);
+
+	    var clusterer = new PinClusterer(map);
+
+	    clusterer.setOptions({
+	        onClusterToMap: function onClusterToMap(center) {
+	            if (isCluster(center)) {
+	                center.setOptions(options);
+
+	                // We hide all markers included in the cluster
+	                clusterer._clusters.forEach(function (cluster) {
+	                    if (JSON.stringify(cluster.center.location) === JSON.stringify(center.getLocation())) {
+	                        cluster.locations.forEach(function (location) {
+	                            var matchingMarker = findByCoords(markers, location);
+
+	                            if (matchingMarker.length) {
+	                                matchingMarker[0].setOptions({
+	                                    visible: false
+	                                });
+	                            }
+	                        });
+	                    }
+	                });
+	            } else {
+	                // We hide the clusterer marker to use our own
+	                center.setOptions({
+	                    visible: false
+	                });
+
+	                var matchingMarker = findByCoords(markers, center.getLocation());
+
+	                if (matchingMarker.length) {
+	                    matchingMarker[0].setOptions({
+	                        visible: true
+	                    });
+	                }
+	            }
+	        }
+	    });
+
+	    return clusterer;
+	};
+
+	function isCluster(point) {
+	    return point.getTypeName() === 'pin_clusterer cluster';
+	}
+
+	function findByCoords(list, coords) {
+	    return list.filter(function (item) {
+	        return item.latitude === coords.latitude && item.longitude === coords.longitude;
+	    });
+	}
+
+	module.exports = MarkerClusterer;
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+	var DirectionsService = (function (_Microsoft$Maps$Directions$DirectionsManager) {
+	    _inherits(DirectionsService, _Microsoft$Maps$Directions$DirectionsManager);
+
+	    function DirectionsService(map, options, callback) {
+	        _classCallCheck(this, DirectionsService);
+
+	        _get(Object.getPrototypeOf(DirectionsService.prototype), 'constructor', this).call(this, map);
+
+	        this.setRequestOptions({
+	            routeMode: Microsoft.Maps.Directions.RouteMode.driving
+	        });
+
+	        if (options.panelSelector) {
+	            this.setRenderOptions({
+	                itineraryContainer: document.querySelector(options.panelSelector)
+	            });
+	        }
+
+	        Microsoft.Maps.Events.addHandler(this, 'directionsUpdated', callback);
+
+	        Microsoft.Maps.Events.addHandler(this, 'directionsError', function (err) {
+	            callback('Unable to calculate a driving itinerary for your destination: ' + err.message);
+	        });
+	    }
+
+	    _createClass(DirectionsService, [{
+	        key: 'getRoute',
+	        value: function getRoute(origin, destination) {
+	            this.reset();
+
+	            var start = new Microsoft.Maps.Directions.Waypoint({ address: origin });
+	            var end = new Microsoft.Maps.Directions.Waypoint({ address: destination });
+
+	            this.addWaypoint(start);
+	            this.addWaypoint(end);
+
+	            this.calculateDirections();
+	        }
+	    }, {
+	        key: 'reset',
+	        value: function reset() {
+	            this.getMap().entities.clear();
+
+	            this.resetDirections({
+	                removeAllWaypoints: true,
+	                resetRenderOptions: false,
+	                resetRequestOptions: false
+	            });
+	        }
+	    }]);
+
+	    return DirectionsService;
+	})(Microsoft.Maps.Directions.DirectionsManager);
+
+	module.exports = DirectionsService;
+
+/***/ }
+/******/ ]);

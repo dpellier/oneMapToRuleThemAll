@@ -16,7 +16,7 @@
     "webpack": "^1.9.10"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack -p && find dist/ -maxdepth 1 -mindepth 1 -type f -name '*.js' | sed 's/.js$//' | xargs -I{} mv {}.js {}.min.js && webpack"
   },
   "repository": {
     "type": "git",
