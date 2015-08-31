@@ -252,7 +252,7 @@ Here are the common options:
             iconImageSize: [28, 34],
             openEmptyBalloon: true,
             hideIconOnBalloonOpen: false,
-            balloonOffset: [16, -32],
+            balloonOffset: [16, -32]
         },
         properties: {
             iconContent: function(point) {

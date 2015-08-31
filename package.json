@@ -1,6 +1,6 @@
 {
   "name": "oneMapToRuleThemAll",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "Unique interface above multiple map providers",
   "dependencies": {},
   "devDependencies": {
