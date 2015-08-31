@@ -11,13 +11,13 @@ Include the script corresponding to the provider you want:
 ```
 
 Providers available:
-- Google
-- Bing
-- Baidu
-- Yandex
-- ViaMichelin
+- googleMap
+- bingMap
+- baidu
+- yandex
+- viaMichelin
 
-Each file can be included with its minified version by inserting the ".min.js" file. 
+Each file can be included with its minified version by inserting the `.min.js` file. 
 
 
 ## Usage
@@ -42,11 +42,11 @@ Provider API Key that will be used to request the API.
 #### options
 Type: `Object`
 
-see TODO link
+see [setOptions method](https://github.com/dpellier/oneMapToRuleThemAll#setoptionsoptions)
 
 #### Example
 ```js
-var map = new Map(document.querySelector('#map'), providerKey);
+var map = new Map(document.querySelector('#map'), providerKey, {});
 ```
 
 
@@ -57,18 +57,18 @@ Set the list of point you want to display on the map.
 #### points
 Type: `Object || Array`
 
-All the point you want to display on the map. Each point must at least contain latitude and longitude properties.
+All the points you want to display on the map. Each point must at least contain latitude and longitude properties.
 
-```js`
+```js
 {
     latitude: 45.564601,
     longitude: 5.917781,
     id: 'uuid1'              // you can add an id if you want to interact with the point later
     data: {
-        // you can add custom data to interact with the point (see TODO link)
+        // you can add custom data to interact with the point
     }
 }
-``
+```
 
 ### setOptions(options)
 
@@ -103,6 +103,7 @@ Here are the common options:
 - [Google config](https://developers.google.com/maps/documentation/javascript/reference)
 
 ```js
+{
     activeCluster: true,
     activeInfoWindow: true,
     map: {
@@ -146,11 +147,13 @@ Here are the common options:
             return '<p>' + JSON.stringify(data) + '</p>';
         }
     }
+}
 ```
 
 - [Bing config](https://www.bingmapsportal.com/isdk/ajaxv7e)
 
 ```js
+{
     activeCluster: true,
     activeInfoWindow: true,
     map: {
@@ -181,11 +184,13 @@ Here are the common options:
             return '<p>' + JSON.stringify(data) + '</p>';
         },
     }
+}
 ```
 
 - [Baidu config](http://developer.baidu.com/map/index.php?title=jspopular)
 
 ```js
+{
     activeCluster: true,
     activeInfoWindow: true,
     map: {
@@ -220,11 +225,13 @@ Here are the common options:
             return '<p>' + JSON.stringify(data) + '</p>';
         }
     }
+}
 ```
 
 - [Yandex config](https://tech.yandex.ru/maps/jsapi/)
 
 ```js
+{
     activeCluster: true,
     activeInfoWindow: true,
     map: {
@@ -257,11 +264,13 @@ Here are the common options:
         clusterIconImageOffset: [0, -32],
         clusterIconImageSize: [28, 34]
     }
+}
 ```
 
 - [ViaMichelin config](http://dev.viamichelin.fr/tutoriel-rest.html)
 
 ```js
+{
     activeCluster: true,
     activeInfoWindow: true,
     map: {
@@ -296,19 +305,21 @@ Here are the common options:
             }
         }]
     }
+}
 ```
 
 ### render
 
-Display the map with all yhe given points and bind the configured events.
+Display the map with all the given points and bind the configured events.
+
 Currently, each point click event is bind to the toggling of the info window.
 
 ### load(callback, loadingMask, clustered)
 
-Each provider script are loaded asynchronously when needed.
-So before rendering the, call the load method to fetch all the needed resources.
+Each provider scripts are loaded asynchronously when needed.
+So before rendering the map, you'll have to call the load method to fetch all the needed resources.
 
-In the load callback, you'll get access to the provider object (ex: google.maps), so you will have to set your options at this moment if you use some of this (ex: google.maps.ControlPosition.TOP_RIGHT)
+In the load callback, you'll get access to the provider object (ex: `google.maps`), so you will have to set your options at this moment if you use some of this (ex: `google.maps.ControlPosition.TOP_RIGHT`)
 
 #### callback
 Type: `Function`
@@ -318,7 +329,7 @@ Function to call when all the provider resources are loaded
 #### loadingMask
 Type: `Boolean`
 
-If set to true, a loader will be added to the map container during the load of all the resources.
+If set to true, a loader will be added to the map container during the loading of all the resources.
 
 The loader style can be customized by overriding the `one-map-to-rule-them-all__spinner` class.
 
@@ -332,13 +343,13 @@ Set this to true to load the clusterer resources.
 #### Example
 
 ```js
-    var map = new Map('#map', key);
-    map.setPoints([...]);
-    
-    map.load(function() {
-        map.setOptions(getMapConfig());
-        map.render();
-    }, true, true);
+var map = new Map('#map', key);
+map.setPoints([...]);
+
+map.load(function() {
+    map.setOptions(getMapConfig());
+    map.render();
+}, true, true);
 ```
 
 ### clickOnMarker(markerId)
@@ -370,10 +381,10 @@ Type: `Object`
 Customize the direction request and result.
 
 ```js
-    {
-        panelSelector: ...      // Set the id of a DOM Element here if you want the native formatted road map to be displayed
-        region: ...             // Set this if you want a more specific direction search request
-    }
+{
+    panelSelector: ...      // Set the id of a DOM Element here if you want the native formatted road map to be displayed
+    region: ...             // Set this if you want a more specific direction search request
+}
 ```
 
 #### callback
@@ -384,18 +395,18 @@ Will receive all the raw data from the provider as argument.
 
 #### Example
 ```js
-    var map = new Map('#directionsMap', key);
-    
-    map.load(function() {
-    
-        map.getDirections('Paris', 'Lyon', {
-            panelSelector: '#directions'
-            region: 'fr'
-        }, function(res) {
-            // res contain all the direction data from the provider
-        });
+var map = new Map('#directionsMap', key);
 
-    }, true, false);
+map.load(function() {
+
+    map.getDirections('Paris', 'Lyon', {
+        panelSelector: '#directions'
+        region: 'fr'
+    }, function(res) {
+        // res contain all the direction data from the provider
+    });
+
+}, true, false);
 ```
 
 ## Compatibility
