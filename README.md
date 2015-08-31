@@ -1,7 +1,13 @@
 # One Map To Rule Them All
 ---
 
-DESC
+The goal of this tiny lib is to offer a common interface to allow basic usage of multiple map providers.
+
+The only thing that change will be the configuration you pass to the Map constructor. All your map interaction logic will stay the same regardless of the provider chosen.
+
+The lib use the native provider configuration voluntarily to allow integrators to use directly the options and functionalities of each provider.
+
+<img src="http://i.imgur.com/1GuEBnv.png" height="400" />
 
 ## Getting Started
 
