@@ -125,9 +125,9 @@
 	            }
 
 	            domUtils.addResources(this.domElement, [domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=fra')], function () {
-	                Marker = __webpack_require__(21);
-	                markerClusterer = __webpack_require__(22);
-	                vmService = __webpack_require__(23);
+	                Marker = __webpack_require__(22);
+	                markerClusterer = __webpack_require__(23);
+	                vmService = __webpack_require__(24);
 	                callback();
 	            });
 	        }
@@ -147,7 +147,7 @@
 	        key: 'getDirections',
 	        value: function getDirections(origin, destination, options, callback) {
 	            if (!directionsService) {
-	                DirectionsService = __webpack_require__(24);
+	                DirectionsService = __webpack_require__(25);
 	                directionsService = new DirectionsService(this.domElement, options.panelSelector);
 	            }
 
@@ -178,12 +178,13 @@
 	var objectAssign = __webpack_require__(6);
 
 	var Map = (function () {
-	    function Map(domSelector, apiKey, options) {
+	    function Map(domSelector, apiKey, options, plugins) {
 	        _classCallCheck(this, Map);
 
 	        this.domElement = document.querySelector(domSelector);
 	        this.apiKey = apiKey;
 	        this.setOptions(options);
+	        this.plugins = plugins || {};
 	        this.provider = '[No provider defined]';
 	    }
 
@@ -719,7 +720,8 @@
 /* 18 */,
 /* 19 */,
 /* 20 */,
-/* 21 */
+/* 21 */,
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -763,7 +765,7 @@
 	module.exports = Marker;
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -784,7 +786,7 @@
 	};
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -830,7 +832,7 @@
 	};
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -840,7 +842,7 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 	var objectAssign = __webpack_require__(6);
-	var vmService = __webpack_require__(23);
+	var vmService = __webpack_require__(24);
 
 	var DirectionsService = (function () {
 	    function DirectionsService(domElement, panelSelector) {
