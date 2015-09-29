@@ -121,7 +121,7 @@
 	            }));
 
 	            // Init the clustering if the option is set
-	            if (this.options.activeCluster) {
+	            if (this.plugins.clusterer && this.options.activeCluster) {
 	                var markerClusterer = new BMapLib.MarkerClusterer(this.map, { markers: this.markers });
 
 	                markerClusterer.setStyles([this.options.markerCluster.style]);
@@ -129,13 +129,14 @@
 	        }
 	    }, {
 	        key: 'load',
-	        value: function load(callback, loadingMask, clustered) {
-	            if (window.BMap && (!clustered || window.BMapLib)) {
+	        value: function load(callback, loadingMask) {
+	            if (window.BMap && (!this.plugins.clusterer || window.BMapLib)) {
 	                callback();
 	                return;
 	            }
 
 	            var domElement = this.domElement;
+	            var plugins = this.plugins;
 
 	            window._baiduCallbackOnLoad = function () {
 	                // Require baidu object here cause they're not loaded before
@@ -144,7 +145,7 @@
 
 	                ieUtils['delete'](window, '_baiduCallbackOnLoad');
 
-	                if (clustered) {
+	                if (plugins.clusterer) {
 	                    domUtils.addResources(domElement, [domUtils.createScript('//api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js'), domUtils.createScript('//api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js')], callback);
 	                } else {
 	                    callback();

@@ -53,7 +53,7 @@ see [setOptions method](https://github.com/dpellier/oneMapToRuleThemAll#setoptio
 #### plugins
 Type: `Object`
 
-List of external plugins to use. It depends on each provider.
+List of external plugins to use. It depends on each provider (see [provider plugins](https://github.com/dpellier/oneMapToRuleThemAll#providerplugins))
 
 #### Example
 ```js
@@ -435,3 +435,19 @@ map.load(function() {
 | IE8* | OK | KO | OK | OK | ? |
 
 * need to include [es5-shim && es5-sham](https://github.com/es-shims/es5-shim)
+
+## Provider Plugins
+
+### Google Map
+
+clusterer: markerclusterer.min.js
+
+infobox: http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/docs/reference.html
+
+### Bing Map
+
+clusterer: http://rtsinani.github.io/PinClusterer/
+
+### Baidu
+
+clusterer: API Baidu (TextIconOverlay && MarkerClusterer)

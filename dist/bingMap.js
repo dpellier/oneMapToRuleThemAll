@@ -133,7 +133,7 @@
 	            });
 
 	            // Init the clustering if the option is set
-	            if (this.options.activeCluster) {
+	            if (this.plugins.clusterer && this.options.activeCluster) {
 	                clusterer = new MarkerClusterer(map, this.markers, this.options.markerCluster);
 	                clusterer.cluster(this.markers);
 	            }
@@ -147,11 +147,13 @@
 	        }
 	    }, {
 	        key: 'load',
-	        value: function load(callback, loadingMask, clustered) {
-	            if (window.Microsoft && window.Microsoft.Maps && (!clustered || window.PinClusterer)) {
+	        value: function load(callback, loadingMask) {
+	            if (window.Microsoft && window.Microsoft.Maps && (!this.plugins.clusterer || window.PinClusterer)) {
 	                callback();
 	                return;
 	            }
+
+	            var plugins = this.plugins;
 
 	            window._bingCallbackOnLoad = function () {
 	                // Require microsoft object here cause they're not loaded before
@@ -160,7 +162,7 @@
 
 	                ieUtils['delete'](window, '_bingCallbackOnLoad');
 
-	                if (clustered) {
+	                if (plugins.clusterer) {
 	                    domUtils.addResources(document.body, [domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/pin_clusterer.js')], function () {
 	                        MarkerClusterer = __webpack_require__(15);
 	                        callback();
