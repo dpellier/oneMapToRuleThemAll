@@ -230,12 +230,13 @@
 	var objectAssign = __webpack_require__(6);
 
 	var Map = (function () {
-	    function Map(domSelector, apiKey, options) {
+	    function Map(domSelector, apiKey, options, plugins) {
 	        _classCallCheck(this, Map);
 
 	        this.domElement = document.querySelector(domSelector);
 	        this.apiKey = apiKey;
 	        this.setOptions(options);
+	        this.plugins = plugins || {};
 	        this.provider = '[No provider defined]';
 	    }
 

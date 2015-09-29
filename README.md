@@ -13,7 +13,7 @@ The lib use the native provider configuration voluntarily to allow integrators t
 
 Include the script corresponding to the provider you want:
 ```html
-<script src="oneMapToRuleThemAll/dist/googleMap.min.js"></script>
+<script src="oneMapToRuleThemAll/dist/googleMap.js"></script>
 ```
 
 Providers available:
@@ -31,7 +31,7 @@ Each file can be included with its minified version by inserting the `.min.js` f
 Each provider expose the same set of methods, that will call the corresponding action using the provider native way.
 
 
-### constructor(selector, apiKey, options)
+### constructor(selector, apiKey, options, plugins)
 
 Create a new Map instance.
 
@@ -50,9 +50,16 @@ Type: `Object`
 
 see [setOptions method](https://github.com/dpellier/oneMapToRuleThemAll#setoptionsoptions)
 
+#### plugins
+Type: `Object`
+
+List of external plugins to use. It depends on each provider.
+
 #### Example
 ```js
-var map = new Map(document.querySelector('#map'), providerKey, {});
+var map = new Map(document.querySelector('#map'), providerKey, {}, {
+    clusterer: true
+});
 ```
 
 

@@ -96,6 +96,12 @@
 	        value: function render() {
 	            var _this = this;
 
+	            if (this.plugins.infobox) {
+	                InfoWindow = __webpack_require__(17);
+	            } else {
+	                InfoWindow = __webpack_require__(18);
+	            }
+
 	            // Init the map
 	            this.map = new google.maps.Map(this.domElement, this.options.map);
 	            var bounds = new google.maps.LatLngBounds();
@@ -115,11 +121,7 @@
 	                // Bind the info window on marker click if the option is set
 	                if (_this.options.activeInfoWindow) {
 	                    google.maps.event.addListener(marker, 'click', function () {
-	                        if (_this.infoWindow.anchor && _this.infoWindow.anchor.id === marker.id) {
-	                            _this.infoWindow.close();
-	                        } else {
-	                            _this.infoWindow.open(point.data, _this.map, marker);
-	                        }
+	                        _this.infoWindow.open(point.data, _this.map, marker);
 	                    });
 	                }
 	            });
@@ -135,7 +137,7 @@
 	            this.map.fitBounds(bounds);
 
 	            // Init the clustering if the option is set
-	            if (this.options.activeCluster) {
+	            if (this.plugins.clusterer && this.options.activeCluster) {
 	                this.markerClusterer = new MarkerClusterer(this.map, this.markers, this.options.markerCluster);
 
 	                google.maps.event.addListener(this.markerClusterer, 'clusteringend', function (clusterer) {
@@ -153,26 +155,32 @@
 	        }
 	    }, {
 	        key: 'load',
-	        value: function load(callback, loadingMask, clustered) {
+	        value: function load(callback, loadingMask) {
 	            if (window.google && window.google.maps) {
 	                callback();
 	                return;
 	            }
 
 	            var domElement = this.domElement;
+	            var plugins = this.plugins;
 
 	            window._googleMapCallbackOnLoad = function () {
 	                // Require google object here cause they're not loaded before
-	                InfoWindow = __webpack_require__(17);
-	                Marker = __webpack_require__(18);
+	                Marker = __webpack_require__(19);
 
 	                ieUtils['delete'](window, '_googleMapCallbackOnLoad');
 
-	                if (clustered) {
-	                    domUtils.addResources(domElement, [domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/markerclusterer.min.js')], callback);
-	                } else {
-	                    callback();
+	                var resources = [];
+
+	                if (plugins.clusterer) {
+	                    resources.push(domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/markerclusterer.min.js'));
 	                }
+
+	                if (plugins.infobox) {
+	                    resources.push(domUtils.createScript('//google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js'));
+	                }
+
+	                domUtils.addResources(domElement, resources, callback);
 	            };
 
 	            if (loadingMask) {
@@ -207,7 +215,7 @@
 	    }, {
 	        key: 'getDirections',
 	        value: function getDirections(origin, destination, options, callback) {
-	            var DirectionsService = __webpack_require__(20);
+	            var DirectionsService = __webpack_require__(21);
 
 	            if (!directionsService) {
 	                var map = new google.maps.Map(this.domElement, this.options.map);
@@ -239,12 +247,13 @@
 	var objectAssign = __webpack_require__(6);
 
 	var Map = (function () {
-	    function Map(domSelector, apiKey, options) {
+	    function Map(domSelector, apiKey, options, plugins) {
 	        _classCallCheck(this, Map);
 
 	        this.domElement = document.querySelector(domSelector);
 	        this.apiKey = apiKey;
 	        this.setOptions(options);
+	        this.plugins = plugins || {};
 	        this.provider = '[No provider defined]';
 	    }
 
@@ -783,6 +792,63 @@
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	var objectAssign = __webpack_require__(6);
+
+	/* global InfoBox:true */
+
+	var InfoBoxPlugin = (function () {
+	    function InfoBoxPlugin(options) {
+	        _classCallCheck(this, InfoBoxPlugin);
+
+	        var infoBox = new InfoBox(objectAssign({}, options, { content: '' }));
+
+	        this._content = options.content;
+	        this.box = infoBox;
+	    }
+
+	    _createClass(InfoBoxPlugin, [{
+	        key: 'build',
+	        value: function build(data) {
+	            if (typeof this._content === 'string') {
+	                return this._content;
+	            }
+
+	            if (typeof this._content === 'function') {
+	                return this._content(data);
+	            }
+
+	            console.error('Info Box content must be a string or a function that return a string');
+	        }
+	    }, {
+	        key: 'open',
+	        value: function open(data) {
+	            var _box;
+
+	            this.box.setContent(this.build(data));
+
+	            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	                args[_key - 1] = arguments[_key];
+	            }
+
+	            (_box = this.box).open.apply(_box, args);
+	        }
+	    }]);
+
+	    return InfoBoxPlugin;
+	})();
+
+	module.exports = InfoBoxPlugin;
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -798,7 +864,6 @@
 	        _classCallCheck(this, InfoWindow);
 
 	        _get(Object.getPrototypeOf(InfoWindow.prototype), 'constructor', this).call(this, objectAssign({}, options, { content: '' }));
-
 	        this._content = options.content;
 	    }
 
@@ -834,7 +899,7 @@
 	module.exports = InfoWindow;
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -848,7 +913,7 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var objectAssign = __webpack_require__(6);
-	var Label = __webpack_require__(19);
+	var Label = __webpack_require__(20);
 
 	var Marker = (function (_google$maps$Marker) {
 	    _inherits(Marker, _google$maps$Marker);
@@ -893,7 +958,7 @@
 	module.exports = Marker;
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -963,7 +1028,7 @@
 	module.exports = Label;
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

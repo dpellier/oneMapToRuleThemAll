@@ -29,6 +29,12 @@ class GoogleMap extends Map {
     }
 
     render() {
+        if (this.plugins.infobox) {
+            InfoWindow = require('./plugins/InfoBox');
+        } else {
+            InfoWindow = require('./InfoWindow');
+        }
+
         // Init the map
         this.map = new google.maps.Map(this.domElement, this.options.map);
         let bounds = new google.maps.LatLngBounds();
@@ -48,11 +54,7 @@ class GoogleMap extends Map {
             // Bind the info window on marker click if the option is set
             if (this.options.activeInfoWindow) {
                 google.maps.event.addListener(marker, 'click', () => {
-                    if (this.infoWindow.anchor && this.infoWindow.anchor.id === marker.id) {
-                        this.infoWindow.close();
-                    } else {
-                        this.infoWindow.open(point.data, this.map, marker);
-                    }
+                    this.infoWindow.open(point.data, this.map, marker);
                 });
             }
         });
@@ -68,7 +70,7 @@ class GoogleMap extends Map {
         this.map.fitBounds(bounds);
 
         // Init the clustering if the option is set
-        if (this.options.activeCluster) {
+        if (this.plugins.clusterer && this.options.activeCluster) {
             this.markerClusterer = new MarkerClusterer(this.map, this.markers, this.options.markerCluster);
 
             google.maps.event.addListener(this.markerClusterer, 'clusteringend', function(clusterer) {
@@ -85,28 +87,32 @@ class GoogleMap extends Map {
         }
     }
 
-    load(callback, loadingMask, clustered) {
+    load(callback, loadingMask) {
         if (window.google && window.google.maps) {
             callback();
             return;
         }
 
         let domElement = this.domElement;
+        let plugins = this.plugins;
 
         window._googleMapCallbackOnLoad = function() {
             // Require google object here cause they're not loaded before
-            InfoWindow = require('./InfoWindow');
             Marker = require('./Marker');
 
             ieUtils.delete(window, '_googleMapCallbackOnLoad');
 
-            if (clustered) {
-                domUtils.addResources(domElement, [
-                    domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/markerclusterer.min.js')
-                ], callback);
-            } else {
-                callback();
+            let resources = [];
+
+            if (plugins.clusterer) {
+                resources.push(domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/markerclusterer.min.js'));
             }
+
+            if (plugins.infobox) {
+                resources.push(domUtils.createScript('//google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js'));
+            }
+
+            domUtils.addResources(domElement, resources, callback);
         };
 
         if (loadingMask) {
