@@ -66,7 +66,7 @@ class BingMap extends Map {
         });
 
         // Init the clustering if the option is set
-        if (this.options.activeCluster) {
+        if (this.plugins.clusterer && this.options.activeCluster) {
             clusterer = new MarkerClusterer(map, this.markers, this.options.markerCluster);
             clusterer.cluster(this.markers);
         }
@@ -79,11 +79,13 @@ class BingMap extends Map {
         }
     }
 
-    load(callback, loadingMask, clustered) {
-        if (window.Microsoft && window.Microsoft.Maps && (!clustered || window.PinClusterer)) {
+    load(callback, loadingMask) {
+        if (window.Microsoft && window.Microsoft.Maps && (!this.plugins.clusterer || window.PinClusterer)) {
             callback();
             return;
         }
+
+        let plugins = this.plugins;
 
         window._bingCallbackOnLoad = function() {
             // Require microsoft object here cause they're not loaded before
@@ -92,7 +94,7 @@ class BingMap extends Map {
 
             ieUtils.delete(window, '_bingCallbackOnLoad');
 
-            if (clustered) {
+            if (plugins.clusterer) {
                 domUtils.addResources(document.body, [
                     domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/pin_clusterer.js')
                 ], () => {
