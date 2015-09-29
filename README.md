@@ -53,7 +53,7 @@ see [setOptions method](https://github.com/dpellier/oneMapToRuleThemAll#setoptio
 #### plugins
 Type: `Object`
 
-List of external plugins to use. It depends on each provider (see [provider plugins](https://github.com/dpellier/oneMapToRuleThemAll#providerplugins))
+List of external plugins to use. It depends on each provider (see [provider plugins](https://github.com/dpellier/oneMapToRuleThemAll#provider-plugins))
 
 #### Example
 ```js
