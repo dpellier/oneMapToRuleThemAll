@@ -865,6 +865,10 @@
 
 	        _get(Object.getPrototypeOf(InfoWindow.prototype), 'constructor', this).call(this, objectAssign({}, options, { content: '' }));
 	        this._content = options.content;
+
+	        if (options.onDomReady) {
+	            google.maps.event.addListener(this, 'domready', options.onDomReady);
+	        }
 	    }
 
 	    _createClass(InfoWindow, [{
