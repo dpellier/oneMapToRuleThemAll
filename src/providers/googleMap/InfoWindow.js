@@ -6,6 +6,10 @@ class InfoWindow extends google.maps.InfoWindow {
     constructor(options) {
         super(objectAssign({}, options, {content: ''}));
         this._content = options.content;
+
+        if (options.onDomReady) {
+            google.maps.event.addListener(this, 'domready', options.onDomReady);
+        }
     }
 
     build(data) {
