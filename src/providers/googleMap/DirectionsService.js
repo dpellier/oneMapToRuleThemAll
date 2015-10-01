@@ -10,7 +10,10 @@ class DirectionsService extends google.maps.DirectionsService {
         this.display.setMap(map);
 
         if (panelSelector) {
-            this.display.setPanel(document.querySelector(panelSelector));
+            let panel = document.querySelector(panelSelector);
+            panel.innerHTML = '';
+
+            this.display.setPanel(panel);
         }
     }
 

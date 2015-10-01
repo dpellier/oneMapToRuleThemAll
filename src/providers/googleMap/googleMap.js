@@ -15,8 +15,6 @@ let loaderUtils = require('../../utils/loader');
 let InfoWindow;
 let Marker;
 
-let directionsService;
-
 class GoogleMap extends Map {
     constructor(...args) {
         super(...args);
@@ -148,10 +146,8 @@ class GoogleMap extends Map {
     getDirections(origin, destination, options, callback) {
         let DirectionsService = require('./DirectionsService');
 
-        if (!directionsService) {
-            let map = new google.maps.Map(this.domElement, this.options.map);
-            directionsService = new DirectionsService(map, options.panelSelector);
-        }
+        let map = new google.maps.Map(this.domElement, this.options.map);
+        let directionsService = new DirectionsService(map, options.panelSelector);
 
         delete options.panelSelector;
 

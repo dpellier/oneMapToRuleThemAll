@@ -70,8 +70,6 @@
 	var InfoWindow = undefined;
 	var Marker = undefined;
 
-	var directionsService = undefined;
-
 	var GoogleMap = (function (_Map) {
 	    _inherits(GoogleMap, _Map);
 
@@ -217,10 +215,8 @@
 	        value: function getDirections(origin, destination, options, callback) {
 	            var DirectionsService = __webpack_require__(21);
 
-	            if (!directionsService) {
-	                var map = new google.maps.Map(this.domElement, this.options.map);
-	                directionsService = new DirectionsService(map, options.panelSelector);
-	            }
+	            var map = new google.maps.Map(this.domElement, this.options.map);
+	            var directionsService = new DirectionsService(map, options.panelSelector);
 
 	            delete options.panelSelector;
 
@@ -1063,7 +1059,10 @@
 	        this.display.setMap(map);
 
 	        if (panelSelector) {
-	            this.display.setPanel(document.querySelector(panelSelector));
+	            var panel = document.querySelector(panelSelector);
+	            panel.innerHTML = '';
+
+	            this.display.setPanel(panel);
 	        }
 	    }
 
