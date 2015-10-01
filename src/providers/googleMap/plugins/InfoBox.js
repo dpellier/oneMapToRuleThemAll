@@ -9,6 +9,10 @@ class InfoBoxPlugin {
 
         this._content = options.content;
         this.box = infoBox;
+
+        if (options.onDomReady) {
+            google.maps.event.addListener(this.box, 'domready', options.onDomReady);
+        }
     }
 
     build(data) {
