@@ -176,7 +176,7 @@
 	                callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
 	            }
 
-	            domUtils.addScript(this.domElement, '//ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad');
+	            domUtils.addScript(this.domElement, '//ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad&mkt=' + this.locale);
 	        }
 	    }, {
 	        key: 'clickOnMarker',
