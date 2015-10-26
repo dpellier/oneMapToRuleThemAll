@@ -31,7 +31,7 @@ Each file can be included with its minified version by inserting the `.min.js` f
 Each provider expose the same set of methods, that will call the corresponding action using the provider native way.
 
 
-### constructor(selector, apiKey, options, plugins)
+### constructor(selector, apiKey, locale, options, plugins)
 
 Create a new Map instance.
 
@@ -44,6 +44,11 @@ The DOM container where the map will be added.
 Type: `String`
 
 Provider API Key that will be used to request the API.
+
+### locale
+Type: `String`
+
+Specific locale to use when loading the Map.
 
 #### options
 Type: `Object`
