@@ -75,7 +75,7 @@ class Yandex extends Map {
             callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
         }
 
-        domUtils.addScript(this.domElement, 'http://api-maps.yandex.ru/2.1/?load=package.standard&lang=ru-RU&onload=_yandexCallbackOnLoad');
+        domUtils.addScript(this.domElement, 'http://api-maps.yandex.ru/2.1/?load=package.standard&onload=_yandexCallbackOnLoad&lang=' + this.locale);
     }
 
     clickOnMarker(markerId) {
