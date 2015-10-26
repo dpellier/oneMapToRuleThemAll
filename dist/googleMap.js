@@ -1072,16 +1072,16 @@
 	        value: function getRoute(origin, destination, options, callback) {
 	            var _this = this;
 
+	            callback = callback || function () {};
+
 	            this.route(buildRequest(origin, destination, options), function (result, status) {
 	                if (status === google.maps.DirectionsStatus.OK) {
 	                    _this.display.setDirections(result);
 
-	                    if (callback) {
-	                        callback(result.routes[0]); // TODO format this to be the same between all providers
-	                    }
+	                    callback(result.routes[0]);
 	                } else {
-	                        callback('Unable to calculate a driving itinerary for the destination: ' + destination);
-	                    }
+	                    callback('Unable to calculate a driving itinerary for the destination: ' + destination);
+	                }
 	            });
 	        }
 	    }]);
