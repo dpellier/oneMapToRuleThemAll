@@ -232,11 +232,12 @@
 	var objectAssign = __webpack_require__(6);
 
 	var Map = (function () {
-	    function Map(domSelector, apiKey, options, plugins) {
+	    function Map(domSelector, apiKey, locale, options, plugins) {
 	        _classCallCheck(this, Map);
 
 	        this.domElement = document.querySelector(domSelector);
 	        this.apiKey = apiKey;
+	        this.locale = locale || 'en';
 	        this.setOptions(options);
 	        this.plugins = plugins || {};
 	        this.provider = '[No provider defined]';

@@ -185,7 +185,7 @@
 	                callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
 	            }
 
-	            domUtils.addScript(this.domElement, '//maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey);
+	            domUtils.addScript(this.domElement, '//maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey + '&language=' + this.locale);
 	        }
 	    }, {
 	        key: 'clickOnMarker',
@@ -243,11 +243,12 @@
 	var objectAssign = __webpack_require__(6);
 
 	var Map = (function () {
-	    function Map(domSelector, apiKey, options, plugins) {
+	    function Map(domSelector, apiKey, locale, options, plugins) {
 	        _classCallCheck(this, Map);
 
 	        this.domElement = document.querySelector(domSelector);
 	        this.apiKey = apiKey;
+	        this.locale = locale || 'en';
 	        this.setOptions(options);
 	        this.plugins = plugins || {};
 	        this.provider = '[No provider defined]';
