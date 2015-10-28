@@ -17,7 +17,7 @@ class DirectionsService extends google.maps.DirectionsService {
         }
     }
 
-    getRoute(origin, destination, options, callback) {
+    getRoute(origin, destination, options, callback, onError) {
         callback = callback || function() {};
 
         this.route(buildRequest(origin, destination, options), (result, status) => {
@@ -26,7 +26,7 @@ class DirectionsService extends google.maps.DirectionsService {
 
                 callback(result.routes[0]);
             } else {
-                callback('Unable to calculate a driving itinerary for the destination: ' + destination);
+                onError('Unable to calculate a driving itinerary for the destination: ' + destination);
             }
         });
     }

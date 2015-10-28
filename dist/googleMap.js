@@ -212,7 +212,7 @@
 	        }
 	    }, {
 	        key: 'getDirections',
-	        value: function getDirections(origin, destination, options, callback) {
+	        value: function getDirections(origin, destination, options, callback, onError) {
 	            var DirectionsService = __webpack_require__(21);
 
 	            var map = new google.maps.Map(this.domElement, this.options.map);
@@ -220,7 +220,7 @@
 
 	            delete options.panelSelector;
 
-	            directionsService.getRoute(origin, destination, options, callback);
+	            directionsService.getRoute(origin, destination, options, callback, onError);
 	        }
 	    }]);
 
@@ -1069,7 +1069,7 @@
 
 	    _createClass(DirectionsService, [{
 	        key: 'getRoute',
-	        value: function getRoute(origin, destination, options, callback) {
+	        value: function getRoute(origin, destination, options, callback, onError) {
 	            var _this = this;
 
 	            callback = callback || function () {};
@@ -1080,7 +1080,7 @@
 
 	                    callback(result.routes[0]);
 	                } else {
-	                    callback('Unable to calculate a driving itinerary for the destination: ' + destination);
+	                    onError('Unable to calculate a driving itinerary for the destination: ' + destination);
 	                }
 	            });
 	        }

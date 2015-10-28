@@ -1,7 +1,7 @@
 'use strict';
 
 class DirectionsService extends Microsoft.Maps.Directions.DirectionsManager {
-    constructor(map, options, callback) {
+    constructor(map, options, callback, onError) {
         super(map);
 
         this.setRequestOptions({
@@ -17,7 +17,7 @@ class DirectionsService extends Microsoft.Maps.Directions.DirectionsManager {
         Microsoft.Maps.Events.addHandler(this, 'directionsUpdated', callback);
 
         Microsoft.Maps.Events.addHandler(this, 'directionsError', (err) => {
-            callback('Unable to calculate a driving itinerary for your destination: ' + err.message);
+            onError('Unable to calculate a driving itinerary for your destination: ' + err.message);
         });
     }
 

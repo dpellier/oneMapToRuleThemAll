@@ -379,7 +379,7 @@ Type: `String || Number`
 
 Id of the marker to trigger the click event on.
 
-### getDirections(origin, destination, options, callback)
+### getDirections(origin, destination, options, callback, onError)
 
 Get the direction to go between two points, it can return the provider raw data or the provider formatted road map.
 
@@ -410,6 +410,12 @@ Type: `Function`
 
 Function to call when the request is completed.
 Will receive all the raw data from the provider as argument.
+
+#### onError
+Type: `Function`
+
+Function to call when the request failed.
+
 
 #### Example
 ```js

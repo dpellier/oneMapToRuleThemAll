@@ -192,7 +192,7 @@
 	        }
 	    }, {
 	        key: 'getDirections',
-	        value: function getDirections(origin, destination, options, _callback) {
+	        value: function getDirections(origin, destination, options, _callback, onError) {
 	            var _this2 = this;
 
 	            if (!directionsService) {
@@ -203,7 +203,7 @@
 	                        }, _this2.options.map));
 
 	                        DirectionsService = __webpack_require__(16);
-	                        directionsService = new DirectionsService(map, options, _callback);
+	                        directionsService = new DirectionsService(map, options, _callback, onError);
 	                        directionsService.getRoute(origin, destination);
 	                    }
 	                });
@@ -937,7 +937,7 @@
 	var DirectionsService = (function (_Microsoft$Maps$Directions$DirectionsManager) {
 	    _inherits(DirectionsService, _Microsoft$Maps$Directions$DirectionsManager);
 
-	    function DirectionsService(map, options, callback) {
+	    function DirectionsService(map, options, callback, onError) {
 	        _classCallCheck(this, DirectionsService);
 
 	        _get(Object.getPrototypeOf(DirectionsService.prototype), 'constructor', this).call(this, map);
@@ -955,7 +955,7 @@
 	        Microsoft.Maps.Events.addHandler(this, 'directionsUpdated', callback);
 
 	        Microsoft.Maps.Events.addHandler(this, 'directionsError', function (err) {
-	            callback('Unable to calculate a driving itinerary for your destination: ' + err.message);
+	            onError('Unable to calculate a driving itinerary for your destination: ' + err.message);
 	        });
 	    }
 

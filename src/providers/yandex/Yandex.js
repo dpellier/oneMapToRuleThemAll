@@ -89,7 +89,7 @@ class Yandex extends Map {
         }
     }
 
-    getDirections(origin, destination, options, callback) {
+    getDirections(origin, destination, options, callback, onError) {
         if (!directionsService) {
             DirectionsService = require('./DirectionsService');
 
@@ -97,7 +97,7 @@ class Yandex extends Map {
             directionsService = new DirectionsService(map);
         }
 
-        directionsService.getRoute(origin, destination, options, callback);
+        directionsService.getRoute(origin, destination, options, callback, onError);
     }
 }
 
