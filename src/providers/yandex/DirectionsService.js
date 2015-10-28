@@ -5,13 +5,13 @@ class DirectionsService {
         this.map = map;
     }
 
-    getRoute(origin, destination, options, callback) {
+    getRoute(origin, destination, options, callback, onError) {
         ymaps.route([origin, destination]).then((route) => {
             this.map.geoObjects.add(route);
             this.map.setBounds(route.getWayPoints().getBounds());
             callback(route);
         }, () => {
-            callback('Unable to calculate a driving itinerary for the destination: ' + destination);
+            onError('Unable to calculate a driving itinerary for the destination: ' + destination);
         });
     }
 }

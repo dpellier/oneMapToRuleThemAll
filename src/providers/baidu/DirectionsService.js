@@ -7,7 +7,7 @@ class DirectionsService {
         this.panelElement = document.querySelector(panelSelector);
     }
 
-    getRoute(origin, destination, callback) {
+    getRoute(origin, destination, callback, onError) {
         let driving = new BMap.DrivingRoute(this.map, {
             renderOptions: {
                 map: this.map,
@@ -18,6 +18,8 @@ class DirectionsService {
             onSearchComplete: function(results) {
                 if (driving.getStatus() === BMAP_STATUS_SUCCESS) {
                     callback(results);
+                } else {
+                    onError();
                 }
             }
         });

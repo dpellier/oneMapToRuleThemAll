@@ -159,7 +159,7 @@
 	        }
 	    }, {
 	        key: 'getDirections',
-	        value: function getDirections(origin, destination, options, callback) {
+	        value: function getDirections(origin, destination, options, callback, onError) {
 	            if (!directionsService) {
 	                DirectionsService = __webpack_require__(28);
 
@@ -167,7 +167,7 @@
 	                directionsService = new DirectionsService(map);
 	            }
 
-	            directionsService.getRoute(origin, destination, options, callback);
+	            directionsService.getRoute(origin, destination, options, callback, onError);
 	        }
 	    }]);
 
@@ -837,7 +837,7 @@
 
 	    _createClass(DirectionsService, [{
 	        key: 'getRoute',
-	        value: function getRoute(origin, destination, options, callback) {
+	        value: function getRoute(origin, destination, options, callback, onError) {
 	            var _this = this;
 
 	            ymaps.route([origin, destination]).then(function (route) {
@@ -845,7 +845,7 @@
 	                _this.map.setBounds(route.getWayPoints().getBounds());
 	                callback(route);
 	            }, function () {
-	                callback('Unable to calculate a driving itinerary for the destination: ' + destination);
+	                onError('Unable to calculate a driving itinerary for the destination: ' + destination);
 	            });
 	        }
 	    }]);

@@ -834,7 +834,7 @@
 
 	    _createClass(DirectionsService, [{
 	        key: 'getRoute',
-	        value: function getRoute(origin, destination, callback) {
+	        value: function getRoute(origin, destination, callback, onError) {
 	            var driving = new BMap.DrivingRoute(this.map, {
 	                renderOptions: {
 	                    map: this.map,
@@ -845,6 +845,8 @@
 	                onSearchComplete: function onSearchComplete(results) {
 	                    if (driving.getStatus() === BMAP_STATUS_SUCCESS) {
 	                        callback(results);
+	                    } else {
+	                        onError();
 	                    }
 	                }
 	            });

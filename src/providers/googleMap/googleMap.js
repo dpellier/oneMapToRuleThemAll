@@ -143,7 +143,7 @@ class GoogleMap extends Map {
         }
     }
 
-    getDirections(origin, destination, options, callback) {
+    getDirections(origin, destination, options, callback, onError) {
         let DirectionsService = require('./DirectionsService');
 
         let map = new google.maps.Map(this.domElement, this.options.map);
@@ -151,7 +151,7 @@ class GoogleMap extends Map {
 
         delete options.panelSelector;
 
-        directionsService.getRoute(origin, destination, options, callback);
+        directionsService.getRoute(origin, destination, options, callback, onError);
     }
 }
 

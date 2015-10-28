@@ -124,7 +124,7 @@ class BingMap extends Map {
         }
     }
 
-    getDirections(origin, destination, options, callback) {
+    getDirections(origin, destination, options, callback, onError) {
         if (!directionsService) {
             Microsoft.Maps.loadModule('Microsoft.Maps.Directions', {
                 callback: () => {
@@ -133,7 +133,7 @@ class BingMap extends Map {
                     }, this.options.map));
 
                     DirectionsService = require('./DirectionsService');
-                    directionsService = new DirectionsService(map, options, callback);
+                    directionsService = new DirectionsService(map, options, callback, onError);
                     directionsService.getRoute(origin, destination);
                 }
             });
