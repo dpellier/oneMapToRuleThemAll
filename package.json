@@ -16,7 +16,7 @@
     "webpack": "^1.9.10"
   },
   "scripts": {
-    "build": "rm dist/*.js && webpack -p && find dist/ -maxdepth 1 -mindepth 1 -type f -name '*.js' | sed 's/.js$//' | xargs -I{} mv {}.js {}.min.js && webpack",
+    "build": "rm -rf dist && webpack -p && find dist/ -maxdepth 1 -mindepth 1 -type f -name '*.js' | sed 's/.js$//' | xargs -I{} mv {}.js {}.min.js && webpack",
     "deploy": "bash scripts/deploy.sh"
   },
   "repository": {
