@@ -17,8 +17,7 @@
   },
   "scripts": {
     "build": "rm dist/*.js && webpack -p && find dist/ -maxdepth 1 -mindepth 1 -type f -name '*.js' | sed 's/.js$//' | xargs -I{} mv {}.js {}.min.js && webpack",
-    "version": "npm run build && git add -A dist",
-    "postversion": "git push origin master && git push --tags"
+    "deploy": "bash scripts/deploy.sh"
   },
   "repository": {
     "type": "git",
