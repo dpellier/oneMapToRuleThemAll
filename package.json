@@ -17,7 +17,8 @@
   },
   "scripts": {
     "build": "rm -rf dist && webpack -p && find dist/ -maxdepth 1 -mindepth 1 -type f -name '*.js' | sed 's/.js$//' | xargs -I{} mv {}.js {}.min.js && webpack",
-    "deploy": "bash scripts/deploy.sh"
+    "deploy": "bash scripts/deploy.sh",
+    "gh-pages": "git subtree push --prefix dist origin gh-pages"
   },
   "repository": {
     "type": "git",
