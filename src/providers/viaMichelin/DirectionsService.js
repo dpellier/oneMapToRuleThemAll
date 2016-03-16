@@ -4,8 +4,8 @@ let objectAssign = require('object-assign');
 let vmService = require('./vmService');
 
 class DirectionsService {
-    constructor(domElement, panelSelector) {
-        this.domElement = domElement;
+    constructor(domId, panelSelector) {
+        this.domId = domId;
         this.panelElement = document.querySelector(panelSelector);
     }
 
@@ -13,19 +13,18 @@ class DirectionsService {
         let self = this;
 
         if (!self.map) {
-            vmService.mapInstance(this.domElement, objectAssign({}, mapOptions, {center : ViaMichelin.Api.Constants.Map.DELAY_LOADING}), (map) => {
+            vmService.mapInstance(this.domId, objectAssign({}, mapOptions, {center : ViaMichelin.Api.Constants.Map.DELAY_LOADING}), (map) => {
                 self.map = map;
 
-                vmService.itineraryInstance(origin, destination, self.domElement, self.panelElement, options, (itinerary) => {
+                vmService.itineraryInstance(origin, destination, self.domId, self.panelElement, options, (itinerary) => {
                     callback(itinerary);
                 });
             });
         } else {
-            // TODO fix: does nothing
             self.map.removeAllLayers();
             self.panelElement.innerHTML = '';
 
-            vmService.itineraryInstance(origin, destination, self.domElement, self.panelElement, options, (itinerary) => {
+            vmService.itineraryInstance(origin, destination, self.domId, self.panelElement, options, (itinerary) => {
                 callback(itinerary);
             });
         }
