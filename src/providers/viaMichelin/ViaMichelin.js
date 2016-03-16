@@ -30,7 +30,7 @@ class ViaMichelinMap extends Map {
         let self = this;
         let bounds = [[0, 0], [0, 0]];
 
-        vmService.mapInstance(this.domElement, this.options.map, (map) => {
+        vmService.mapInstance(this.domId, this.options.map, (map) => {
 
             // Create a marker for each point
             self.points.forEach((point) => {
@@ -58,14 +58,18 @@ class ViaMichelinMap extends Map {
             callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
         }
 
-        domUtils.addResources(this.domElement, [
-            domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=fra')
-        ], () => {
-            Marker = require('./Marker');
-            markerClusterer = require('./markerClusterer');
-            vmService = require('./vmService');
+        if (window.VMLaunch) {
             callback();
-        });
+        } else {
+            domUtils.addResources(this.domElement, [
+                domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=fra')
+            ], () => {
+                Marker = require('./Marker');
+                markerClusterer = require('./markerClusterer');
+                vmService = require('./vmService');
+                callback();
+            });
+        }
     }
 
     clickOnMarker(markerId) {
@@ -82,7 +86,7 @@ class ViaMichelinMap extends Map {
     getDirections(origin, destination, options, callback) {
         if (!directionsService) {
             DirectionsService = require('./DirectionsService');
-            directionsService = new DirectionsService(this.domElement, options.panelSelector);
+            directionsService = new DirectionsService(this.domId, options.panelSelector);
         }
 
         directionsService.getRoute(origin, destination, this.options.map, options, callback);
