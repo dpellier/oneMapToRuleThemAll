@@ -47,7 +47,6 @@ class ViaMichelinMap extends Map {
 
             // Init the clustering if the option is set
             if (self.options.activeCluster) {
-                //let markerClusterer = new MarkerClusterer(map, self.markers, self.options.markerCluster);
                 markerClusterer.init(map, self.markers, self.options.markerCluster);
             }
         });
@@ -62,7 +61,7 @@ class ViaMichelinMap extends Map {
             callback();
         } else {
             domUtils.addResources(this.domElement, [
-                domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=fra')
+                domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=' + this.locale)
             ], () => {
                 Marker = require('./Marker');
                 markerClusterer = require('./markerClusterer');
