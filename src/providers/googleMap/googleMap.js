@@ -53,6 +53,7 @@ class GoogleMap extends Map {
             if (this.options.activeInfoWindow) {
                 google.maps.event.addListener(marker, 'click', () => {
                     this.infoWindow.open(point.data, this.map, marker);
+                    this.map.panTo(marker.getPosition());
                 });
             }
         });
