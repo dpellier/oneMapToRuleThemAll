@@ -108,11 +108,13 @@ class ViaMichelinMap extends Map {
         }
     }
 
-    addPoint(lat, lng, customOptions = {}) {
+    addPoint(point, customOptions = {}, activeInfoWindow = false) {
         const options = Object.assign({}, this.options.marker, customOptions);
 
         if (this.map) {
-            const marker = new Marker({latitude: lat, longitude: lng}, options, self.activeInfoWindow);
+            console.log('infoWindow: ');
+            console.log(activeInfoWindow);
+            const marker = new Marker(point, options, activeInfoWindow);
             this.map.addLayer(marker);
             this.markers.push(marker);
         }

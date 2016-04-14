@@ -170,11 +170,19 @@ class GoogleMap extends Map {
         }
     }
 
-    addPoint(lat, lng, customOptions = {}) {
+    addPoint(point, customOptions = {}) {
         const options = Object.assign({}, this.options.marker, customOptions);
 
         if (this.map) {
-            const marker = new Marker(this.map, {latitude: lat, longitude: lng}, options);
+            const marker = new Marker(this.map, point, options);
+
+            if (this.options.activeInfoWindow) {
+                google.maps.event.addListener(marker, 'click', () => {
+                    this.infoWindow.open(point.data, this.map, marker);
+                    this.map.panTo(marker.getPosition());
+                });
+            }
+            
             this.markers.push(marker);
         }
     }
