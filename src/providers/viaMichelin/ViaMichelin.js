@@ -112,8 +112,6 @@ class ViaMichelinMap extends Map {
         const options = Object.assign({}, this.options.marker, customOptions);
 
         if (this.map) {
-            console.log('infoWindow: ');
-            console.log(activeInfoWindow);
             const marker = new Marker(point, options, activeInfoWindow);
             this.map.addLayer(marker);
             this.markers.push(marker);
@@ -127,8 +125,8 @@ function getLargestBounds(bounds, point) {
             bounds[0][0] ? Math.min(bounds[0][0], point.latitude) : point.latitude,
             bounds[0][1] ? Math.min(bounds[0][1], point.longitude) : point.longitude
         ], [
-            Math.max(bounds[1][0], point.latitude),
-            Math.max(bounds[1][1], point.longitude)
+            bounds[1][0] ? Math.max(bounds[1][0], point.latitude) : point.latitude,
+            bounds[1][0] ? Math.max(bounds[1][1], point.longitude) : point.longitude
         ]
     ];
 }
