@@ -23,6 +23,7 @@ class ViaMichelinMap extends Map {
         super(...args);
 
         this.provider = 'ViaMichelin';
+        this.map = null;
         this.markers = [];
     }
 
@@ -31,6 +32,7 @@ class ViaMichelinMap extends Map {
         let bounds = [[0, 0], [0, 0]];
 
         vmService.mapInstance(this.domId, this.options.map, (map) => {
+            this.map = map;
 
             // Create a marker for each point
             self.points.forEach((point) => {
@@ -89,6 +91,31 @@ class ViaMichelinMap extends Map {
         }
 
         directionsService.getRoute(origin, destination, this.options.map, options, callback);
+    }
+
+    setCenter(lat, lng) {
+        if(this.map) {
+            this.map.panTo({
+                lon: lng,
+                lat: lat
+            });
+        }
+    }
+
+    setZoom (level) {
+        if(this.map) {
+            this.map.setZoomLevel(level);
+        }
+    }
+
+    addPoint(lat, lng, customOptions = {}) {
+        const options = Object.assign({}, this.options.marker, customOptions);
+
+        if (this.map) {
+            const marker = new Marker({latitude: lat, longitude: lng}, options, self.activeInfoWindow);
+            this.map.addLayer(marker);
+            this.markers.push(marker);
+        }
     }
 }
 

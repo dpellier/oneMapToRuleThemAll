@@ -154,6 +154,30 @@ class GoogleMap extends Map {
 
         directionsService.getRoute(origin, destination, options, callback, onError);
     }
+
+    setCenter(lat, lng) {
+        if (this.map) {
+            this.map.setCenter({
+                lat: lat,
+                lng:lng
+            });
+        }
+    }
+
+    setZoom (level) {
+        if (this.map) {
+            this.map.setZoom(level);
+        }
+    }
+
+    addPoint(lat, lng, customOptions = {}) {
+        const options = Object.assign({}, this.options.marker, customOptions);
+
+        if (this.map) {
+            const marker = new Marker(this.map, {latitude: lat, longitude: lng}, options);
+            this.markers.push(marker);
+        }
+    }
 }
 
 window.Map = GoogleMap;
