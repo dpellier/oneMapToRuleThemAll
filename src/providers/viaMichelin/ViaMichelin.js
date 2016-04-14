@@ -112,7 +112,7 @@ class ViaMichelinMap extends Map {
         const options = Object.assign({}, this.options.marker, customOptions);
 
         if (this.map) {
-            let marker = new Marker({latitude: lat, longitude: lng}, options, self.activeInfoWindow);
+            const marker = new Marker({latitude: lat, longitude: lng}, options, self.activeInfoWindow);
             this.map.addLayer(marker);
             this.markers.push(marker);
         }

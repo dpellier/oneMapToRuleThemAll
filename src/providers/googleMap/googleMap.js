@@ -174,7 +174,7 @@ class GoogleMap extends Map {
         const options = Object.assign({}, this.options.marker, customOptions);
 
         if (this.map) {
-            let marker = new Marker(this.map, {latitude: lat, longitude: lng}, options);
+            const marker = new Marker(this.map, {latitude: lat, longitude: lng}, options);
             this.markers.push(marker);
         }
     }
