@@ -153,6 +153,32 @@ class GoogleMap extends Map {
 
         directionsService.getRoute(origin, destination, options, callback, onError);
     }
+
+    setCenter(lat, lng) {
+        if (this.map) {
+            this.map.setCenter({
+                lat: lat,
+                lng:lng
+            });
+        }
+    }
+
+    setZoom (level) {
+        if (this.map) {
+            this.map.setZoom(level);
+        }
+    }
+
+    addPoint(lat, lng, customOptions) {
+        let options = this.options.marker;
+        if (customOptions) {
+            options = customOptions;
+        }
+
+        if (this.map) {
+            new Marker(this.map, {latitude: lat, longitude: lng}, options);
+        }
+    }
 }
 
 window.Map = GoogleMap;

@@ -86,21 +86,28 @@
 	        _get(Object.getPrototypeOf(ViaMichelinMap.prototype), 'constructor', this).apply(this, args);
 
 	        this.provider = 'ViaMichelin';
+	        this.map = null;
 	        this.markers = [];
 	    }
 
 	    _createClass(ViaMichelinMap, [{
 	        key: 'render',
 	        value: function render() {
+	            var _this = this;
+
 	            var self = this;
 	            var bounds = [[0, 0], [0, 0]];
 
 	            vmService.mapInstance(this.domElement, this.options.map, function (map) {
+	                _this.map = map;
 
 	                // Create a marker for each point
 	                self.points.forEach(function (point) {
 	                    var marker = new Marker(point, self.options.marker, self.options.activeInfoWindow);
 	                    self.markers.push(marker);
+
+	                    console.log('ST OPTIONS:');
+	                    console.log(self.options);
 
 	                    map.addLayer(marker);
 
@@ -152,6 +159,38 @@
 	            }
 
 	            directionsService.getRoute(origin, destination, this.options.map, options, callback);
+	        }
+	    }, {
+	        key: 'setCenter',
+	        value: function setCenter(lat, lng) {
+	            if (this.map) {
+	                this.map.panTo({
+	                    lon: lng,
+	                    lat: lat
+	                });
+	            }
+	        }
+	    }, {
+	        key: 'setZoom',
+	        value: function setZoom(level) {
+	            if (this.map) {
+	                this.map.setZoomLevel(level);
+	            }
+	        }
+	    }, {
+	        key: 'addPoint',
+	        value: function addPoint(lat, lng, customOptions) {
+	            var options = this.options.marker;
+	            if (customOptions) {
+	                options = customOptions;
+	            }
+	            console.log('OPTIONS');
+	            console.log(options);
+
+	            if (this.map) {
+	                var marker = new Marker({ latitude: lat, longitude: lng }, options, self.activeInfoWindow);
+	                this.map.addLayer(marker);
+	            }
 	        }
 	    }]);
 
@@ -229,6 +268,21 @@
 	        key: 'getDirections',
 	        value: function getDirections() {
 	            console.error(this.provider + ' has no getDirections method implemented');
+	        }
+	    }, {
+	        key: 'setCenter',
+	        value: function setCenter() {
+	            console.error(this.provider + ' has no setCenter method implemented');
+	        }
+	    }, {
+	        key: 'setZoom',
+	        value: function setZoom() {
+	            console.error(this.provider + ' has no setZoom method implemented');
+	        }
+	    }, {
+	        key: 'addPoint',
+	        value: function addPoint() {
+	            console.error(this.provider + ' has no addPoint method implemented');
 	        }
 	    }]);
 
@@ -736,7 +790,7 @@
 
 	    var opts = objectAssign({}, options);
 
-	    if (infoWindow) {
+	    if (options && infoWindow) {
 	        if (typeof options.htm === 'function') {
 	            objectAssign(opts, {
 	                htm: options.htm(point.data) || ''
@@ -746,7 +800,7 @@
 	        delete opts.htm;
 	    }
 
-	    if (options.overlayText && typeof options.overlayText.text === 'function') {
+	    if (options && options.overlayText && typeof options.overlayText.text === 'function') {
 	        objectAssign(opts, {
 	            overlayText: {
 	                text: options.overlayText.text(point) || ''

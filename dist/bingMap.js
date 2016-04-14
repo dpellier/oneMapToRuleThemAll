@@ -284,6 +284,21 @@
 	        value: function getDirections() {
 	            console.error(this.provider + ' has no getDirections method implemented');
 	        }
+	    }, {
+	        key: 'setCenter',
+	        value: function setCenter() {
+	            console.error(this.provider + ' has no setCenter method implemented');
+	        }
+	    }, {
+	        key: 'setZoom',
+	        value: function setZoom() {
+	            console.error(this.provider + ' has no setZoom method implemented');
+	        }
+	    }, {
+	        key: 'addPoint',
+	        value: function addPoint() {
+	            console.error(this.provider + ' has no addPoint method implemented');
+	        }
 	    }]);
 
 	    return Map;

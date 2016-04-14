@@ -222,6 +222,35 @@
 
 	            directionsService.getRoute(origin, destination, options, callback, onError);
 	        }
+	    }, {
+	        key: 'setCenter',
+	        value: function setCenter(lat, lng) {
+	            if (this.map) {
+	                this.map.setCenter({
+	                    lat: lat,
+	                    lng: lng
+	                });
+	            }
+	        }
+	    }, {
+	        key: 'setZoom',
+	        value: function setZoom(level) {
+	            if (this.map) {
+	                this.map.setZoom(level);
+	            }
+	        }
+	    }, {
+	        key: 'addPoint',
+	        value: function addPoint(lat, lng, customOptions) {
+	            var options = this.options.marker;
+	            if (customOptions) {
+	                options = customOptions;
+	            }
+
+	            if (this.map) {
+	                new Marker(this.map, { latitude: lat, longitude: lng }, options);
+	            }
+	        }
 	    }]);
 
 	    return GoogleMap;
@@ -294,6 +323,21 @@
 	        key: 'getDirections',
 	        value: function getDirections() {
 	            console.error(this.provider + ' has no getDirections method implemented');
+	        }
+	    }, {
+	        key: 'setCenter',
+	        value: function setCenter() {
+	            console.error(this.provider + ' has no setCenter method implemented');
+	        }
+	    }, {
+	        key: 'setZoom',
+	        value: function setZoom() {
+	            console.error(this.provider + ' has no setZoom method implemented');
+	        }
+	    }, {
+	        key: 'addPoint',
+	        value: function addPoint() {
+	            console.error(this.provider + ' has no addPoint method implemented');
 	        }
 	    }]);
 

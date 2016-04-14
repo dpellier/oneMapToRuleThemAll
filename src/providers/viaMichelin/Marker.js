@@ -6,7 +6,7 @@ class Marker {
     constructor(point, options, infoWindow) {
         let opts = objectAssign({}, options);
 
-        if (infoWindow) {
+        if (options && infoWindow) {
             if (typeof options.htm === 'function') {
                 objectAssign(opts, {
                     htm: options.htm(point.data) || ''
@@ -16,7 +16,7 @@ class Marker {
             delete opts.htm;
         }
 
-        if (options.overlayText && typeof options.overlayText.text === 'function') {
+        if (options && options.overlayText && typeof options.overlayText.text === 'function') {
             objectAssign(opts, {
                 overlayText: {
                     text:options.overlayText.text(point) || ''

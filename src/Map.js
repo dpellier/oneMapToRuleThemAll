@@ -47,6 +47,18 @@ class Map {
     getDirections() {
         console.error(this.provider + ' has no getDirections method implemented');
     }
+
+    setCenter() {
+        console.error(this.provider + ' has no setCenter method implemented');
+    }
+
+    setZoom() {
+        console.error(this.provider + ' has no setZoom method implemented');
+    }
+
+    addPoint() {
+        console.error(this.provider + ' has no addPoint method implemented');
+    }
 }
 
 module.exports = Map;
