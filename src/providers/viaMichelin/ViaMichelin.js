@@ -39,9 +39,6 @@ class ViaMichelinMap extends Map {
                 let marker = new Marker(point, self.options.marker, self.options.activeInfoWindow);
                 self.markers.push(marker);
 
-                console.log('ST OPTIONS:');
-                console.log(self.options);
-
                 map.addLayer(marker);
 
                 bounds = getLargestBounds(bounds, point);
@@ -116,8 +113,6 @@ class ViaMichelinMap extends Map {
         if (customOptions) {
             options = customOptions;
         }
-        console.log('OPTIONS');
-        console.log(options);
 
         if (this.map) {
             let marker = new Marker({latitude: lat, longitude: lng}, options, self.activeInfoWindow);
