@@ -170,14 +170,12 @@ class GoogleMap extends Map {
         }
     }
 
-    addPoint(lat, lng, customOptions) {
-        let options = this.options.marker;
-        if (customOptions) {
-            options = customOptions;
-        }
+    addPoint(lat, lng, customOptions = {}) {
+        const options = Object.assign({}, this.options.marker, customOptions);
 
         if (this.map) {
-            new Marker(this.map, {latitude: lat, longitude: lng}, options);
+            let marker = new Marker(this.map, {latitude: lat, longitude: lng}, options);
+            this.markers.push(marker);
         }
     }
 }
