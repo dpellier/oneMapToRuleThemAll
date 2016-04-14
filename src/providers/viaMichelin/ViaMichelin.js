@@ -31,14 +31,14 @@ class ViaMichelinMap extends Map {
         let self = this;
         let bounds = [[0, 0], [0, 0]];
 
-        vmService.mapInstance(this.domElement, this.options.map, (map) => {
+        vmService.mapInstance(this.domId, this.options.map, (map) => {
             this.map = map;
 
             // Create a marker for each point
             self.points.forEach((point) => {
                 let marker = new Marker(point, self.options.marker, self.options.activeInfoWindow);
                 self.markers.push(marker);
-                
+
                 console.log('ST OPTIONS:');
                 console.log(self.options);
 
@@ -52,7 +52,6 @@ class ViaMichelinMap extends Map {
 
             // Init the clustering if the option is set
             if (self.options.activeCluster) {
-                //let markerClusterer = new MarkerClusterer(map, self.markers, self.options.markerCluster);
                 markerClusterer.init(map, self.markers, self.options.markerCluster);
             }
         });
@@ -63,14 +62,18 @@ class ViaMichelinMap extends Map {
             callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
         }
 
-        domUtils.addResources(this.domElement, [
-            domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=fra')
-        ], () => {
-            Marker = require('./Marker');
-            markerClusterer = require('./markerClusterer');
-            vmService = require('./vmService');
+        if (window.VMLaunch) {
             callback();
-        });
+        } else {
+            domUtils.addResources(this.domElement, [
+                domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=' + this.locale)
+            ], () => {
+                Marker = require('./Marker');
+                markerClusterer = require('./markerClusterer');
+                vmService = require('./vmService');
+                callback();
+            });
+        }
     }
 
     clickOnMarker(markerId) {
@@ -87,7 +90,7 @@ class ViaMichelinMap extends Map {
     getDirections(origin, destination, options, callback) {
         if (!directionsService) {
             DirectionsService = require('./DirectionsService');
-            directionsService = new DirectionsService(this.domElement, options.panelSelector);
+            directionsService = new DirectionsService(this.domId, options.panelSelector);
         }
 
         directionsService.getRoute(origin, destination, this.options.map, options, callback);

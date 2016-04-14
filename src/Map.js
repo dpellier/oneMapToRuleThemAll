@@ -6,6 +6,7 @@ let objectAssign = require('object-assign');
 class Map {
     constructor(domSelector, apiKey, locale, options, plugins) {
         this.domElement = document.querySelector(domSelector);
+        this.domId = this.domElement.id || '';
         this.apiKey = apiKey;
         this.locale = locale || 'en';
         this.setOptions(options);
