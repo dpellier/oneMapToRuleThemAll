@@ -24,8 +24,14 @@ class Marker {
             });
         }
 
+        if (options && options.title && typeof options.title.text === 'function') {
+            objectAssign(opts, {
+                title: options.title.text(point) || ''
+            });
+        }
+
         let marker = new ViaMichelin.Api.Map.Marker(objectAssign(opts, {
-            coords: {lon: point.longitude, lat: point.latitude}
+            coords: {lon: parseFloat(point.longitude), lat: parseFloat(point.latitude)} // Parse float : security for lat/lng passed in string (create a bug on clusters)
         }));
 
         marker.id = point.id;

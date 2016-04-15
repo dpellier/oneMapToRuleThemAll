@@ -36,11 +36,7 @@ class ViaMichelinMap extends Map {
 
             // Create a marker for each point
             self.points.forEach((point) => {
-                let marker = new Marker(point, self.options.marker, self.options.activeInfoWindow);
-                self.markers.push(marker);
-
-                map.addLayer(marker);
-
+                this.addPoint(point, {}, self.options.activeInfoWindow);
                 bounds = getLargestBounds(bounds, point);
             });
 
@@ -108,14 +104,17 @@ class ViaMichelinMap extends Map {
         }
     }
 
-    addPoint(lat, lng, customOptions = {}) {
+    addPoint(point, customOptions = {}, activeInfoWindow = false) {
         const options = Object.assign({}, this.options.marker, customOptions);
 
         if (this.map) {
-            const marker = new Marker({latitude: lat, longitude: lng}, options, self.activeInfoWindow);
+            const marker = new Marker(point, options, activeInfoWindow);
             this.map.addLayer(marker);
             this.markers.push(marker);
+            
+            return marker;
         }
+        return null;
     }
 }
 
@@ -125,8 +124,8 @@ function getLargestBounds(bounds, point) {
             bounds[0][0] ? Math.min(bounds[0][0], point.latitude) : point.latitude,
             bounds[0][1] ? Math.min(bounds[0][1], point.longitude) : point.longitude
         ], [
-            Math.max(bounds[1][0], point.latitude),
-            Math.max(bounds[1][1], point.longitude)
+            bounds[1][0] ? Math.max(bounds[1][0], point.latitude) : point.latitude,
+            bounds[1][0] ? Math.max(bounds[1][1], point.longitude) : point.longitude
         ]
     ];
 }
