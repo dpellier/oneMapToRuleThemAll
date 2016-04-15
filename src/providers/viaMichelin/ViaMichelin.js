@@ -25,6 +25,7 @@ class ViaMichelinMap extends Map {
         this.provider = 'ViaMichelin';
         this.map = null;
         this.markers = [];
+        this.cluster = null;
     }
 
     render() {
@@ -43,10 +44,7 @@ class ViaMichelinMap extends Map {
             // Center the map
             map.drawMap({geoBoundaries: {no: {lon: bounds[0][1], lat: bounds[0][0]}, se:{lon: bounds[1][1], lat: bounds[1][0]}}}, 16);
 
-            // Init the clustering if the option is set
-            if (self.options.activeCluster) {
-                markerClusterer.init(map, self.markers, self.options.markerCluster);
-            }
+            this.setCluster();
         });
     }
 
@@ -111,10 +109,27 @@ class ViaMichelinMap extends Map {
             const marker = new Marker(point, options, activeInfoWindow);
             this.map.addLayer(marker);
             this.markers.push(marker);
-            
+
             return marker;
         }
         return null;
+    }
+
+    setCluster() {
+        // Init the clustering if the option is set
+        if (this.options.activeCluster) {
+            if (this.cluster) {
+                // Reset all markers & clusters because ViaMichelin API does not allow it...
+                this.map.removeAllLayers();
+                this.cluster.clear();
+
+                // Redraw each markers
+                this.markers.forEach((marker) => {
+                    this.map.addLayer(marker);
+                });
+            }
+            this.cluster = markerClusterer.init(this.map, this.markers, this.options.markerCluster);
+        }
     }
 }
 
