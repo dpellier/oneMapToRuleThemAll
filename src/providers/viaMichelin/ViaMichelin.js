@@ -36,11 +36,7 @@ class ViaMichelinMap extends Map {
 
             // Create a marker for each point
             self.points.forEach((point) => {
-                let marker = new Marker(point, self.options.marker, self.options.activeInfoWindow);
-                self.markers.push(marker);
-
-                map.addLayer(marker);
-
+                this.addPoint(point, {}, self.options.activeInfoWindow);
                 bounds = getLargestBounds(bounds, point);
             });
 
