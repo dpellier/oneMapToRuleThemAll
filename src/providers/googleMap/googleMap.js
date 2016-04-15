@@ -44,8 +44,8 @@ class GoogleMap extends Map {
 
         // Create a marker for each point
         this.points.forEach((point) => {
-            const marker = this.addPoint(point, {});
-            
+            const marker = this.addPoint(point, {}, false);
+
             if (marker) {
                 bounds.extend(marker.position);
             }
@@ -163,7 +163,7 @@ class GoogleMap extends Map {
         }
     }
 
-    addPoint(point, customOptions = {}) {
+    addPoint(point, customOptions = {}, reloadCluster = false) {
         const options = Object.assign({}, this.options.marker, customOptions);
 
         if (this.map) {
@@ -178,8 +178,14 @@ class GoogleMap extends Map {
             }
 
             this.markers.push(marker);
+
+            if (reloadCluster && this.plugins.clusterer && this.options.activeCluster) {
+                this.markerClusterer.addMarker(marker);
+            }
+
             return marker;
         }
+
         return null;
     }
 }
