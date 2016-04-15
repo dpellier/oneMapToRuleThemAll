@@ -111,7 +111,10 @@ class ViaMichelinMap extends Map {
             const marker = new Marker(point, options, activeInfoWindow);
             this.map.addLayer(marker);
             this.markers.push(marker);
+            
+            return marker;
         }
+        return null;
     }
 }
 

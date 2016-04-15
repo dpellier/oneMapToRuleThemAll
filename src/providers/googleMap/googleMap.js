@@ -44,17 +44,10 @@ class GoogleMap extends Map {
 
         // Create a marker for each point
         this.points.forEach((point) => {
-            let marker = new Marker(this.map, point, this.options.marker);
-            bounds.extend(marker.position);
-
-            this.markers.push(marker);
-
-            // Bind the info window on marker click if the option is set
-            if (this.options.activeInfoWindow) {
-                google.maps.event.addListener(marker, 'click', () => {
-                    this.infoWindow.open(point.data, this.map, marker);
-                    this.map.panTo(marker.getPosition());
-                });
+            const marker = this.addPoint(point, {});
+            
+            if (marker) {
+                bounds.extend(marker.position);
             }
         });
 
@@ -176,15 +169,18 @@ class GoogleMap extends Map {
         if (this.map) {
             const marker = new Marker(this.map, point, options);
 
+            // Bind the info window on marker click if the option is set
             if (this.options.activeInfoWindow) {
                 google.maps.event.addListener(marker, 'click', () => {
                     this.infoWindow.open(point.data, this.map, marker);
                     this.map.panTo(marker.getPosition());
                 });
             }
-            
+
             this.markers.push(marker);
+            return marker;
         }
+        return null;
     }
 }
 
