@@ -36,8 +36,9 @@ class ViaMichelinMap extends Map {
             this.map = map;
 
             // Create a marker for each point
+            this.addMarkers(self.points);
+
             self.points.forEach((point) => {
-                this.addPoint(point, {}, self.options.activeInfoWindow);
                 bounds = getLargestBounds(bounds, point);
             });
 
@@ -102,17 +103,32 @@ class ViaMichelinMap extends Map {
         }
     }
 
-    addPoint(point, customOptions = {}, activeInfoWindow = false) {
-        const options = Object.assign({}, this.options.marker, customOptions);
-
-        if (this.map) {
-            const marker = new Marker(point, options, activeInfoWindow);
-            this.map.addLayer(marker);
-            this.markers.push(marker);
-
-            return marker;
+    addMarkers(points) {
+        if (Object.prototype.toString.call(points) !== '[object Array]') {
+            points = [points];
         }
-        return null;
+
+        let markers = [];
+        let options = {};
+        let activeInfoWindow;
+
+        for(let i = 0; i < points.length; i++) {
+            options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
+            activeInfoWindow = points[i].activeInfoWindow !== undefined ? points[i].activeInfoWindow : this.options.activeInfoWindow;
+
+            points[i].options = options;
+            points[i].activeInfoWindow = activeInfoWindow;
+            
+            if (this.map) {
+                const marker = new Marker(points[i], options, activeInfoWindow);
+                markers.push(marker);
+                this.markers.push(marker);
+                this.map.addLayer(marker);
+            }
+        }
+        this.setCluster();
+
+        return markers;
     }
 
     setCluster() {

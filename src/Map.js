@@ -57,8 +57,8 @@ class Map {
         console.error(this.provider + ' has no setZoom method implemented');
     }
 
-    addPoint() {
-        console.error(this.provider + ' has no addPoint method implemented');
+    addMarkers() {
+        console.error(this.provider + ' has no addMarkers method implemented');
     }
 }
 

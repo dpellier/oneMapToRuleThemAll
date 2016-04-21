@@ -42,15 +42,6 @@ class GoogleMap extends Map {
             this.infoWindow = new InfoWindow(this.options.infoWindow);
         }
 
-        // Create a marker for each point
-        this.points.forEach((point) => {
-            const marker = this.addPoint(point, {}, false);
-
-            if (marker) {
-                bounds.extend(marker.position);
-            }
-        });
-
         if (this.options.map.zoom) {
             // This is needed to set the zoom after fitBounds,
             google.maps.event.addListenerOnce(this.map, 'bounds_changed', () => {
@@ -77,6 +68,13 @@ class GoogleMap extends Map {
                 });
             });
         }
+
+        // Create a marker for each point
+        let markers = this.addMarkers(this.points);
+
+        this.markers.forEach((marker) => {
+            bounds.extend(marker.position);
+        });
     }
 
     load(callback, loadingMask) {
@@ -163,30 +161,40 @@ class GoogleMap extends Map {
         }
     }
 
-    addPoint(point, customOptions = {}, reloadCluster = false) {
-        const options = Object.assign({}, this.options.marker, customOptions);
+    addMarkers(points) {
+        if (Object.prototype.toString.call(points) !== '[object Array]') {
+            points = [points];
+        }
+        let markers = [];
 
-        if (this.map) {
-            const marker = new Marker(this.map, point, options);
+        let options = {};
+        let activeInfoWindow;
+
+        for(let i = 0; i < points.length; i++) {
+            options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
+            activeInfoWindow = points[i].activeInfoWindow !== undefined ? points[i].activeInfoWindow : this.options.activeInfoWindow;
+
+            points[i].options = options;
+            points[i].activeInfoWindow = activeInfoWindow;
+
+            const marker = new Marker(this.map, points[i], options);
 
             // Bind the info window on marker click if the option is set
-            if (this.options.activeInfoWindow) {
+            if (activeInfoWindow) {
                 google.maps.event.addListener(marker, 'click', () => {
-                    this.infoWindow.open(point.data, this.map, marker);
+                    this.infoWindow.open(points[i].data, this.map, marker);
                     this.map.panTo(marker.getPosition());
                 });
             }
 
             this.markers.push(marker);
 
-            if (reloadCluster && this.plugins.clusterer && this.options.activeCluster) {
+            if (this.map && this.plugins.clusterer && this.options.activeCluster) {
                 this.markerClusterer.addMarker(marker);
             }
-
-            return marker;
         }
-
-        return null;
+        
+        return markers;
     }
 }
 
