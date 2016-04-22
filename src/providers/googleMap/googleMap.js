@@ -35,21 +35,11 @@ class GoogleMap extends Map {
 
         // Init the map
         this.map = new google.maps.Map(this.domElement, this.options.map);
-        let bounds = new google.maps.LatLngBounds();
 
         // Init the info window is the option is set
         if (this.options.activeInfoWindow) {
             this.infoWindow = new InfoWindow(this.options.infoWindow);
         }
-
-        // Create a marker for each point
-        this.points.forEach((point) => {
-            const marker = this.addPoint(point, {}, false);
-
-            if (marker) {
-                bounds.extend(marker.position);
-            }
-        });
 
         if (this.options.map.zoom) {
             // This is needed to set the zoom after fitBounds,
@@ -57,9 +47,6 @@ class GoogleMap extends Map {
                 this.map.setZoom(Math.min(this.options.map.zoom, this.map.getZoom()));
             });
         }
-
-        // Center the map
-        this.map.fitBounds(bounds);
 
         // Init the clustering if the option is set
         if (this.plugins.clusterer && this.options.activeCluster) {
@@ -77,6 +64,12 @@ class GoogleMap extends Map {
                 });
             });
         }
+
+        // Create a marker for each point
+        this.addMarkers(this.points);
+
+        // Center the map
+        this.setBounds();
     }
 
     load(callback, loadingMask) {
@@ -114,24 +107,53 @@ class GoogleMap extends Map {
         domUtils.addScript(this.domElement, '//maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey + '&language=' + this.locale);
     }
 
-    clickOnMarker(markerId) {
+    setBounds() {
+        let bounds = new google.maps.LatLngBounds();
+        this.markers.forEach((marker) => {
+            bounds.extend(marker.position);
+        });
+        this.map.fitBounds(bounds);
+    }
+
+    setIconOnMarker(markerId, icon) {
         markerId = markerId.toString();
+
+        let marker = this.markers.filter((marker) => {
+            return marker.id.toString() === markerId;
+        });
+
+        if (marker.length && icon) {
+            marker[0].setIcon(icon);
+        }
+    }
+
+    focusOnMarker(markerId, showInfoWindow = false, pan = false, zoom = 0) {
+        markerId = markerId.toString();
+
         let marker = this.markers.filter((marker) => {
             return marker.id.toString() === markerId;
         });
 
         if (marker.length) {
-            // If the marker is inside a cluster, we have to zoom to it before triggering the click
-            if (this.options.activeCluster && !marker[0].getMap()) {
-                this.map.setZoom(17);
+            if (pan) {
+                // If the marker is inside a cluster, we have to zoom to it before triggering the click
+                if (this.options.activeCluster && !marker[0].getMap()) {
+                    this.map.setZoom(17);
+                }
+                else if (zoom > 0) {
+                    this.setZoom(zoom);
+                }
+
                 this.map.panTo(marker[0].position);
 
-                // We trigger the info window only after the pan has finished
-                google.maps.event.addListenerOnce(this.map, 'idle', function() {
-                    google.maps.event.trigger(marker[0], 'click');
-                });
-
-            } else {
+                if (showInfoWindow) {
+                    // We trigger the info window only after the pan has finished
+                    google.maps.event.addListenerOnce(this.map, 'idle', function() {
+                        google.maps.event.trigger(marker[0], 'click');
+                    });
+                }
+            }
+            else if (showInfoWindow) {
                 google.maps.event.trigger(marker[0], 'click');
             }
         }
@@ -163,30 +185,40 @@ class GoogleMap extends Map {
         }
     }
 
-    addPoint(point, customOptions = {}, reloadCluster = false) {
-        const options = Object.assign({}, this.options.marker, customOptions);
+    addMarkers(points) {
+        if (Object.prototype.toString.call(points) !== '[object Array]') {
+            points = [points];
+        }
+        let markers = [];
 
-        if (this.map) {
-            const marker = new Marker(this.map, point, options);
+        let options = {};
+        let activeInfoWindow;
+
+        for(let i = 0; i < points.length; i++) {
+            options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
+            activeInfoWindow = points[i].activeInfoWindow !== undefined ? points[i].activeInfoWindow : this.options.activeInfoWindow;
+
+            points[i].options = options;
+            points[i].activeInfoWindow = activeInfoWindow;
+
+            const marker = new Marker(this.map, points[i], options);
 
             // Bind the info window on marker click if the option is set
-            if (this.options.activeInfoWindow) {
+            if (activeInfoWindow) {
                 google.maps.event.addListener(marker, 'click', () => {
-                    this.infoWindow.open(point.data, this.map, marker);
+                    this.infoWindow.open(points[i].data, this.map, marker);
                     this.map.panTo(marker.getPosition());
                 });
             }
 
             this.markers.push(marker);
 
-            if (reloadCluster && this.plugins.clusterer && this.options.activeCluster) {
+            if (this.map && this.plugins.clusterer && this.options.activeCluster) {
                 this.markerClusterer.addMarker(marker);
             }
-
-            return marker;
         }
 
-        return null;
+        return markers;
     }
 }
 
