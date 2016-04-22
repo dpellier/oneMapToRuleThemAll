@@ -41,6 +41,18 @@ class Map {
         console.error(this.provider + ' has no load method implemented');
     }
 
+    setBounds() {
+        console.error(this.provider + ' has no setBounds method implemented');
+    }
+
+    setIconOnMarker() {
+        console.error(this.provider + ' has no setIconOnMarker method implemented');
+    }
+
+    focusOnMarker() {
+        console.error(this.provider + ' has no focusOnMarker method implemented');
+    }
+
     clickOnMarker() {
         console.error(this.provider + ' has no clickOnMarker method implemented');
     }

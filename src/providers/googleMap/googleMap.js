@@ -35,7 +35,6 @@ class GoogleMap extends Map {
 
         // Init the map
         this.map = new google.maps.Map(this.domElement, this.options.map);
-        let bounds = new google.maps.LatLngBounds();
 
         // Init the info window is the option is set
         if (this.options.activeInfoWindow) {
@@ -48,9 +47,6 @@ class GoogleMap extends Map {
                 this.map.setZoom(Math.min(this.options.map.zoom, this.map.getZoom()));
             });
         }
-
-        // Center the map
-        this.map.fitBounds(bounds);
 
         // Init the clustering if the option is set
         if (this.plugins.clusterer && this.options.activeCluster) {
@@ -70,11 +66,10 @@ class GoogleMap extends Map {
         }
 
         // Create a marker for each point
-        let markers = this.addMarkers(this.points);
+        this.addMarkers(this.points);
 
-        this.markers.forEach((marker) => {
-            bounds.extend(marker.position);
-        });
+        // Center the map
+        this.setBounds();
     }
 
     load(callback, loadingMask) {
@@ -110,6 +105,54 @@ class GoogleMap extends Map {
         }
 
         domUtils.addScript(this.domElement, '//maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey + '&language=' + this.locale);
+    }
+
+    setBounds() {
+        let bounds = new google.maps.LatLngBounds();
+        this.markers.forEach((marker) => {
+            bounds.extend(marker.position);
+        });
+        this.map.fitBounds(bounds);
+    }
+
+    setIconOnMarker(markerId, icon) {
+        markerId = markerId.toString();
+
+        let marker = this.markers.filter((marker) => {
+            return marker.id.toString() === markerId;
+        });
+
+        if (marker.length && icon) {
+            marker[0].setIcon(icon);
+        }
+    }
+
+    focusOnMarker(markerId, showInfoWindow = false, pan = false, zoom = 0) {
+        markerId = markerId.toString();
+
+        let marker = this.markers.filter((marker) => {
+            return marker.id.toString() === markerId;
+        });
+
+        if (marker.length) {
+            if (pan) {
+                this.map.panTo(marker[0].position);
+
+                if (showInfoWindow) {
+                    // We trigger the info window only after the pan has finished
+                    google.maps.event.addListenerOnce(this.map, 'idle', function() {
+                        google.maps.event.trigger(marker[0], 'click');
+                    });
+                }
+            }
+            else if (showInfoWindow) {
+                google.maps.event.trigger(marker[0], 'click');
+            }
+
+            if (zoom > 0) {
+                this.map.setZoom(zoom);
+            }
+        }
     }
 
     clickOnMarker(markerId) {
@@ -193,7 +236,7 @@ class GoogleMap extends Map {
                 this.markerClusterer.addMarker(marker);
             }
         }
-        
+
         return markers;
     }
 }
