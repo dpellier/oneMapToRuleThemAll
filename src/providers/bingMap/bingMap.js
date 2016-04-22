@@ -113,7 +113,7 @@ class BingMap extends Map {
         domUtils.addScript(this.domElement, '//ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad&mkt=' + this.locale);
     }
 
-    clickOnMarker(markerId) {
+    focusOnMarker(markerId) {
         markerId = markerId.toString();
         let marker = this.markers.filter((marker) => {
             return marker.id.toString() === markerId;

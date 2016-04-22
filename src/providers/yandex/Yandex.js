@@ -78,7 +78,7 @@ class Yandex extends Map {
         domUtils.addScript(this.domElement, 'http://api-maps.yandex.ru/2.1/?load=package.standard&onload=_yandexCallbackOnLoad&lang=' + this.locale);
     }
 
-    clickOnMarker(markerId) {
+    focusOnMarker(markerId) {
         markerId = markerId.toString();
         let marker = this.markers.filter((marker) => {
             return marker.id.toString() === markerId;

@@ -136,6 +136,14 @@ class GoogleMap extends Map {
 
         if (marker.length) {
             if (pan) {
+                // If the marker is inside a cluster, we have to zoom to it before triggering the click
+                if (this.options.activeCluster && !marker[0].getMap()) {
+                    this.map.setZoom(17);
+                }
+                else if (zoom > 0) {
+                    this.setZoom(zoom);
+                }
+
                 this.map.panTo(marker[0].position);
 
                 if (showInfoWindow) {
@@ -146,33 +154,6 @@ class GoogleMap extends Map {
                 }
             }
             else if (showInfoWindow) {
-                google.maps.event.trigger(marker[0], 'click');
-            }
-
-            if (zoom > 0) {
-                this.map.setZoom(zoom);
-            }
-        }
-    }
-
-    clickOnMarker(markerId) {
-        markerId = markerId.toString();
-        let marker = this.markers.filter((marker) => {
-            return marker.id.toString() === markerId;
-        });
-
-        if (marker.length) {
-            // If the marker is inside a cluster, we have to zoom to it before triggering the click
-            if (this.options.activeCluster && !marker[0].getMap()) {
-                this.map.setZoom(17);
-                this.map.panTo(marker[0].position);
-
-                // We trigger the info window only after the pan has finished
-                google.maps.event.addListenerOnce(this.map, 'idle', function() {
-                    google.maps.event.trigger(marker[0], 'click');
-                });
-
-            } else {
                 google.maps.event.trigger(marker[0], 'click');
             }
         }

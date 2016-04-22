@@ -26,11 +26,11 @@ class ViaMichelinMap extends Map {
         this.map = null;
         this.markers = [];
         this.cluster = null;
+        this.center = null;
     }
 
     render() {
         let self = this;
-        let bounds = [[0, 0], [0, 0]];
 
         vmService.mapInstance(this.domId, this.options.map, (map) => {
             this.map = map;
@@ -38,12 +38,9 @@ class ViaMichelinMap extends Map {
             // Create a marker for each point
             this.addMarkers(self.points);
 
-            self.points.forEach((point) => {
-                bounds = getLargestBounds(bounds, point);
-            });
-
-            // Center the map
-            map.drawMap({geoBoundaries: {no: {lon: bounds[0][1], lat: bounds[0][0]}, se:{lon: bounds[1][1], lat: bounds[1][0]}}}, 16);
+            const bounds = this.getBounds();
+            this.map.drawMap({geoBoundaries: {no: {lon: bounds[0][1], lat: bounds[0][0]}, se:{lon: bounds[1][1], lat: bounds[1][0]}}}, 16);
+            this.center = this.map.getCenter();
 
             this.setCluster();
         });
@@ -68,14 +65,47 @@ class ViaMichelinMap extends Map {
         }
     }
 
-    clickOnMarker(markerId) {
+    getBounds() {
+        let bounds = [[0, 0], [0, 0]];
+
+        this.points.forEach((point) => {
+            bounds = getLargestBounds(bounds, point);
+        });
+
+        return bounds;
+    }
+
+    setBounds() {
+        this.map.drawMapFromLayers();
+    }
+
+    setIconOnMarker(markerId, icon) {
         markerId = markerId.toString();
+
+        let marker = this.markers.filter((marker) => {
+            return marker.id.toString() === markerId;
+        });
+
+        if (marker.length && icon) {
+            marker[0].setIcon(icon);
+        }
+    }
+
+    focusOnMarker(markerId, showInfoWindow = false, pan = false) {
+        markerId = markerId.toString();
+
         let marker = this.markers.filter((marker) => {
             return marker.id.toString() === markerId;
         });
 
         if (marker.length) {
-            marker[0]._triggerClickEvent();
+            if (pan) {
+                this.map.moveTo(marker[0].getPosition());
+            }
+
+            if (showInfoWindow) {
+                marker[0]._triggerClickEvent();
+            }
         }
     }
 
@@ -118,7 +148,7 @@ class ViaMichelinMap extends Map {
 
             points[i].options = options;
             points[i].activeInfoWindow = activeInfoWindow;
-            
+
             if (this.map) {
                 const marker = new Marker(points[i], options, activeInfoWindow);
                 markers.push(marker);
