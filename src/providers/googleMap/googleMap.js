@@ -26,7 +26,7 @@ class GoogleMap extends Map {
         this.markerClusterer = null;
     }
 
-    render() {
+    render(callback) {
         if (this.plugins.infobox) {
             InfoWindow = require('./plugins/InfoBox');
         } else {
@@ -70,6 +70,10 @@ class GoogleMap extends Map {
 
         // Center the map
         this.setBounds();
+
+        if (callback) {
+            callback();
+        }
     }
 
     load(callback, loadingMask) {
@@ -125,6 +129,10 @@ class GoogleMap extends Map {
         if (marker.length && icon) {
             marker[0].setIcon(icon);
         }
+    }
+
+    clickOnMarker(markerId) {
+        this.focusOnMarker(markerId, true, true, 0);
     }
 
     focusOnMarker(markerId, showInfoWindow = false, pan = false, zoom = 0) {

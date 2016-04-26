@@ -53,6 +53,11 @@ class Map {
         console.error(this.provider + ' has no focusOnMarker method implemented');
     }
 
+    clickOnMarker() {
+        // For retro-compat
+        console.error(this.provider + ' has no clickOnMarker method implemented');
+    }
+
     getDirections() {
         console.error(this.provider + ' has no getDirections method implemented');
     }

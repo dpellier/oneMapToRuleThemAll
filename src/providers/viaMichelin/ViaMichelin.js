@@ -29,7 +29,7 @@ class ViaMichelinMap extends Map {
         this.center = null;
     }
 
-    render() {
+    render(callback) {
         let self = this;
 
         vmService.mapInstance(this.domId, this.options.map, (map) => {
@@ -43,6 +43,10 @@ class ViaMichelinMap extends Map {
             this.center = this.map.getCenter();
 
             this.setCluster();
+
+            if (callback) {
+                callback();
+            }
         });
     }
 
@@ -89,6 +93,10 @@ class ViaMichelinMap extends Map {
         if (marker.length && icon) {
             marker[0].setIcon(icon);
         }
+    }
+
+    clickOnMarker(markerId) {
+        this.focusOnMarker(markerId, true, true);
     }
 
     focusOnMarker(markerId, showInfoWindow = false, pan = false) {
