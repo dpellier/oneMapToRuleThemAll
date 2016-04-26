@@ -394,7 +394,6 @@
 	    }, {
 	        key: 'clickOnMarker',
 	        value: function clickOnMarker() {
-	            // For retro-compat
 	            console.error(this.provider + ' has no clickOnMarker method implemented');
 	        }
 	    }, {

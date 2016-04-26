@@ -230,13 +230,11 @@
 
 	            for (var i = 0; i < points.length; i++) {
 	                options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
-	                activeInfoWindow = points[i].activeInfoWindow !== undefined ? points[i].activeInfoWindow : this.options.activeInfoWindow;
 
 	                points[i].options = options;
-	                points[i].activeInfoWindow = activeInfoWindow;
 
 	                if (this.map) {
-	                    var marker = new Marker(points[i], options, activeInfoWindow);
+	                    var marker = new Marker(points[i], options);
 	                    markers.push(marker);
 	                    this.markers.push(marker);
 	                    this.map.addLayer(marker);
@@ -352,7 +350,6 @@
 	    }, {
 	        key: 'clickOnMarker',
 	        value: function clickOnMarker() {
-	            // For retro-compat
 	            console.error(this.provider + ' has no clickOnMarker method implemented');
 	        }
 	    }, {
@@ -876,12 +873,12 @@
 
 	var objectAssign = __webpack_require__(6);
 
-	var Marker = function Marker(point, options, infoWindow) {
+	var Marker = function Marker(point, options) {
 	    _classCallCheck(this, Marker);
 
 	    var opts = objectAssign({}, options);
 
-	    if (options && infoWindow) {
+	    if (options && options.activeInfoWindow) {
 	        if (typeof options.htm === 'function') {
 	            objectAssign(opts, {
 	                htm: options.htm(point.data) || ''

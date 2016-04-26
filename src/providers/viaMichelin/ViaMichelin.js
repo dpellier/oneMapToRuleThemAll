@@ -152,13 +152,11 @@ class ViaMichelinMap extends Map {
 
         for(let i = 0; i < points.length; i++) {
             options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
-            activeInfoWindow = points[i].activeInfoWindow !== undefined ? points[i].activeInfoWindow : this.options.activeInfoWindow;
 
             points[i].options = options;
-            points[i].activeInfoWindow = activeInfoWindow;
 
             if (this.map) {
-                const marker = new Marker(points[i], options, activeInfoWindow);
+                const marker = new Marker(points[i], options);
                 markers.push(marker);
                 this.markers.push(marker);
                 this.map.addLayer(marker);

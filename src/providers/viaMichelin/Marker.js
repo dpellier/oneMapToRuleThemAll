@@ -3,10 +3,10 @@
 let objectAssign = require('object-assign');
 
 class Marker {
-    constructor(point, options, infoWindow) {
+    constructor(point, options) {
         let opts = objectAssign({}, options);
 
-        if (options && infoWindow) {
+        if (options && options.activeInfoWindow) {
             if (typeof options.htm === 'function') {
                 objectAssign(opts, {
                     htm: options.htm(point.data) || ''
