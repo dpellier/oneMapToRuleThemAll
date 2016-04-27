@@ -86,7 +86,7 @@
 	        this.map = null;
 	        this.markers = [];
 	        this.infoWindow = null;
-	        this.markerClusterer = null;
+	        this.markerClusterers = [];
 	    }
 
 	    _createClass(GoogleMap, [{
@@ -112,23 +112,6 @@
 	                // This is needed to set the zoom after fitBounds,
 	                google.maps.event.addListenerOnce(this.map, 'bounds_changed', function () {
 	                    _this.map.setZoom(Math.min(_this.options.map.zoom, _this.map.getZoom()));
-	                });
-	            }
-
-	            // Init the clustering if the option is set
-	            if (this.plugins.clusterer && this.options.activeCluster) {
-	                this.markerClusterer = new MarkerClusterer(this.map, this.markers, this.options.markerCluster);
-
-	                google.maps.event.addListener(this.markerClusterer, 'clusteringend', function (clusterer) {
-	                    clusterer.getClusters().forEach(function (cluster) {
-	                        var markers = cluster.getMarkers();
-
-	                        if (markers.length > 1) {
-	                            markers.forEach(function (marker) {
-	                                marker.hideLabel();
-	                            });
-	                        }
-	                    });
 	                });
 	            }
 
@@ -271,17 +254,21 @@
 	        }
 	    }, {
 	        key: 'addMarkers',
-	        value: function addMarkers(points) {
+	        value: function addMarkers(points, clusterIndex, clusterConfig) {
 	            var _this2 = this;
+
+	            if (clusterIndex === undefined) clusterIndex = 0;
 
 	            if (Object.prototype.toString.call(points) !== '[object Array]') {
 	                points = [points];
 	            }
-	            var markers = [];
 
+	            if (!clusterConfig) {
+	                clusterConfig = this.options.markerCluster;
+	            }
+
+	            var markers = [];
 	            var options = {};
-	            var activeInfoWindow = undefined;
-	            var activeCluster = undefined;
 
 	            var _loop = function (i) {
 	                options = Object.assign({}, _this2.options.marker, points[i].options ? points[i].options : {});
@@ -306,15 +293,36 @@
 	                    });
 	                }
 
+	                markers.push(marker);
 	                _this2.markers.push(marker);
-
-	                if (_this2.map && _this2.plugins.clusterer && options.activeCluster) {
-	                    _this2.markerClusterer.addMarker(marker);
-	                }
 	            };
 
 	            for (var i = 0; i < points.length; i++) {
 	                _loop(i);
+	            }
+
+	            // If clustering is activated for those poses
+	            if (this.map && this.plugins.clusterer && this.options.activeCluster && clusterIndex !== false) {
+	                if (this.markerClusterers[clusterIndex]) {
+	                    for (var i = 0; i < markers.length; i++) {
+	                        this.markerClusterers[clusterIndex].addMarker(markers[i]);
+	                    }
+	                } else {
+	                    var markerClusterer = new MarkerClusterer(this.map, markers, clusterConfig);
+	                    this.markerClusterers.push(markerClusterer);
+
+	                    google.maps.event.addListener(markerClusterer, 'clusteringend', function (clusterer) {
+	                        clusterer.getClusters().forEach(function (cluster) {
+	                            var markers = cluster.getMarkers();
+
+	                            if (markers.length > 1) {
+	                                markers.forEach(function (marker) {
+	                                    marker.hideLabel();
+	                                });
+	                            }
+	                        });
+	                    });
+	                }
 	            }
 
 	            return markers;

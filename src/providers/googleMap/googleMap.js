@@ -23,7 +23,7 @@ class GoogleMap extends Map {
         this.map = null;
         this.markers = [];
         this.infoWindow = null;
-        this.markerClusterer = null;
+        this.markerClusterers = [];
     }
 
     render(callback) {
@@ -45,23 +45,6 @@ class GoogleMap extends Map {
             // This is needed to set the zoom after fitBounds,
             google.maps.event.addListenerOnce(this.map, 'bounds_changed', () => {
                 this.map.setZoom(Math.min(this.options.map.zoom, this.map.getZoom()));
-            });
-        }
-
-        // Init the clustering if the option is set
-        if (this.plugins.clusterer && this.options.activeCluster) {
-            this.markerClusterer = new MarkerClusterer(this.map, this.markers, this.options.markerCluster);
-
-            google.maps.event.addListener(this.markerClusterer, 'clusteringend', function(clusterer) {
-                clusterer.getClusters().forEach(function(cluster) {
-                    let markers = cluster.getMarkers();
-
-                    if (markers.length > 1) {
-                        markers.forEach(function(marker) {
-                            marker.hideLabel();
-                        });
-                    }
-                });
             });
         }
 
@@ -193,23 +176,25 @@ class GoogleMap extends Map {
         }
     }
 
-    addMarkers(points) {
+    addMarkers(points, clusterIndex = 0, clusterConfig) {
         if (Object.prototype.toString.call(points) !== '[object Array]') {
             points = [points];
         }
-        let markers = [];
 
+        if (!clusterConfig) {
+            clusterConfig = this.options.markerCluster;
+        }
+
+        let markers = [];
         let options = {};
-        let activeInfoWindow;
-        let activeCluster;
 
         for(let i = 0; i < points.length; i++) {
             options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
-            
+
             if (options.activeInfoWindow === undefined) {
                 options.activeInfoWindow = this.options.activeInfoWindow;
             }
-            
+
             if (options.activeCluster === undefined) {
                 options.activeCluster = this.options.activeCluster;
             }
@@ -226,10 +211,32 @@ class GoogleMap extends Map {
                 });
             }
 
+            markers.push(marker);
             this.markers.push(marker);
+        }
 
-            if (this.map && this.plugins.clusterer && options.activeCluster) {
-                this.markerClusterer.addMarker(marker);
+        // If clustering is activated for those poses
+        if (this.map && this.plugins.clusterer && this.options.activeCluster && clusterIndex !== false) {
+            if (this.markerClusterers[clusterIndex]) {
+                for(let i = 0; i < markers.length; i++) {
+                    this.markerClusterers[clusterIndex].addMarker(markers[i]);
+                }
+            }
+            else {
+                let markerClusterer = new MarkerClusterer(this.map, markers, clusterConfig);
+                this.markerClusterers.push(markerClusterer);
+
+                google.maps.event.addListener(markerClusterer, 'clusteringend', function(clusterer) {
+                    clusterer.getClusters().forEach(function(cluster) {
+                        let markers = cluster.getMarkers();
+
+                        if (markers.length > 1) {
+                            markers.forEach(function(marker) {
+                                marker.hideLabel();
+                            });
+                        }
+                    });
+                });
             }
         }
 
