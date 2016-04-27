@@ -232,14 +232,21 @@
 
 	                points[i].options = options;
 
+	                if (options.activeCluster === undefined) {
+	                    options.activeCluster = this.options.activeCluster;
+	                }
+
 	                if (this.map) {
 	                    var marker = new Marker(points[i], options);
 	                    markers.push(marker);
 	                    this.markers.push(marker);
 	                    this.map.addLayer(marker);
 	                }
+
+	                if (options.activeCluster) {
+	                    this.setCluster();
+	                }
 	            }
-	            this.setCluster();
 
 	            return markers;
 	        }

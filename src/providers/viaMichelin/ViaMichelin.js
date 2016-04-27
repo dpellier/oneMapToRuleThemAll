@@ -153,6 +153,10 @@ class ViaMichelinMap extends Map {
             options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
 
             points[i].options = options;
+            
+            if (options.activeCluster === undefined) {
+                options.activeCluster = this.options.activeCluster;
+            }
 
             if (this.map) {
                 const marker = new Marker(points[i], options);
@@ -160,8 +164,11 @@ class ViaMichelinMap extends Map {
                 this.markers.push(marker);
                 this.map.addLayer(marker);
             }
+
+            if (options.activeCluster) {
+                this.setCluster();
+            }
         }
-        this.setCluster();
 
         return markers;
     }
