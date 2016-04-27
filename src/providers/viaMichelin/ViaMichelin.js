@@ -148,7 +148,6 @@ class ViaMichelinMap extends Map {
 
         let markers = [];
         let options = {};
-        let activeInfoWindow;
 
         for(let i = 0; i < points.length; i++) {
             options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});

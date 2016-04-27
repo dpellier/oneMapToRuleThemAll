@@ -281,18 +281,25 @@
 
 	            var options = {};
 	            var activeInfoWindow = undefined;
+	            var activeCluster = undefined;
 
 	            var _loop = function (i) {
 	                options = Object.assign({}, _this2.options.marker, points[i].options ? points[i].options : {});
-	                activeInfoWindow = points[i].activeInfoWindow !== undefined ? points[i].activeInfoWindow : _this2.options.activeInfoWindow;
+
+	                if (options.activeInfoWindow === undefined) {
+	                    options.activeInfoWindow = _this2.options.activeInfoWindow;
+	                }
+
+	                if (options.activeCluster === undefined) {
+	                    options.activeCluster = _this2.options.activeCluster;
+	                }
 
 	                points[i].options = options;
-	                points[i].activeInfoWindow = activeInfoWindow;
 
 	                var marker = new Marker(_this2.map, points[i], options);
 
 	                // Bind the info window on marker click if the option is set
-	                if (activeInfoWindow) {
+	                if (options.activeInfoWindow) {
 	                    google.maps.event.addListener(marker, 'click', function () {
 	                        _this2.infoWindow.open(points[i].data, _this2.map, marker);
 	                        _this2.map.panTo(marker.getPosition());
@@ -301,7 +308,7 @@
 
 	                _this2.markers.push(marker);
 
-	                if (_this2.map && _this2.plugins.clusterer && _this2.options.activeCluster) {
+	                if (_this2.map && _this2.plugins.clusterer && options.activeCluster) {
 	                    _this2.markerClusterer.addMarker(marker);
 	                }
 	            };

@@ -201,18 +201,25 @@ class GoogleMap extends Map {
 
         let options = {};
         let activeInfoWindow;
+        let activeCluster;
 
         for(let i = 0; i < points.length; i++) {
             options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
-            activeInfoWindow = points[i].activeInfoWindow !== undefined ? points[i].activeInfoWindow : this.options.activeInfoWindow;
+            
+            if (options.activeInfoWindow === undefined) {
+                options.activeInfoWindow = this.options.activeInfoWindow;
+            }
+            
+            if (options.activeCluster === undefined) {
+                options.activeCluster = this.options.activeCluster;
+            }
 
             points[i].options = options;
-            points[i].activeInfoWindow = activeInfoWindow;
 
             const marker = new Marker(this.map, points[i], options);
 
             // Bind the info window on marker click if the option is set
-            if (activeInfoWindow) {
+            if (options.activeInfoWindow) {
                 google.maps.event.addListener(marker, 'click', () => {
                     this.infoWindow.open(points[i].data, this.map, marker);
                     this.map.panTo(marker.getPosition());
@@ -221,7 +228,7 @@ class GoogleMap extends Map {
 
             this.markers.push(marker);
 
-            if (this.map && this.plugins.clusterer && this.options.activeCluster) {
+            if (this.map && this.plugins.clusterer && options.activeCluster) {
                 this.markerClusterer.addMarker(marker);
             }
         }

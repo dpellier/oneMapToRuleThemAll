@@ -226,7 +226,6 @@
 
 	            var markers = [];
 	            var options = {};
-	            var activeInfoWindow = undefined;
 
 	            for (var i = 0; i < points.length; i++) {
 	                options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
