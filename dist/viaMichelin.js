@@ -88,7 +88,7 @@
 	        this.provider = 'ViaMichelin';
 	        this.map = null;
 	        this.markers = [];
-	        this.cluster = null;
+	        this.markerClusterers = [];
 	        this.center = null;
 	    }
 
@@ -103,13 +103,11 @@
 	                _this.map = map;
 
 	                // Create a marker for each point
-	                _this.addMarkers(self.points);
+	                _this.addMarkers(self.points, 0);
 
 	                var bounds = _this.getBounds();
 	                _this.map.drawMap({ geoBoundaries: { no: { lon: bounds[0][1], lat: bounds[0][0] }, se: { lon: bounds[1][1], lat: bounds[1][0] } } }, 16);
 	                _this.center = _this.map.getCenter();
-
-	                _this.setCluster();
 
 	                if (callback) {
 	                    callback();
@@ -219,7 +217,9 @@
 	        }
 	    }, {
 	        key: 'addMarkers',
-	        value: function addMarkers(points) {
+	        value: function addMarkers(points, clusterIndex, clusterConfig) {
+	            if (clusterIndex === undefined) clusterIndex = 0;
+
 	            if (Object.prototype.toString.call(points) !== '[object Array]') {
 	                points = [points];
 	            }
@@ -230,11 +230,15 @@
 	            for (var i = 0; i < points.length; i++) {
 	                options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
 
-	                points[i].options = options;
+	                if (options.activeInfoWindow === undefined) {
+	                    options.activeInfoWindow = this.options.activeInfoWindow;
+	                }
 
 	                if (options.activeCluster === undefined) {
 	                    options.activeCluster = this.options.activeCluster;
 	                }
+
+	                points[i].options = options;
 
 	                if (this.map) {
 	                    var marker = new Marker(points[i], options);
@@ -242,32 +246,29 @@
 	                    this.markers.push(marker);
 	                    this.map.addLayer(marker);
 	                }
-
-	                if (options.activeCluster) {
-	                    this.setCluster();
-	                }
 	            }
+
+	            this.setCluster(markers, clusterIndex, clusterConfig);
 
 	            return markers;
 	        }
 	    }, {
 	        key: 'setCluster',
-	        value: function setCluster() {
-	            var _this2 = this;
+	        value: function setCluster(markers, clusterIndex, clusterConfig) {
+	            if (this.map && this.options.activeCluster && clusterIndex !== false) {
 
-	            // Init the clustering if the option is set
-	            if (this.options.activeCluster) {
-	                if (this.cluster) {
-	                    // Reset all markers & clusters because ViaMichelin API does not allow it...
-	                    this.map.removeAllLayers();
-	                    this.cluster.clear();
-
-	                    // Redraw each markers
-	                    this.markers.forEach(function (marker) {
-	                        _this2.map.addLayer(marker);
-	                    });
+	                if (!clusterConfig) {
+	                    clusterConfig = this.options.markerCluster;
 	                }
-	                this.cluster = markerClusterer.init(this.map, this.markers, this.options.markerCluster);
+
+	                if (this.markerClusterers[clusterIndex]) {
+	                    for (var i = 0; i < markers.length; i++) {
+	                        this.markerClusterers[clusterIndex].markers.push(markers[i]);
+	                    }
+	                } else {
+	                    var cluster = markerClusterer.init(this.map, markers, clusterConfig);
+	                    this.markerClusterers.push(cluster);
+	                }
 	            }
 	        }
 	    }]);
