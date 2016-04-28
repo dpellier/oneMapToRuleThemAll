@@ -6,16 +6,6 @@ class Marker {
     constructor(point, options) {
         let opts = objectAssign({}, options);
 
-        if (options && options.activeInfoWindow) {
-            if (typeof options.htm === 'function') {
-                objectAssign(opts, {
-                    htm: options.htm(point.data) || ''
-                });
-            }
-        } else {
-            delete opts.htm;
-        }
-
         if (options && options.overlayText && typeof options.overlayText.text === 'function') {
             objectAssign(opts, {
                 overlayText: {
@@ -35,7 +25,19 @@ class Marker {
         }));
 
         marker.id = point.id;
+        
+        if (options && options.activeInfoWindow) {
+            if (typeof options.htm === 'function') {
 
+                marker.addEventListener("onClick", function() {
+                    marker.setBubbleContent(options.htm(point.data) || '');
+                });
+            }
+            else {
+                marker.setBubbleContent(options.htm);
+            }
+        }
+        
         return marker;
     }
 }
