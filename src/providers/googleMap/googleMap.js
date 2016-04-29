@@ -49,7 +49,7 @@ class GoogleMap extends Map {
         }
 
         // Create a marker for each point
-        this.addMarkers(this.points);
+        this.addMarkers(this.points, 0);
 
         // Center the map
         this.setBounds();
@@ -176,7 +176,7 @@ class GoogleMap extends Map {
         }
     }
 
-    addMarkers(points, clusterIndex = 0, clusterConfig) {
+    addMarkers(points, clusterIndex = null, clusterConfig = null) {
         if (Object.prototype.toString.call(points) !== '[object Array]') {
             points = [points];
         }
@@ -191,11 +191,11 @@ class GoogleMap extends Map {
         for(let i = 0; i < points.length; i++) {
             options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
 
-            if (!options.activeInfoWindow) {
+            if (typeof options.activeInfoWindow === "undefined" || options.activeInfoWindow === null) {
                 options.activeInfoWindow = this.options.activeInfoWindow;
             }
 
-            if (!options.activeCluster) {
+            if (typeof options.activeCluster === "undefined" || options.activeCluster === null) {
                 options.activeCluster = this.options.activeCluster;
             }
 
@@ -216,7 +216,7 @@ class GoogleMap extends Map {
         }
 
         // If clustering is activated for those markers
-        if (this.map && this.plugins.clusterer && this.options.activeCluster && clusterIndex !== false) {
+        if (this.map && this.plugins.clusterer && this.options.activeCluster && clusterIndex !== null) {
             if (this.markerClusterers[clusterIndex]) {
                 for(let i = 0; i < markers.length; i++) {
                     this.markerClusterers[clusterIndex].addMarker(markers[i]);

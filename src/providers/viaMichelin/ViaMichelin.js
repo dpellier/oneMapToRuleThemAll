@@ -139,7 +139,7 @@ class ViaMichelinMap extends Map {
         }
     }
 
-    addMarkers(points, clusterIndex = 0, clusterConfig) {
+    addMarkers(points, clusterIndex = null, clusterConfig = null) {
         if (Object.prototype.toString.call(points) !== '[object Array]') {
             points = [points];
         }
@@ -150,11 +150,11 @@ class ViaMichelinMap extends Map {
         for(let i = 0; i < points.length; i++) {
             options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
 
-            if (!options.activeInfoWindow) {
+            if (typeof options.activeInfoWindow === "undefined" || options.activeInfoWindow === null) {
                 options.activeInfoWindow = this.options.activeInfoWindow;
             }
 
-            if (!options.activeCluster) {
+            if (typeof options.activeCluster === "undefined" || options.activeCluster === null) {
                 options.activeCluster = this.options.activeCluster;
             }
 
@@ -173,8 +173,8 @@ class ViaMichelinMap extends Map {
         return markers;
     }
 
-    setCluster(markers, clusterIndex, clusterConfig) {
-        if (this.map && this.options.activeCluster && clusterIndex !== false) {
+    setCluster(markers, clusterIndex = null, clusterConfig = null) {
+        if (this.map && this.options.activeCluster && clusterIndex !== null) {
 
             if (!clusterConfig) {
                 clusterConfig = this.options.markerCluster;
