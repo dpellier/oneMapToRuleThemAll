@@ -23,10 +23,10 @@ class GoogleMap extends Map {
         this.map = null;
         this.markers = [];
         this.infoWindow = null;
-        this.markerClusterer = null;
+        this.markerClusterers = [];
     }
 
-    render() {
+    render(callback) {
         if (this.plugins.infobox) {
             InfoWindow = require('./plugins/InfoBox');
         } else {
@@ -48,28 +48,15 @@ class GoogleMap extends Map {
             });
         }
 
-        // Init the clustering if the option is set
-        if (this.plugins.clusterer && this.options.activeCluster) {
-            this.markerClusterer = new MarkerClusterer(this.map, this.markers, this.options.markerCluster);
-
-            google.maps.event.addListener(this.markerClusterer, 'clusteringend', function(clusterer) {
-                clusterer.getClusters().forEach(function(cluster) {
-                    let markers = cluster.getMarkers();
-
-                    if (markers.length > 1) {
-                        markers.forEach(function(marker) {
-                            marker.hideLabel();
-                        });
-                    }
-                });
-            });
-        }
-
         // Create a marker for each point
-        this.addMarkers(this.points);
+        this.addMarkers(this.points, 0);
 
         // Center the map
         this.setBounds();
+
+        if (callback) {
+            callback();
+        }
     }
 
     load(callback, loadingMask) {
@@ -125,6 +112,10 @@ class GoogleMap extends Map {
         if (marker.length && icon) {
             marker[0].setIcon(icon);
         }
+    }
+
+    clickOnMarker(markerId) {
+        this.focusOnMarker(markerId, true, true, 0);
     }
 
     focusOnMarker(markerId, showInfoWindow = false, pan = false, zoom = 0) {
@@ -185,36 +176,67 @@ class GoogleMap extends Map {
         }
     }
 
-    addMarkers(points) {
+    addMarkers(points, clusterIndex = null, clusterConfig = null) {
         if (Object.prototype.toString.call(points) !== '[object Array]') {
             points = [points];
         }
-        let markers = [];
 
+        if (!clusterConfig) {
+            clusterConfig = this.options.markerCluster;
+        }
+
+        let markers = [];
         let options = {};
-        let activeInfoWindow;
 
         for(let i = 0; i < points.length; i++) {
             options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
-            activeInfoWindow = points[i].activeInfoWindow !== undefined ? points[i].activeInfoWindow : this.options.activeInfoWindow;
+
+            if (typeof options.activeInfoWindow === "undefined" || options.activeInfoWindow === null) {
+                options.activeInfoWindow = this.options.activeInfoWindow;
+            }
+
+            if (typeof options.activeCluster === "undefined" || options.activeCluster === null) {
+                options.activeCluster = this.options.activeCluster;
+            }
 
             points[i].options = options;
-            points[i].activeInfoWindow = activeInfoWindow;
 
             const marker = new Marker(this.map, points[i], options);
 
             // Bind the info window on marker click if the option is set
-            if (activeInfoWindow) {
+            if (options.activeInfoWindow) {
                 google.maps.event.addListener(marker, 'click', () => {
                     this.infoWindow.open(points[i].data, this.map, marker);
                     this.map.panTo(marker.getPosition());
                 });
             }
 
+            markers.push(marker);
             this.markers.push(marker);
+        }
 
-            if (this.map && this.plugins.clusterer && this.options.activeCluster) {
-                this.markerClusterer.addMarker(marker);
+        // If clustering is activated for those markers
+        if (this.map && this.plugins.clusterer && this.options.activeCluster && clusterIndex !== null) {
+            if (this.markerClusterers[clusterIndex]) {
+                for(let i = 0; i < markers.length; i++) {
+                    this.markerClusterers[clusterIndex].addMarker(markers[i]);
+                }
+            }
+            else {
+                let markerClusterer = new MarkerClusterer(this.map, markers, clusterConfig);
+                this.markerClusterers.push(markerClusterer);
+
+                google.maps.event.addListener(markerClusterer, 'clusteringend', function(clusterer) {
+                    clusterer.getClusters().forEach(function(cluster) {
+                        let markers = cluster.getMarkers();
+
+                        if (markers.length > 1) {
+                            markers.forEach(function(marker) {
+                                marker.hideLabel();
+                            });
+                        }
+                    });
+                });
             }
         }
 

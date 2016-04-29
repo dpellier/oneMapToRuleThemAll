@@ -25,24 +25,26 @@ class ViaMichelinMap extends Map {
         this.provider = 'ViaMichelin';
         this.map = null;
         this.markers = [];
-        this.cluster = null;
+        this.markerClusterers = [];
         this.center = null;
     }
 
-    render() {
+    render(callback) {
         let self = this;
 
         vmService.mapInstance(this.domId, this.options.map, (map) => {
             this.map = map;
 
             // Create a marker for each point
-            this.addMarkers(self.points);
+            this.addMarkers(self.points, 0);
 
             const bounds = this.getBounds();
             this.map.drawMap({geoBoundaries: {no: {lon: bounds[0][1], lat: bounds[0][0]}, se:{lon: bounds[1][1], lat: bounds[1][0]}}}, 16);
             this.center = this.map.getCenter();
 
-            this.setCluster();
+            if (callback) {
+                callback();
+            }
         });
     }
 
@@ -91,6 +93,10 @@ class ViaMichelinMap extends Map {
         }
     }
 
+    clickOnMarker(markerId) {
+        this.focusOnMarker(markerId, true, true);
+    }
+
     focusOnMarker(markerId, showInfoWindow = false, pan = false) {
         markerId = markerId.toString();
 
@@ -133,48 +139,56 @@ class ViaMichelinMap extends Map {
         }
     }
 
-    addMarkers(points) {
+    addMarkers(points, clusterIndex = null, clusterConfig = null) {
         if (Object.prototype.toString.call(points) !== '[object Array]') {
             points = [points];
         }
 
         let markers = [];
         let options = {};
-        let activeInfoWindow;
 
         for(let i = 0; i < points.length; i++) {
             options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
-            activeInfoWindow = points[i].activeInfoWindow !== undefined ? points[i].activeInfoWindow : this.options.activeInfoWindow;
+
+            if (typeof options.activeInfoWindow === "undefined" || options.activeInfoWindow === null) {
+                options.activeInfoWindow = this.options.activeInfoWindow;
+            }
+
+            if (typeof options.activeCluster === "undefined" || options.activeCluster === null) {
+                options.activeCluster = this.options.activeCluster;
+            }
 
             points[i].options = options;
-            points[i].activeInfoWindow = activeInfoWindow;
 
             if (this.map) {
-                const marker = new Marker(points[i], options, activeInfoWindow);
+                const marker = new Marker(points[i], options);
                 markers.push(marker);
                 this.markers.push(marker);
                 this.map.addLayer(marker);
             }
         }
-        this.setCluster();
+
+        this.setCluster(markers, clusterIndex, clusterConfig);
 
         return markers;
     }
 
-    setCluster() {
-        // Init the clustering if the option is set
-        if (this.options.activeCluster) {
-            if (this.cluster) {
-                // Reset all markers & clusters because ViaMichelin API does not allow it...
-                this.map.removeAllLayers();
-                this.cluster.clear();
+    setCluster(markers, clusterIndex = null, clusterConfig = null) {
+        if (this.map && this.options.activeCluster && clusterIndex !== null) {
 
-                // Redraw each markers
-                this.markers.forEach((marker) => {
-                    this.map.addLayer(marker);
-                });
+            if (!clusterConfig) {
+                clusterConfig = this.options.markerCluster;
             }
-            this.cluster = markerClusterer.init(this.map, this.markers, this.options.markerCluster);
+
+            if (this.markerClusterers[clusterIndex]) {
+                for(let i = 0; i < markers.length; i++) {
+                    this.markerClusterers[clusterIndex].markers.push(markers[i]);
+                }
+            }
+            else {
+                let cluster = markerClusterer.init(this.map, markers, clusterConfig);
+                this.markerClusterers.push(cluster);
+            }
         }
     }
 }
