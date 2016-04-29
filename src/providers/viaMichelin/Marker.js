@@ -25,11 +25,11 @@ class Marker {
         }));
 
         marker.id = point.id;
-        
+
         if (options && options.activeInfoWindow) {
             if (typeof options.htm === 'function') {
 
-                marker.addEventListener("onClick", function() {
+                marker.addEventListener("onClick", () => {
                     marker.setBubbleContent(options.htm(point.data) || '');
                 });
             }
@@ -37,7 +37,7 @@ class Marker {
                 marker.setBubbleContent(options.htm);
             }
         }
-        
+
         return marker;
     }
 }

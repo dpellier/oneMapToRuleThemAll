@@ -191,11 +191,11 @@ class GoogleMap extends Map {
         for(let i = 0; i < points.length; i++) {
             options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
 
-            if (options.activeInfoWindow === undefined) {
+            if (!options.activeInfoWindow) {
                 options.activeInfoWindow = this.options.activeInfoWindow;
             }
 
-            if (options.activeCluster === undefined) {
+            if (!options.activeCluster) {
                 options.activeCluster = this.options.activeCluster;
             }
 
@@ -215,7 +215,7 @@ class GoogleMap extends Map {
             this.markers.push(marker);
         }
 
-        // If clustering is activated for those poses
+        // If clustering is activated for those markers
         if (this.map && this.plugins.clusterer && this.options.activeCluster && clusterIndex !== false) {
             if (this.markerClusterers[clusterIndex]) {
                 for(let i = 0; i < markers.length; i++) {
