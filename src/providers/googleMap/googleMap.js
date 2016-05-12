@@ -81,7 +81,7 @@ class GoogleMap extends Map {
             }
 
             if (plugins.infobox) {
-                resources.push(domUtils.createScript('//google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js'));
+                resources.push(domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/plugins/googleMap/infobubble-compiled.js'));
             }
 
             domUtils.addResources(domElement, resources, callback);

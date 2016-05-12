@@ -5,7 +5,7 @@ let objectAssign = require('object-assign');
 /* global InfoBox:true */
 class InfoBoxPlugin {
     constructor(options) {
-        let infoBox = new InfoBox(objectAssign({}, options, {content: ''}));
+        let infoBox = new InfoBubble(objectAssign({}, options, {content: ''}));
 
         this._content = options.content;
         this.box = infoBox;
