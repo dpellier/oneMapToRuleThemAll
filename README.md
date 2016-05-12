@@ -453,7 +453,7 @@ map.load(function() {
 
 clusterer: markerclusterer.min.js
 
-infobox: http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/docs/reference.html
+infobox: https://github.com/googlemaps/js-info-bubble
 
 ### Bing Map
 
