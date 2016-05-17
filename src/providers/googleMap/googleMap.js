@@ -135,13 +135,11 @@ class GoogleMap extends Map {
                     this.setZoom(zoom);
                 }
 
-                this.map.panTo(marker[0].position);
-
-                if (showInfoWindow) {
-                    // We trigger the info window only after the pan has finished
-                    google.maps.event.addListenerOnce(this.map, 'idle', function() {
-                        google.maps.event.trigger(marker[0], 'click');
-                    });
+                if (showInfoWindow && this.infoWindow) {
+                    google.maps.event.trigger(marker[0], 'click');
+                }
+                else { // The pan is managed by the infowindow
+                    this.map.panTo(marker[0].position);
                 }
             }
             else if (showInfoWindow) {
@@ -207,6 +205,10 @@ class GoogleMap extends Map {
             if (options.activeInfoWindow) {
                 google.maps.event.addListener(marker, 'click', () => {
                     this.infoWindow.open(points[i].data, this.map, marker);
+                });
+            }
+            else {
+                google.maps.event.addListener(marker, 'click', () => {
                     this.map.panTo(marker.getPosition());
                 });
             }
