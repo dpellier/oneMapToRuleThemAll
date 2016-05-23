@@ -42,6 +42,15 @@ class ViaMichelinMap extends Map {
             this.map.drawMap({geoBoundaries: {no: {lon: bounds[0][1], lat: bounds[0][0]}, se:{lon: bounds[1][1], lat: bounds[1][0]}}}, 16);
             this.center = this.map.getCenter();
 
+            // Force zoom redraw and recenter marker
+            if (self.points.length === 1) {
+                this.map.moveTo({
+                    lon: self.points[0].longitude,
+                    lat: self.points[0].latitude
+                });
+                this.map.setZoomLevel(zoom);
+            }
+
             if (callback) {
                 callback();
             }
