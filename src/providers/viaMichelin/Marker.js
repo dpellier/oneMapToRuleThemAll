@@ -29,7 +29,7 @@ class Marker {
         if (options && options.activeInfoWindow) {
             if (typeof options.htm === 'function') {
 
-                marker.addEventListener("onClick", () => {
+                marker.addEventListener('onClick', () => {
                     marker.setBubbleContent(options.htm(point.data) || '');
                 });
             }

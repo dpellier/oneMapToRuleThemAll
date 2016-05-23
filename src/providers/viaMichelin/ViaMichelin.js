@@ -45,8 +45,14 @@ class ViaMichelinMap extends Map {
 
             this.center = this.map.getCenter();
 
-            // Force zoom redraw
-            this.map.setZoomLevel(zoom);
+            // Force zoom redraw and recenter marker
+            if (self.points.length === 1) {
+                this.map.setZoomLevel(zoom);
+                this.map.panTo({
+                    lon: self.points[0].longitude,
+                    lat: self.points[0].latitude
+                });
+            }
 
             if (callback) {
                 callback();
@@ -156,11 +162,11 @@ class ViaMichelinMap extends Map {
         for(let i = 0; i < points.length; i++) {
             options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
 
-            if (typeof options.activeInfoWindow === "undefined" || options.activeInfoWindow === null) {
+            if (typeof options.activeInfoWindow === 'undefined' || options.activeInfoWindow === null) {
                 options.activeInfoWindow = this.options.activeInfoWindow;
             }
 
-            if (typeof options.activeCluster === "undefined" || options.activeCluster === null) {
+            if (typeof options.activeCluster === 'undefined' || options.activeCluster === null) {
                 options.activeCluster = this.options.activeCluster;
             }
 

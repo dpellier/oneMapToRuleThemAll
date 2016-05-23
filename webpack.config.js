@@ -56,6 +56,7 @@ module.exports = {
             BMAP_STATUS_SUCCESS: true,
             console: true,
             google: true,
+            InfoBubble: true,
             MarkerClusterer: true,
             Microsoft: true,
             PinClusterer: true,
