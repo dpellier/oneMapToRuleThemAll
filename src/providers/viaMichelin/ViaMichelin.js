@@ -39,8 +39,14 @@ class ViaMichelinMap extends Map {
             this.addMarkers(self.points, 0);
 
             const bounds = this.getBounds();
-            this.map.drawMap({geoBoundaries: {no: {lon: bounds[0][1], lat: bounds[0][0]}, se:{lon: bounds[1][1], lat: bounds[1][0]}}}, 16);
+            const zoom = this.options.map.zoom || 16;
+
+            this.map.drawMap({geoBoundaries: {no: {lon: bounds[0][1], lat: bounds[0][0]}, se:{lon: bounds[1][1], lat: bounds[1][0]}}}, zoom);
+
             this.center = this.map.getCenter();
+
+            // Force zoom redraw
+            this.map.setZoomLevel(zoom);
 
             if (callback) {
                 callback();
