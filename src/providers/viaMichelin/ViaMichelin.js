@@ -161,11 +161,11 @@ class ViaMichelinMap extends Map {
         for(let i = 0; i < points.length; i++) {
             options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
 
-            if (typeof options.activeInfoWindow === "undefined" || options.activeInfoWindow === null) {
+            if (typeof options.activeInfoWindow === 'undefined' || options.activeInfoWindow === null) {
                 options.activeInfoWindow = this.options.activeInfoWindow;
             }
 
-            if (typeof options.activeCluster === "undefined" || options.activeCluster === null) {
+            if (typeof options.activeCluster === 'undefined' || options.activeCluster === null) {
                 options.activeCluster = this.options.activeCluster;
             }
 
