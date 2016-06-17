@@ -467,7 +467,7 @@ map.load(function() {
 
 ## Compatibility
 | | Google Map | Bing Map | Baidu | Mappy | Yandex | ViaMichelin |
-|-----|:----------:|:--------:|:-----:|:------:|:-----------:|
+|-----|:----------:|:--------:|:-----:|:-----:|:------:|:-----------:|
 | Chrome | OK | OK | OK | OK | OK | OK |
 | Firefox | OK | OK | OK | ? | OK | ? |
 | Opera | OK | OK | OK | ? | OK | OK |
