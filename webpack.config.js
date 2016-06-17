@@ -5,6 +5,7 @@ module.exports = {
         baidu: './src/providers/baidu/baidu.js',
         bingMap: './src/providers/bingMap/BingMap.js',
         googleMap: './src/providers/googleMap/GoogleMap.js',
+        mappy: './src/providers/mappy/Mappy.js',
         viaMichelin: './src/providers/viaMichelin/ViaMichelin.js',
         yandex: './src/providers/yandex/Yandex.js'
     },
@@ -56,6 +57,7 @@ module.exports = {
             BMAP_STATUS_SUCCESS: true,
             console: true,
             google: true,
+            L: true,
             MarkerClusterer: true,
             Microsoft: true,
             PinClusterer: true,
