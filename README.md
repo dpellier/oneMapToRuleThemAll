@@ -20,6 +20,7 @@ Providers available:
 - googleMap
 - bingMap
 - baidu
+- mappy
 - yandex
 - viaMichelin
 
@@ -246,6 +247,37 @@ Here are the common options:
 }
 ```
 
+- [Mappy config](http://leafletjs.com/reference.html)
+
+```js
+{
+    {
+        activeCluster: true,
+        activeInfoWindow: true,
+        map: {
+            clientId: mappyKey,
+            layersControl: false,
+            zoom: 7
+        },
+        marker: {
+            icon: L.icon({
+                iconUrl: './marker.png'
+            })
+        },
+        markerCluster: {
+            iconCreateFunction: function(cluster) {
+                return L.divIcon({ html: '<b>' + cluster.getChildCount() + '</b>' });
+            }
+        },
+        infoWindow: {
+            content: function(data) {
+                return bigDOM(data);
+            }
+        }
+    }
+}
+```
+
 - [Yandex config](https://tech.yandex.ru/maps/jsapi/)
 
 ```js
@@ -434,16 +466,16 @@ map.load(function() {
 ```
 
 ## Compatibility
-| | Google Map | Bing Map | Baidu | Yandex | ViaMichelin |
+| | Google Map | Bing Map | Baidu | Mappy | Yandex | ViaMichelin |
 |-----|:----------:|:--------:|:-----:|:------:|:-----------:|
-| Chrome | OK | OK | OK | OK | OK |
-| Firefox | OK | OK | OK | OK | ? |
-| Opera | OK | OK | OK | OK | OK |
-| Safari | OK | OK | OK | OK | ? |
-| IE11 | OK | OK | OK | OK | ? |
-| IE10 | OK | OK | OK | OK | ? |
-| IE9 | OK | OK | OK | OK | ? |
-| IE8* | OK | KO | OK | OK | ? |
+| Chrome | OK | OK | OK | OK | OK | OK |
+| Firefox | OK | OK | OK | ? | OK | ? |
+| Opera | OK | OK | OK | ? | OK | OK |
+| Safari | OK | OK | OK | ? | OK | ? |
+| IE11 | OK | OK | OK | ? | OK | ? |
+| IE10 | OK | OK | OK | ? | OK | ? |
+| IE9 | OK | OK | OK | ? | OK | ? |
+| IE8* | OK | KO | OK | ? | OK | ? |
 
 * need to include [es5-shim && es5-sham](https://github.com/es-shims/es5-shim)
 
@@ -462,3 +494,7 @@ clusterer: http://rtsinani.github.io/PinClusterer/
 ### Baidu
 
 clusterer: API Baidu (TextIconOverlay && MarkerClusterer)
+
+### Mappy
+
+clusterer: https://github.com/Leaflet/Leaflet.markercluster/tree/leaflet-0.7

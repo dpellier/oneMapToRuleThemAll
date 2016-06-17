@@ -27,6 +27,11 @@ class Mappy extends Map {
         this.map = new MappyMap(this.domId, this.options.map);
         this.markers = [];
 
+        if (this.plugins.clusterer && this.options.activeCluster) {
+            this.markerClusterer = L.markerClusterGroup(this.options.markerCluster);
+            this.map.addLayer(this.markerClusterer);
+        }
+
         this.addMarkers(this.points);
 
         this.setBounds();
@@ -50,10 +55,18 @@ class Mappy extends Map {
             domUtils.createScript('//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js'),
             domUtils.createStyle('//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css')
         ], () => {
-            domUtils.addResources(document.body, [
+            const resources = [
                 domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/Mappy/L.Mappy.js'),
                 domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/Mappy/L.Mappy.css')
-            ], () => {
+            ];
+
+            if (this.plugins.clusterer) {
+                resources.push(domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/leaflet.markercluster.js'));
+                resources.push(domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/MarkerCluster.Default.css'));
+                resources.push(domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/MarkerCluster.css'));
+            }
+
+            domUtils.addResources(document.body, resources, () => {
                 MappyMap = require('./Map');
                 Marker = require('./Marker');
 
@@ -77,7 +90,12 @@ class Mappy extends Map {
             }
 
             this.markers.push(marker);
-            marker.addTo(this.map);
+
+            if (this.plugins.clusterer && this.options.activeCluster) {
+                this.markerClusterer.addLayer(marker);
+            } else {
+                marker.addTo(this.map);
+            }
         });
     }
 
