@@ -8,14 +8,21 @@ class Marker extends L.Marker {
     }
 
     bindPopup(content, data) {
-        if (typeof content === 'string') {
-            super.bindPopup(content);
-            return;
-        }
+        super.bindPopup();
 
-        if (typeof content === 'function') {
-            super.bindPopup(content(data));
-        }
+        this.on({
+            click: () => {
+                const popup = this.getPopup();
+
+                if (!popup.getContent()) {
+                    if (typeof content === 'function') {
+                        popup.setContent(content(data));
+                    } else {
+                        popup.setContent(content);
+                    }
+                }
+            }
+        });
     }
 }
 
