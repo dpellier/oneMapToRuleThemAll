@@ -79,6 +79,8 @@ class Mappy extends Map {
         this.map.fitBounds(this.markers.map((marker) => {
             return marker.getLatLng();
         }));
+
+        this.map.boundsZoom = this.map.getZoom();
     }
 
     addMarkers(points) {
@@ -100,12 +102,20 @@ class Mappy extends Map {
     }
 
     clickOnMarker(markerId) {
-        const marker = this.markers.filter((marker) => {
+        const markers = this.markers.filter((marker) => {
             return marker.id.toString() === markerId;
         });
 
-        if (marker.length) {
-            marker[0].openPopup();
+        if (markers.length) {
+            const marker = markers[0];
+
+            if (this.options.activeCluster) {
+                this.markerClusterer.zoomToShowLayer(marker, () => {
+                    marker.fire('click');
+                });
+            } else {
+                marker.fire('click');
+            }
         }
     }
 
