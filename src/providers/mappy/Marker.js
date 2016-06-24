@@ -7,7 +7,7 @@ class Marker extends L.Marker {
         super([point.latitude, point.longitude], options);
 
         if (options.icon && typeof options.icon.options.html === 'function') {
-            const icon = new Icon(point, options.icon);
+            const icon = new Icon(point, options.icon.options);
             this.setIcon(icon);
         }
 
