@@ -79,8 +79,6 @@ class Mappy extends Map {
         this.map.fitBounds(this.markers.map((marker) => {
             return marker.getLatLng();
         }));
-
-        this.map.boundsZoom = this.map.getZoom();
     }
 
     addMarkers(points) {
