@@ -2,9 +2,9 @@
 
 class Icon extends L.DivIcon {
     constructor(point, options) {
-        super({
-            html: options.options.html(point)
-        });
+        super(Object.assign({}, options, {
+            html: options.html(point)
+        }));
     }
 }
 
