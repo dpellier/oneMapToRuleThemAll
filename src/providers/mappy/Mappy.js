@@ -101,7 +101,7 @@ class Mappy extends Map {
 
     clickOnMarker(markerId) {
         const markers = this.markers.filter((marker) => {
-            return marker.id.toString() === markerId;
+            return marker.id.toString() === markerId.toString();
         });
 
         if (markers.length) {
