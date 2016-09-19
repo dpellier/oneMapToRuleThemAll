@@ -483,7 +483,7 @@ map.load(function() {
 
 ### Google Map
 
-clusterer: markerclusterer.min.js
+clusterer: https://github.com/googlemaps/js-marker-clusterer
 
 infobox: https://github.com/googlemaps/js-info-bubble
 
