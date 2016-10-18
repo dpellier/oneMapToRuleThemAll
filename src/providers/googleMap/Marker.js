@@ -7,7 +7,8 @@ class Marker extends google.maps.Marker {
     constructor(map, point, options) {
         let marker = {
             position: new google.maps.LatLng(point.latitude, point.longitude),
-            map: map
+            map: map,
+            draggable: options.draggable || false
         };
 
         if (options.icon) {
@@ -24,6 +25,20 @@ class Marker extends google.maps.Marker {
                 map: map,
                 position: this.getPosition()
             }, point, options.label);
+        }
+
+        if (marker.draggable) {
+            google.maps.event.addListener(this, 'drag', (event) => {
+                if (options.label) {
+                    this.label.update(event.latLng);
+                }
+            });
+
+            if (options.onDragEnd) {
+                google.maps.event.addListener(this, 'dragend', (event) => {
+                    options.onDragEnd(event.latLng.lat(), event.latLng.lng());
+                });
+            }
         }
     }
 
