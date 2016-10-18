@@ -40,6 +40,11 @@ class Label extends google.maps.OverlayView {
     hide() {
         this._div.style.cssText = 'position: absolute; display: none';
     }
+
+    update(coordinates) {
+        this.position = coordinates;
+        this.draw();
+    }
 }
 
 module.exports = Label;
