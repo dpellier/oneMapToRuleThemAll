@@ -1,0 +1,7 @@
+{
+  "name": "oneMapToRuleThemAll",
+  "description": "Unique interface above multiple map providers.",
+  "main": [
+    "dist/googleMap.js"
+  ]
+}
