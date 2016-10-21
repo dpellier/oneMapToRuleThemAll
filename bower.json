@@ -1,7 +1,13 @@
 {
   "name": "oneMapToRuleThemAll",
   "description": "Unique interface above multiple map providers.",
-  "main": [
-    "dist/googleMap.js"
+  "main": "dist/googleMap.js",
+  "ignore": [
+      "scripts",
+      "src",
+      ".editorconfig",
+      ".gitignore",
+      "package.json",
+      "webpack.config.js"
   ]
 }
