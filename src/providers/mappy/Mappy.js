@@ -128,3 +128,4 @@ class Mappy extends Map {
 }
 
 window.Map = Mappy;
+window.OneMap = Mappy;

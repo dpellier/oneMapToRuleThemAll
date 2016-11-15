@@ -217,3 +217,4 @@ function getLargestBounds(bounds, point) {
 }
 
 window.Map = ViaMichelinMap;
+window.OneMap = ViaMichelinMap;

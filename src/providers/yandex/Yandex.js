@@ -114,3 +114,4 @@ function getLargestBounds(bounds, point) {
 }
 
 window.Map = Yandex;
+window.OneMap = Yandex;

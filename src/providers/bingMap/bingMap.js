@@ -144,3 +144,4 @@ class BingMap extends Map {
 }
 
 window.Map = BingMap;
+window.OneMap = BingMap;
