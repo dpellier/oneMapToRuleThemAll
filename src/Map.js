@@ -27,7 +27,8 @@ class Map {
             map: {},
             marker: {},
             markerCluster: {},
-            infoWindow: {}
+            infoWindow: {},
+            loadParams: {}
         };
 
         this.options = objectAssign(defaultOptions, options);
