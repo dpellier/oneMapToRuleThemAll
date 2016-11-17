@@ -92,7 +92,18 @@ class GoogleMap extends Map {
             callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
         }
 
-        domUtils.addScript(this.domElement, '//maps.googleapis.com/maps/api/js?v=3.exp&callback=_googleMapCallbackOnLoad&key=' + this.apiKey + '&language=' + this.locale);
+        let urlParams = Object.keys(this.options.loadParams).reduce((param, key) => {
+            param += key + '=' + this.options.loadParams[key] + '&';
+            return param;
+        }, '?');
+
+        urlParams += 'v=3.exp&callback=_googleMapCallbackOnLoad&language=' + this.locale;
+
+        if (!this.options.loadParams.signature) {
+            urlParams += '&key=' + this.apiKey;
+        }
+
+        domUtils.addScript(this.domElement, '//maps.googleapis.com/maps/api/js' + urlParams);
     }
 
     setBounds() {
