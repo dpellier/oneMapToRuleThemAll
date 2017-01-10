@@ -94,6 +94,10 @@ class Baidu extends Map {
         domUtils.addScript(domElement, '//api.map.baidu.com/api?v=2.0&callback=_baiduCallbackOnLoad&ak=' + this.apiKey);
     }
 
+    clickOnMarker(markerId) {
+        return this.focusOnMarker(markerId);
+    }
+
     focusOnMarker(markerId) {
         markerId = markerId.toString();
         let marker = this.markers.filter((marker) => {
