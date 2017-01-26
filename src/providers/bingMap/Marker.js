@@ -16,8 +16,8 @@ class Marker {
         let marker = new Microsoft.Maps.Pushpin(location, opts);
 
         marker.id = point.id;
-        marker.latitude = point.latitude;
-        marker.longitude = point.longitude;
+        marker.latitude = parseFloat(point.latitude);
+        marker.longitude = parseFloat(point.longitude);
 
         return marker;
     }
