@@ -52,18 +52,18 @@ class Mappy extends Map {
         }
 
         domUtils.addResources(document.body, [
-            domUtils.createScript('//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js'),
-            domUtils.createStyle('//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css')
+            domUtils.createScript('//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.1/leaflet.js'),
+            domUtils.createStyle('//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.1/leaflet.css')
         ], () => {
             const resources = [
-                domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/Mappy/L.Mappy.js'),
-                domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/Mappy/L.Mappy.css')
+                domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/Mappy/5.4.1/L.Mappy.js'),
+                domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/Mappy/5.4.1/L.Mappy.css')
             ];
 
             if (this.plugins.clusterer) {
-                resources.push(domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/leaflet.markercluster.js'));
-                resources.push(domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/MarkerCluster.Default.css'));
-                resources.push(domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/MarkerCluster.css'));
+                resources.push(domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/5.4.1/leaflet.markercluster.js'));
+                resources.push(domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/5.4.1/MarkerCluster.Default.css'));
+                resources.push(domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/5.4.1/MarkerCluster.css'));
             }
 
             domUtils.addResources(document.body, resources, () => {
@@ -75,10 +75,21 @@ class Mappy extends Map {
         });
     }
 
+    setZoom (level) {
+        if (this.map) {
+            this.map.setZoom(level);
+        }
+    }
+
     setBounds() {
         this.map.fitBounds(this.markers.map((marker) => {
             return marker.getLatLng();
         }));
+
+        // Prevent zoomlevel too high when one marker
+        if (this.markers.length === 1) {
+            this.setZoom(14);
+        }
     }
 
     addMarkers(points) {
