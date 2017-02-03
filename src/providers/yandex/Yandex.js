@@ -75,16 +75,31 @@ class Yandex extends Map {
             callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
         }
 
-        domUtils.addScript(this.domElement, 'http://api-maps.yandex.ru/2.1/?load=package.standard&onload=_yandexCallbackOnLoad&lang=' + this.locale);
+        domUtils.addScript(this.domElement, '//api-maps.yandex.ru/2.1/?load=package.standard&onload=_yandexCallbackOnLoad&lang=' + this.locale);
     }
 
+    setZoom(level) {
+        if (this.map) {
+            this.map.setZoom(level);
+        }
+    }
+
+    clickOnMarker(markerId) {
+        this.focusOnMarker(markerId);
+    }
+
+    // Use focusOnMarker instead, this one is for retro compat
     focusOnMarker(markerId) {
         markerId = markerId.toString();
         let marker = this.markers.filter((marker) => {
             return marker.id.toString() === markerId;
         });
 
+
+
         if (marker.length) {
+            this.map.setCenter(marker[0].geometry.getCoordinates());
+            this.map.setZoom(16);
             marker[0].events.fire('click');
         }
     }
