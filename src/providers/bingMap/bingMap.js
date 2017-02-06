@@ -26,25 +26,27 @@ class BingMap extends Map {
 
         this.provider = 'Bing';
         this.markers = [];
+        this.map = null;
     }
 
     render() {
+
         // Init the map
-        let map = new Microsoft.Maps.Map(this.domElement, objectAssign({
+        this.map = new Microsoft.Maps.Map(this.domElement, objectAssign({
             credentials: this.apiKey
         }, this.options.map));
 
         let clusterer;
         let infoBox = {};
         let dataLayer = new Microsoft.Maps.EntityCollection();
-        map.entities.push(dataLayer);
+        this.map.entities.push(dataLayer);
 
         let bounds = [];
 
         // Init the info window is the option is set
         if (this.options.activeInfoWindow) {
             infoBox = new InfoBox(new Microsoft.Maps.Location(0, 0), this.options.infoWindow);
-            map.entities.push(infoBox);
+            this.map.entities.push(infoBox);
         }
 
         // Create a marker for each point
@@ -58,7 +60,7 @@ class BingMap extends Map {
             if (this.options.activeInfoWindow) {
                 Microsoft.Maps.Events.addHandler(marker, 'click', () => {
                     infoBox.display(marker.getLocation(), point.data);
-                    map.setView({center: marker.getLocation()});
+                    this.map.setView({center: marker.getLocation()});
                 });
             }
 
@@ -67,15 +69,15 @@ class BingMap extends Map {
 
         // Init the clustering if the option is set
         if (this.plugins.clusterer && this.options.activeCluster) {
-            clusterer = new MarkerClusterer(map, this.markers, this.options.markerCluster);
+            clusterer = new MarkerClusterer(this.map, this.markers, this.options.markerCluster);
             clusterer.cluster(this.markers);
         }
 
         // Center the map
         if (bounds.length === 1) {
-            map.setView({center: bounds[0], zoom: 16});
+            this.map.setView({center: bounds[0], zoom: 16});
         } else {
-            map.setView({bounds: Microsoft.Maps.LocationRect.fromLocations(bounds)});
+            this.map.setView({bounds: Microsoft.Maps.LocationRect.fromLocations(bounds)});
         }
     }
 
@@ -110,7 +112,27 @@ class BingMap extends Map {
             callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
         }
 
-        domUtils.addScript(this.domElement, '//ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad&mkt=' + this.locale);
+        domUtils.addScript(this.domElement, '//ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&onScriptLoad=_bingCallbackOnLoad&s=1&mkt=' + this.locale);
+    }
+
+    setCenter(lat, lng) {
+        if (this.map) {
+            this.map.setView({center: {
+                lat: lat,
+                lng:lng
+            }});
+        }
+    }
+
+    setZoom (level) {
+        if (this.map) {
+            this.map.setView({zoom:level});
+        }
+    }
+
+    // Use focusOnMarker instead, this one is for retro compat
+    clickOnMarker(markerId) {
+        this.focusOnMarker(markerId);
     }
 
     focusOnMarker(markerId) {
@@ -122,6 +144,8 @@ class BingMap extends Map {
         if (marker.length) {
             Microsoft.Maps.Events.invoke(marker[0], 'click', {});
         }
+
+        this.setZoom(16);
     }
 
     getDirections(origin, destination, options, callback, onError) {

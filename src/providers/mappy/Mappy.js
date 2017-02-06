@@ -110,7 +110,12 @@ class Mappy extends Map {
         });
     }
 
+    // Use focusOnMarker instead, this one is for retro compat
     clickOnMarker(markerId) {
+        this.focusOnMarker(markerId);
+    }
+
+    focusOnMarker(markerId) {
         const markers = this.markers.filter((marker) => {
             return marker.id.toString() === markerId.toString();
         });
