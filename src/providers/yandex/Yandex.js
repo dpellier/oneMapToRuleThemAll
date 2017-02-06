@@ -54,6 +54,11 @@ class Yandex extends Map {
 
         // Center the map
         this.map.setBounds(bounds);
+
+        // If one marker: readjust zoom because bounds are too small to show tiles
+        if (this.points && this.points.length === 1) {
+            this.setZoom(16);
+        }
     }
 
     load(callback, loadingMask) {
