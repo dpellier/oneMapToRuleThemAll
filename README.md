@@ -251,28 +251,26 @@ Here are the common options:
 
 ```js
 {
-    {
-        activeCluster: true,
-        activeInfoWindow: true,
-        map: {
-            clientId: mappyKey,
-            layersControl: false,
-            zoom: 7
-        },
-        marker: {
-            icon: L.icon({
-                iconUrl: './marker.png'
-            })
-        },
-        markerCluster: {
-            iconCreateFunction: function(cluster) {
-                return L.divIcon({ html: '<b>' + cluster.getChildCount() + '</b>' });
-            }
-        },
-        infoWindow: {
-            content: function(data) {
-                return bigDOM(data);
-            }
+    activeCluster: true,
+    activeInfoWindow: true,
+    map: {
+        clientId: mappyKey,
+        layersControl: false,
+        zoom: 7
+    },
+    marker: {
+        icon: L.icon({
+            iconUrl: './marker.png'
+        })
+    },
+    markerCluster: {
+        iconCreateFunction: function(cluster) {
+            return L.divIcon({ html: '<b>' + cluster.getChildCount() + '</b>' });
+        }
+    },
+    infoWindow: {
+        content: function(data) {
+            return bigDOM(data);
         }
     }
 }
