@@ -68,7 +68,7 @@ class ViaMichelinMap extends Map {
             callback();
         } else {
             domUtils.addResources(this.domElement, [
-                domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=' + this.locale)
+                domUtils.createScript('//secure-apijs.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=' + this.locale + '&protocol=https')
             ], () => {
                 Marker = require('./Marker');
                 markerClusterer = require('./markerClusterer');
