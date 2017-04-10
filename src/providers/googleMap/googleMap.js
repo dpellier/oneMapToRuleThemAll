@@ -12,6 +12,7 @@ let Map = require('../../Map');
 let domUtils = require('../../utils/dom');
 let ieUtils = require('../../utils/ie');
 let loaderUtils = require('../../utils/loader');
+let objectAssign = require('object-assign');
 let InfoWindow;
 let Marker;
 
@@ -199,7 +200,7 @@ class GoogleMap extends Map {
         let options = {};
 
         for(let i = 0; i < points.length; i++) {
-            options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
+            options = objectAssign({}, this.options.marker, points[i].options ? points[i].options : {});
 
             if (typeof options.activeInfoWindow === 'undefined' || options.activeInfoWindow === null) {
                 options.activeInfoWindow = this.options.activeInfoWindow;
