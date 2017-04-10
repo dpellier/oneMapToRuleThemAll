@@ -11,6 +11,7 @@ let Map = require('../../Map');
 
 let domUtils = require('../../utils/dom');
 let loaderUtils = require('../../utils/loader');
+let objectAssign = require('object-assign');
 let DirectionsService;
 let Marker;
 let markerClusterer;
@@ -68,7 +69,7 @@ class ViaMichelinMap extends Map {
             callback();
         } else {
             domUtils.addResources(this.domElement, [
-                domUtils.createScript('//apijsv2.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=' + this.locale)
+                domUtils.createScript('//secure-apijs.viamichelin.com/apijsv2/api/js?key=' + this.apiKey + '&lang=' + this.locale + '&protocol=https')
             ], () => {
                 Marker = require('./Marker');
                 markerClusterer = require('./markerClusterer');
@@ -159,7 +160,7 @@ class ViaMichelinMap extends Map {
         let options = {};
 
         for(let i = 0; i < points.length; i++) {
-            options = Object.assign({}, this.options.marker, points[i].options ? points[i].options : {});
+            options = objectAssign({}, this.options.marker, points[i].options ? points[i].options : {});
 
             if (typeof options.activeInfoWindow === 'undefined' || options.activeInfoWindow === null) {
                 options.activeInfoWindow = this.options.activeInfoWindow;
