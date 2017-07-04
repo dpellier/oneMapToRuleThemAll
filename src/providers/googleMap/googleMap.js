@@ -70,11 +70,13 @@ class GoogleMap extends Map {
         let domElement = this.domElement;
         let plugins = this.plugins;
 
-        window._googleMapCallbackOnLoad = function() {
+        this.window._googleMapCallbackOnLoad = function() {
+            window.google = this.window.google;
+
             // Require google object here cause they're not loaded before
             Marker = require('./Marker');
 
-            ieUtils.delete(window, '_googleMapCallbackOnLoad');
+            ieUtils.delete(this.window, '_googleMapCallbackOnLoad');
 
             let resources = [];
 
@@ -238,7 +240,7 @@ class GoogleMap extends Map {
                 }
             }
             else {
-                let markerClusterer = new MarkerClusterer(this.map, markers, clusterConfig);
+                let markerClusterer = new this.window.MarkerClusterer(this.map, markers, clusterConfig);
                 this.markerClusterers.push(markerClusterer);
 
                 google.maps.event.addListener(markerClusterer, 'clusteringend', function(clusterer) {

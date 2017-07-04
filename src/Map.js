@@ -1,17 +1,19 @@
 'use strict';
 
 require('./style.css');
-let objectAssign = require('object-assign');
+const objectAssign = require('object-assign');
+const {isHTMLElement} = require('./utils/dom');
 
 class Map {
-    constructor(domSelector, apiKey, locale, options, plugins) {
-        this.domElement = document.querySelector(domSelector);
+    constructor(domSelector, apiKey, locale, options, plugins, customWindow) {
+        this.domElement = isHTMLElement(domSelector) ? domSelector : document.querySelector(domSelector);
         this.domId = this.domElement.id || '';
         this.apiKey = apiKey;
         this.locale = locale || 'en';
         this.setOptions(options);
         this.plugins = plugins || {};
         this.provider = '[No provider defined]';
+        this.window = customWindow || window;
     }
 
     setPoints(points) {
