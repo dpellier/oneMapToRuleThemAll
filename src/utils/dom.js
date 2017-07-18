@@ -46,5 +46,13 @@ module.exports = {
         style.href = href;
 
         return style;
+    },
+
+    isHTMLElement: function(obj) {
+        if (typeof HTMLElement === 'object') {
+            return obj instanceof HTMLElement;
+        }
+
+        return obj && typeof obj === 'object' && obj !== null && obj.nodeType === 1 && typeof obj.nodeName === 'string';
     }
 };

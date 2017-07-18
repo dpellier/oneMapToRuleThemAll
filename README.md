@@ -37,9 +37,9 @@ Each provider expose the same set of methods, that will call the corresponding a
 Create a new Map instance.
 
 #### selector
-Type: `DOM Element`
+Type: `DOM Selector || Node`
 
-The DOM container where the map will be added.
+The DOM container where the map will be added or a selector to found it using `document.querySelector`. 
 
 #### apiKey
 Type: `String`
