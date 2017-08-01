@@ -37,6 +37,7 @@ class GoogleMap extends Map {
         // Init the map
         this.map = new google.maps.Map(this.domElement, this.options.map);
         this.markers = [];
+        this.markerClusterers = [];
 
         // Init the info window is the option is set
         if (this.options.activeInfoWindow) {
