@@ -116,14 +116,6 @@ class GoogleMap extends Map {
             bounds.extend(marker.position);
         });
 
-        // Don't zoom in too far on only one marker
-        if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
-            const extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + 0.01, bounds.getNorthEast().lng() + 0.01);
-            const extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - 0.01, bounds.getNorthEast().lng() - 0.01);
-            bounds.extend(extendPoint1);
-            bounds.extend(extendPoint2);
-        }
-
         this.map.fitBounds(bounds);
     }
 
