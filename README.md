@@ -1,4 +1,5 @@
 # One Map To Rule Them All
+
 ---
 
 The goal of this tiny lib is to offer a common interface to allow basic usage of multiple map providers.
@@ -12,25 +13,28 @@ The lib use the native provider configuration voluntarily to allow integrators t
 ## Getting Started
 
 Include the script corresponding to the provider you want:
+
 ```html
 <script src="oneMapToRuleThemAll/dist/googleMap.js"></script>
 ```
 
 Providers available:
-- googleMap
-- bingMap
-- baidu
-- mappy
-- yandex
-- viaMichelin
 
-Each file can be included with its minified version by inserting the `.min.js` file. 
+-   googleMap
+-   bingMap
+-   baidu
+-   mappy
+-   yandex
+-   viaMichelin
+-   openStreetMap (no infowindow, no clustering)
+
+Each file can be included with its minified version by inserting the `.min.js` file.
 
 ## Development
 
 ### Testing your devs
 
-If you need to test your developments before releasing on Cloudfront, you can push the compiled filed to Github Pages. 
+If you need to test your developments before releasing on Cloudfront, you can push the compiled filed to Github Pages.
 To do this, just run `npm run gh-deploy`.
 
 You'll find the generated files on this link: https://leadformance.github.io/oneMapToRuleThemAll/[PROVIDER].js
@@ -39,49 +43,59 @@ You'll find the generated files on this link: https://leadformance.github.io/one
 
 Each provider expose the same set of methods, that will call the corresponding action using the provider native way.
 
-
 ### constructor(selector, apiKey, locale, options, plugins)
 
 Create a new Map instance.
 
 #### selector
+
 Type: `DOM Selector || Node`
 
-The DOM container where the map will be added or a selector to found it using `document.querySelector`. 
+The DOM container where the map will be added or a selector to found it using `document.querySelector`.
 
 #### apiKey
+
 Type: `String`
 
 Provider API Key that will be used to request the API.
 
 ### locale
+
 Type: `String`
 
 Specific locale to use when loading the Map.
 
 #### options
+
 Type: `Object`
 
 see [setOptions method](https://github.com/dpellier/oneMapToRuleThemAll#setoptionsoptions)
 
 #### plugins
+
 Type: `Object`
 
 List of external plugins to use. It depends on each provider (see [provider plugins](https://github.com/dpellier/oneMapToRuleThemAll#provider-plugins))
 
 #### Example
-```js
-var map = new Map(document.querySelector('#map'), providerKey, {}, {
-    clusterer: true
-});
-```
 
+```js
+var map = new Map(
+    document.querySelector("#map"),
+    providerKey,
+    {},
+    {
+        clusterer: true
+    }
+);
+```
 
 ### setPoints(points)
 
 Set the list of point you want to display on the map.
 
 #### points
+
 Type: `Object || Array`
 
 All the points you want to display on the map. Each point must at least contain latitude and longitude properties.
@@ -102,6 +116,7 @@ All the points you want to display on the map. Each point must at least contain 
 Set the custom options to configure your map.
 
 #### options
+
 Type: `Object`
 
 The options are separated into common groups for each provider, but the properties inside each group are the native ones of the provider.
@@ -127,7 +142,8 @@ Here are the common options:
 ```
 
 #### Examples
-- [Google config](https://developers.google.com/maps/documentation/javascript/reference)
+
+-   [Google config](https://developers.google.com/maps/documentation/javascript/reference)
 
 ```js
 {
@@ -177,7 +193,7 @@ Here are the common options:
 }
 ```
 
-- [Bing config](https://www.bingmapsportal.com/isdk/ajaxv7e)
+-   [Bing config](https://www.bingmapsportal.com/isdk/ajaxv7e)
 
 ```js
 {
@@ -214,7 +230,7 @@ Here are the common options:
 }
 ```
 
-- [Baidu config](http://developer.baidu.com/map/index.php?title=jspopular)
+-   [Baidu config](http://developer.baidu.com/map/index.php?title=jspopular)
 
 ```js
 {
@@ -255,7 +271,7 @@ Here are the common options:
 }
 ```
 
-- [Mappy config](http://leafletjs.com/reference.html)
+-   [Mappy config](http://leafletjs.com/reference.html)
 
 ```js
 {
@@ -284,7 +300,7 @@ Here are the common options:
 }
 ```
 
-- [Yandex config](https://tech.yandex.ru/maps/jsapi/)
+-   [Yandex config](https://tech.yandex.ru/maps/jsapi/)
 
 ```js
 {
@@ -323,7 +339,7 @@ Here are the common options:
 }
 ```
 
-- [ViaMichelin config](http://dev.viamichelin.fr/tutoriel-rest.html)
+-   [ViaMichelin config](http://dev.viamichelin.fr/tutoriel-rest.html)
 
 ```js
 {
@@ -378,11 +394,13 @@ So before rendering the map, you'll have to call the load method to fetch all th
 In the load callback, you'll get access to the provider object (ex: `google.maps`), so you will have to set your options at this moment if you use some of this (ex: `google.maps.ControlPosition.TOP_RIGHT`)
 
 #### callback
+
 Type: `Function`
 
 Function to call when all the provider resources are loaded
 
 #### loadingMask
+
 Type: `Boolean`
 
 If set to true, a loader will be added to the map container during the loading of all the resources.
@@ -390,6 +408,7 @@ If set to true, a loader will be added to the map container during the loading o
 The loader style can be customized by overriding the `one-map-to-rule-them-all__spinner` class.
 
 #### clustered
+
 Type: `Boolean`
 
 As many provider use external scripts to manage the clustering, we load them only if they are required.
@@ -413,6 +432,7 @@ map.load(function() {
 Trigger a click on the point with the given id (if your point have a id property).
 
 #### markerId
+
 Type: `String || Number`
 
 Id of the marker to trigger the click event on.
@@ -422,16 +442,19 @@ Id of the marker to trigger the click event on.
 Get the direction to go between two points, it can return the provider raw data or the provider formatted road map.
 
 #### origin
+
 Type: `String`
 
 Starting address.
 
 #### destination
+
 Type: `String`
 
 Arriving address.
 
 #### options
+
 Type: `Object`
 
 Customize the direction request and result.
@@ -444,18 +467,20 @@ Customize the direction request and result.
 ```
 
 #### callback
+
 Type: `Function`
 
 Function to call when the request is completed.
 Will receive all the raw data from the provider as argument.
 
 #### onError
+
 Type: `Function`
 
 Function to call when the request failed.
 
-
 #### Example
+
 ```js
 var map = new Map('#directionsMap', key);
 
@@ -472,18 +497,17 @@ map.load(function() {
 ```
 
 ## Compatibility
-| | Google Map | Bing Map | Baidu | Mappy | Yandex | ViaMichelin |
-|-----|:----------:|:--------:|:-----:|:-----:|:------:|:-----------:|
-| Chrome | OK | OK | OK | OK | OK | OK |
-| Firefox | OK | OK | OK | ? | OK | ? |
-| Opera | OK | OK | OK | ? | OK | OK |
-| Safari | OK | OK | OK | ? | OK | ? |
-| IE11 | OK | OK | OK | ? | OK | ? |
-| IE10 | OK | OK | OK | ? | OK | ? |
-| IE9 | OK | OK | OK | ? | OK | ? |
-| IE8* | OK | KO | OK | ? | OK | ? |
 
-* need to include [es5-shim && es5-sham](https://github.com/es-shims/es5-shim)
+|         | Google Map | Bing Map | Baidu | Mappy | Yandex | ViaMichelin | OpenStreetMap |
+| ------- | :--------: | :------: | :---: | :---: | :----: | :---------: | :-----------: |
+| Chrome  |     OK     |    OK    |  OK   |  OK   |   OK   |     OK      |      OK       |
+| Firefox |     OK     |    OK    |  OK   |   ?   |   OK   |      ?      |      OK       |
+| Opera   |     OK     |    OK    |  OK   |   ?   |   OK   |     OK      |      OK       |
+| Safari  |     OK     |    OK    |  OK   |   ?   |   OK   |      ?      |      OK       |
+| IE11    |     OK     |    OK    |  OK   |   ?   |   OK   |      ?      |       ?       |
+| IE10    |     OK     |    OK    |  OK   |   ?   |   OK   |      ?      |       ?       |
+
+-   need to include [es5-shim && es5-sham](https://github.com/es-shims/es5-shim)
 
 ## Provider Plugins
 
