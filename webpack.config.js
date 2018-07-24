@@ -6,6 +6,7 @@ module.exports = {
         bingMap: './src/providers/bingMap/BingMap.js',
         googleMap: './src/providers/googleMap/GoogleMap.js',
         mappy: './src/providers/mappy/Mappy.js',
+        openStreetMap: './src/providers/openStreetMap/openStreetMap.js',
         viaMichelin: './src/providers/viaMichelin/ViaMichelin.js',
         yandex: './src/providers/yandex/Yandex.js'
     },
