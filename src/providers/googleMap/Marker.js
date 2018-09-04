@@ -1,52 +1,63 @@
 'use strict';
 
+let isDefined = require('simple-js-validator').isDefined;
+let isTrue = require('simple-js-validator').isTrue;
+let isAFunction = require('../../utils/type').isAFunction;
+let isAString = require('../../utils/type').isAString;
 let objectAssign = require('object-assign');
-let Label = require('./Label');
 
 class Marker extends google.maps.Marker {
     constructor(map, point, options) {
-        let marker = {
-            position: new google.maps.LatLng(point.latitude, point.longitude),
-            map: map,
-            draggable: options.draggable || false
-        };
-
-        if (options.icon) {
-            objectAssign(marker, {
-                icon: options.icon
-            });
-        }
-
-        super(marker);
+        let markerOptions = buildMarkerOptions(point, map, options);
+        super(markerOptions);
         this.id = point.id;
+        this.defineLabel(options, point);
+        this.addOnDragEndEventListener(markerOptions, options);
+    }
 
-        if (options.label) {
-            this.label = new Label({
-                map: map,
-                position: this.getPosition()
-            }, point, options.label);
-        }
-
-        if (marker.draggable) {
-            google.maps.event.addListener(this, 'drag', (event) => {
-                if (options.label) {
-                    this.label.update(event.latLng);
-                }
-            });
-
-            if (options.onDragEnd) {
-                google.maps.event.addListener(this, 'dragend', (event) => {
-                    options.onDragEnd(event.latLng.lat(), event.latLng.lng());
-                });
+    defineLabel(options, point) {
+        let label = options.label;
+        if (true === isDefined(label)) {
+            if (true === isAFunction(label)) {
+                this.setLabel(label(point));
+            } else if (true === isAString(label) || true === isAMarkerLabel(label)) {
+                this.setLabel(label);
             }
         }
     }
 
-    hideLabel() {
-        if (this.label) {
-            this.label.hide();
+    addOnDragEndEventListener(marker, options) {
+        if (true === isTrue(marker.draggable) && true === isDefined(options.onDragEnd)) {
+            google.maps.event.addListener(this, 'dragend', (event) => {
+                options.onDragEnd(event.latLng.lat(), event.latLng.lng());
+            });
         }
     }
+
+}
+
+function buildMarkerOptions(point, map, options) {
+    let marker = {
+        position: new google.maps.LatLng(point.latitude, point.longitude),
+        map: map,
+        draggable: options.draggable || false
+    };
+
+    if (true === isDefined(options.icon)) {
+        objectAssign(marker, {
+            icon: options.icon
+        });
+    }
+    return marker;
+}
+
+function isAMarkerLabel(label) {
+    // use duck typing heuristic
+    return true === isDefined(label.color) ||
+        true === isDefined(label.fontFamily) ||
+        true === isDefined(label.fontSize) ||
+        true === isDefined(label.fontWeight) ||
+        true === isDefined(label.text);
 }
 
 module.exports = Marker;

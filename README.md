@@ -173,7 +173,8 @@ Here are the common options:
             anchor: new google.maps.Point(0, 32)
         },
         label: function(point) {
-            return '<div class="map-custom-label">' + point.id + '</div>';
+            // a function that return the text value of the label
+            return point.data.location.name;
         }
     },
     markerCluster: {

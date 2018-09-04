@@ -1,0 +1,123 @@
+class MappedMap {
+
+    constructor(el, attributes = DEFAULT_ATTRIBUTES) {
+        this.el = el;
+        this.attr = attributes;
+    }
+
+    init() {
+        this.map = new window.Map(`#map`, this.attr.apiKey, this.attr.locale, {}, {clusterer: true});
+        this.displayMap();
+    }
+
+    displayMap() {
+        this.map.load(() => this.doLoad(), true, true);
+    }
+
+    doLoad() {
+        this.map.setPoints(
+            this.attr.locations.map(location => ({
+                latitude: location.localisation.coordinates.latitude,
+                longitude: location.localisation.coordinates.longitude,
+                id: location._id,
+                data: {
+                    location: location
+                }
+            })));
+
+        this.map.setOptions({
+            activeCluster: true,
+            activeInfoWindow: false,
+            marker: {
+                label: (point) => this.attr.showLabel ?
+                    `${point.data.location.name}` :
+                    ''
+            },
+        });
+        this.map.render();
+    }
+
+    setIconOnMarker(markerId, markerIcon) {
+        this.map.setIconOnMarker(markerId, markerIcon);
+    }
+
+    // Center the map view to fit all the markers on the map
+    panToAllMarkers() {
+        this.map.setBounds();
+    }
+
+    focusOnMarker(markerId, opt = {}) {
+        const options = Object.assign({
+            infoWindow: false,
+            pan: true,
+            zoom: 17
+        }, opt);
+
+        this.map.focusOnMarker(markerId, options.infoWindow, options.pan, options.zoom);
+    }
+}
+
+const DEFAULT_ATTRIBUTES = {
+    "apiKey": "<YOUR_API_KEY>",
+    "showLabel": true,
+    "showPosition": true,
+    "locale": "fr",
+    "locations": [
+        {
+            "name": "institut d\u00e9positaire test chamb\u00e9ry",
+            "localisation": {
+                "coordinates": {
+                    "latitude": 45.566322399999997,
+                    "longitude": 5.9209144999999994,
+                }
+            }
+        },
+        {
+            "name": "MARIE-LAURE ESTHETIQUE",
+            "localisation": {
+                "coordinates": {
+                    "latitude": 45.567290499999999,
+                    "longitude": 5.9230074999999998
+                }
+            }
+        },
+        {
+            "name": "Test Chamb\u00e9ry",
+            "localisation": {
+                "coordinates": {
+                    "latitude": 45.569057099999988,
+                    "longitude": 5.9196637000000001,
+                }
+            }
+        },
+        {
+            "name": "institut d\u00e9positaire test",
+            "localisation": {
+                "coordinates": {
+                    "latitude": 45.641514600000001,
+                    "longitude": 5.8729199000000003
+                }
+            }
+        },
+        {
+            "name": "Test Chamb\u00e9ry - Simone Mahler",
+            "localisation": {
+                "coordinates": {
+                    "latitude": 45.641773899999997,
+                    "longitude": 5.8736332999999998,
+                }
+            }
+        },
+        {
+            "client": "5b35ea847d22ff001195cd82",
+            "name": "Caprice institut",
+            "localisation": {
+                "coordinates": {
+                    "latitude": 45.1452077,
+                    "longitude": 5.7042411999999993
+                },
+
+            }
+        }
+    ],
+};
