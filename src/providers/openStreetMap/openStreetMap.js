@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Open Street Map
@@ -6,35 +6,35 @@
  */
 
 /*jshint -W079 */
-let Map = require("../../Map");
+let Map = require('../../Map');
 /* jshint +W079 */
 
-let domUtils = require("../../utils/dom");
-let _ = require("lodash");
+let domUtils = require('../../utils/dom');
+let _ = require('lodash');
 
 class OpenStreetMap extends Map {
     constructor(...args) {
         super(...args);
 
-        this.provider = "OpenStreetMap";
+        this.provider = 'OpenStreetMap';
         this.view = null;
     }
 
     load(callback) {
         if (window.ol) {
-            if (callback) callback();
+            if (callback) {callback();}
         } else {
             domUtils.addResources(
                 this.domElement,
                 [
                     domUtils.createStyle(
-                        "//openlayers.org/en/v4.6.5/css/ol.css"
+                        '//openlayers.org/en/v4.6.5/css/ol.css'
                     ),
                     domUtils.createScript(
-                        "//cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"
+                        '//cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL'
                     ),
                     domUtils.createScript(
-                        "//openlayers.org/en/v4.6.5/build/ol.js"
+                        '//openlayers.org/en/v4.6.5/build/ol.js'
                     )
                 ],
                 () => {
@@ -89,7 +89,7 @@ class OpenStreetMap extends Map {
             this.setBounds();
         }
 
-        if (callback) callback();
+        if (callback) {callback();}
     }
 
     setBounds() {
@@ -106,7 +106,7 @@ class OpenStreetMap extends Map {
 
     setCenter(lat, lng) {
         if (this.map) {
-            var size = this.map.getSize();
+            const size = this.map.getSize();
             this.view.centerOn(ol.proj.fromLonLat([lng, lat]), size, [
                 size[0] / 2,
                 size[1] / 2
@@ -136,8 +136,8 @@ class OpenStreetMap extends Map {
         if (marker.length) {
             const coords = ol.proj.transform(
                 marker[0].getGeometry().getCoordinates(),
-                "EPSG:3857",
-                "EPSG:4326"
+                'EPSG:3857',
+                'EPSG:4326'
             );
             this.setCenter(coords[1], coords[0]);
             this.setZoom(14);
@@ -145,13 +145,13 @@ class OpenStreetMap extends Map {
     }
 
     addMarkers(points) {
-        if (Object.prototype.toString.call(points) !== "[object Array]") {
+        if (Object.prototype.toString.call(points) !== '[object Array]') {
             points = [points];
         }
 
         for (let i = 0; i < points.length; i++) {
             const iconFeature = new ol.Feature({
-                type: "icon",
+                type: 'icon',
                 geometry: new ol.geom.Point(
                     ol.proj.fromLonLat([
                         points[i].longitude,
@@ -164,7 +164,7 @@ class OpenStreetMap extends Map {
                 this.getStyle(
                     _.get(
                         points[i],
-                        "options.icon.url",
+                        'options.icon.url',
                         this.options.marker.icon.url
                     )
                 )
@@ -184,8 +184,8 @@ class OpenStreetMap extends Map {
         return new ol.style.Style({
             image: new ol.style.Icon({
                 anchor: [0.5, 1],
-                anchorXUnits: "fraction",
-                anchorYUnits: "fraction",
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'fraction',
                 src: url
             }),
             zIndex: index

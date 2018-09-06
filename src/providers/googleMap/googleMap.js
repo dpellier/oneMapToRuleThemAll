@@ -244,18 +244,6 @@ class GoogleMap extends Map {
             else {
                 let markerClusterer = new this.window.MarkerClusterer(this.map, markers, clusterConfig);
                 this.markerClusterers.push(markerClusterer);
-
-                google.maps.event.addListener(markerClusterer, 'clusteringend', function(clusterer) {
-                    clusterer.getClusters().forEach(function(cluster) {
-                        let markers = cluster.getMarkers();
-
-                        if (markers.length > 1) {
-                            markers.forEach(function(marker) {
-                                marker.hideLabel();
-                            });
-                        }
-                    });
-                });
             }
         }
 

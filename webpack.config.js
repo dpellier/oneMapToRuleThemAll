@@ -1,5 +1,5 @@
-var path = require('path');
-
+const path = require('path');
+const LoaderOptionsPlugin = require('webpack').LoaderOptionsPlugin;
 module.exports = {
     entry: {
         baidu: './src/providers/baidu/baidu.js',
@@ -14,57 +14,73 @@ module.exports = {
         filename: '[name].js',
         path: path.join(__dirname, 'dist')
     },
+    plugins: [
+       new LoaderOptionsPlugin({ options: {} })
+    ],
+    mode: "development",
     module: {
-        preLoaders: [
-            { test: /\.js$/, exclude: /node_modules/, loader: 'jshint-loader'}
-        ],
-        loaders: [
-            { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader'},
-            { test: /\.css$/, loader: 'style-loader!css-loader' }
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                enforce: "pre",
+                loader: "jshint-loader",
+                options: {
+                    bitwise: true,
+                    camelcase: true,
+                    curly: true,
+                    eqeqeq: true,
+                    freeze: true,
+                    immed: true,
+                    indent: 4,
+                    latedef: 'nofunc',
+                    maxcomplexity: 8,
+                    maxdepth: 4,
+                    newcap: true,
+                    noarg: true,
+                    noempty: true,
+                    nonbsp: true,
+                    nonew: true,
+                    quotmark: 'single',
+                    strict: true,
+                    undef: true,
+                    unused: true,
+                    varstmt: true,
+
+                    // Relaxing options
+                    eqnull: true,
+                    esnext: true,
+                    globalstrict: true,
+
+                    // Environments
+                    browser: true,
+                    globals: {
+                        BMap: true,
+                        BMapLib: true,
+                        BMAP_STATUS_SUCCESS: true,
+                        console: true,
+                        google: true,
+                        L: true,
+                        MarkerClusterer: true,
+                        Microsoft: true,
+                        PinClusterer: true,
+                        ViaMichelin: true,
+                        VMLaunch: true,
+                        ymaps: true,
+                        window: true,
+                        ol: true,
+                    }
+                },
+            },
+            {
+                test:/\.js$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader'
+            },
+            {
+                test:/\.css$/,
+                loader: 'style-loader!css-loader'
+            }
         ]
-    },
-    jshint: {
-        bitwise: true,
-        camelcase: true,
-        curly: true,
-        eqeqeq: true,
-        freeze: true,
-        immed: true,
-        indent: 4,
-        latedef: 'nofunc',
-        maxcomplexity: 8,
-        maxdepth: 4,
-        newcap: true,
-        noarg: true,
-        noempty: true,
-        nonbsp: true,
-        nonew: true,
-        quotmark: 'single',
-        strict: true,
-        undef: true,
-        unused: true,
-        varstmt: true,
-
-        // Relaxing options
-        eqnull: true,
-        esnext: true,
-        globalstrict: true,
-
-        // Environments
-        browser: true,
-        globals: {
-            BMap: true,
-            BMapLib: true,
-            BMAP_STATUS_SUCCESS: true,
-            console: true,
-            google: true,
-            L: true,
-            MarkerClusterer: true,
-            Microsoft: true,
-            PinClusterer: true,
-            ViaMichelin: true,
-            VMLaunch: true,
-            ymaps: true
-        }
     }
 };
