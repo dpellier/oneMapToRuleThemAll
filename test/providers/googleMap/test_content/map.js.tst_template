@@ -29,9 +29,7 @@ class MappedMap {
             activeCluster: true,
             activeInfoWindow: false,
             marker: {
-                label: (point) => this.attr.showLabel ?
-                    `${point.data.location.name}` :
-                    ''
+                label: (point) => `<div class="map-custom-label">${point.data.location.name}</div>`
             },
         });
         this.map.render();
@@ -115,8 +113,7 @@ const DEFAULT_ATTRIBUTES = {
                 "coordinates": {
                     "latitude": 45.1452077,
                     "longitude": 5.7042411999999993
-                },
-
+                }
             }
         }
     ],

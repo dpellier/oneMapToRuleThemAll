@@ -43,9 +43,9 @@ describe(
             await clickOnElement(page, 'div[class=cluster]');
 
             // THEN
-            await hasDivWithText(page, "MARIE-LAURE ESTHETIQUE");
-            await hasDivWithText(page, "Test Chambéry");
-            await hasDivWithText(page, "institut dépositaire test chambéry");
+            await hasDivWithTextAndClass(page, 'MARIE-LAURE ESTHETIQUE', 'map-custom-label');
+            await hasDivWithTextAndClass(page, 'Test Chambéry', 'map-custom-label');
+            await hasDivWithTextAndClass(page, 'institut dépositaire test chambéry', 'map-custom-label');
 
         });
     }
@@ -71,7 +71,7 @@ async function clickOnElement(page, selector) {
     await (await page.waitFor(selector)).click();
 }
 
-async function hasDivWithText(page, text) {
-    const div = await page.waitFor(`//div[contains(., '${text}')]`);
+async function hasDivWithTextAndClass(page, text, cssClass) {
+    const div = await page.waitFor(`//div[contains(., '${text}') and contains(@class, '${cssClass}')]`);
     expect(div).toBeDefined();
 }
