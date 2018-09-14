@@ -44,8 +44,9 @@ function buildMarkerOptions(point, map, options) {
     };
 
     if (true === isDefined(options.icon)) {
+        let iconOptions = objectAssign({}, options.icon);
         objectAssign(markerOptions, {
-            icon: options.icon
+            icon: iconOptions
         });
     }
     // NOTE:
@@ -59,10 +60,13 @@ function buildMarkerOptions(point, map, options) {
         objectAssign(markerOptions,{
             labelContent: textAndCssForLabel.textContent,
         });
-        if (textAndCssForLabel.classes.length > 0){
+        if (true === isAString(textAndCssForLabel.classes) && textAndCssForLabel.classes.trim().length > 0) {
+            const labelClass = textAndCssForLabel.classes;
             objectAssign(markerOptions,{
-                labelClass: textAndCssForLabel.classes.join(' ')
+                labelClass: labelClass
             });
+            const style = dom.getStyleFromCss(labelClass);
+            objectAssign(markerOptions, {labelAnchor: new google.maps.Point(-style.left + 1, -style.top)});
         }
     }
     if (false === isDefined(markerOptions.labelClass)) {

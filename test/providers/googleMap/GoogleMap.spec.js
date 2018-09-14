@@ -16,9 +16,12 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await unlinkFile(jsFile);
-    if (server) {
-        await server.stop();
+    // do not stop server for debugging purposes
+    if ('true' !== process.env.DO_NOT_STOP_SERVER) {
+        await unlinkFile(jsFile);
+        if (server) {
+            await server.stop();
+        }
     }
 });
 

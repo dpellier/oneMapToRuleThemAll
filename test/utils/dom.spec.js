@@ -10,7 +10,7 @@ test('extract text from text', ()=>{
 });
 
 test('extract no css class from text', () => {
-    expect(dom.extractTextAndCssClasses('a content').classes).toEqual([]);
+    expect(dom.extractTextAndCssClasses('a content').classes).toEqual('');
 });
 
 test('extract text from html', ()=>{
@@ -18,13 +18,30 @@ test('extract text from html', ()=>{
 });
 
 test('extract css class from fragment', ()=>{
-    expect(dom.extractTextAndCssClasses('<div class="myClass"></div>').classes).toEqual(['myClass']);
+    expect(dom.extractTextAndCssClasses('<div class="myClass"></div>').classes).toEqual('myClass');
 });
 
 test('extract css classes from fragment', ()=>{
-    expect(dom.extractTextAndCssClasses('<div class="myClass myOtherClass"></div>').classes).toEqual(['myClass', 'myOtherClass']);
+    expect(dom.extractTextAndCssClasses('<div class="myClass myOtherClass"></div>').classes).toEqual('myClass myOtherClass');
 });
 
 test('extract no css class from text', ()=>{
-    expect(dom.extractTextAndCssClasses('a content').classes).toEqual([]);
+    expect(dom.extractTextAndCssClasses('a content').classes).toEqual('');
+});
+
+test('extract style from css class', () => {
+    // given a defined css class
+    const style = document.createElement('style');
+    style.type = 'text/css';
+    const css = `.map-custom-label {
+  top: 2px;
+  left: 40px;
+  width: 10px;
+  height: 10px;
+  color: red;
+  position: absolute;
+}`;
+    style.appendChild(document.createTextNode(css));
+    document.head.appendChild(style);
+    expect(dom.getStyleFromCss('map-custom-label')).toEqual({left: 40, top: 2});
 });
