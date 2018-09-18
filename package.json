@@ -3,6 +3,7 @@
   "version": "1.6.0",
   "description": "Unique interface above multiple map providers",
   "dependencies": {
+    "@google/markerwithlabel": "^1.2.3",
     "simple-js-validator": "^0.13.0"
   },
   "devDependencies": {
@@ -16,6 +17,7 @@
     "express": "^4.16.3",
     "jest": "^23.5.0",
     "jest-puppeteer": "^3.3.1",
+    "jsdom": "^12.0.0",
     "jshint": "^2.9.6",
     "jshint-loader": "^0.8.4",
     "node-libs-browser": "^0.5.2",

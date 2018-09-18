@@ -173,8 +173,7 @@ Here are the common options:
             anchor: new google.maps.Point(0, 32)
         },
         label: function(point) {
-            // a function that return the text value of the label
-            return point.data.location.name;
+            return '<div class="map-custom-label">' + point.id + '</div>';
         }
     },
     markerCluster: {
@@ -193,6 +192,11 @@ Here are the common options:
     }
 }
 ```
+
+N.B.: if marker.label is a simple text or does not define a css class, a div with class lf-map-marker-label.
+
+In future release, it will be possible to set this css class. Defining the css in marker.label is brittle
+
 
 -   [Bing config](https://www.bingmapsportal.com/isdk/ajaxv7e)
 
