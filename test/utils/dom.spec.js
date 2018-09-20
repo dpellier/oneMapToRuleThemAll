@@ -10,7 +10,7 @@ test('extract text from text', ()=>{
 });
 
 test('extract no css class from text', () => {
-    expect(dom.extractTextAndCssClasses('a content').classes).toEqual('');
+    expect(dom.extractTextAndCssClasses('a content').classes).toBeUndefined();
 });
 
 test('extract text from html', ()=>{
@@ -26,7 +26,13 @@ test('extract css classes from fragment', ()=>{
 });
 
 test('extract no css class from text', ()=>{
-    expect(dom.extractTextAndCssClasses('a content').classes).toEqual('');
+    expect(dom.extractTextAndCssClasses('a content').classes).toBeUndefined();
+});
+
+test('extract no css class and no text from empty string', () => {
+    const textAndCssClasses = dom.extractTextAndCssClasses('');
+    expect(textAndCssClasses.textContent).toEqual('');
+    expect(textAndCssClasses.classes).toEqual('');
 });
 
 test('extract style from css class', () => {
