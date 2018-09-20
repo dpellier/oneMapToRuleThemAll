@@ -2,6 +2,7 @@
 
 let ieUtils = require('./ie');
 let isAString = require('./type').isAString;
+let isDefined = require('simple-js-validator').isDefined;
 
 module.exports = {
     addScript: function (domElement, src) {
@@ -56,15 +57,10 @@ module.exports = {
     extractTextAndCssClasses: function (str) {
         let div = document.createElement('div');
         div.innerHTML = str;
-        let textContent = div.textContent || div.innerText || "";
+        let textContent = div.textContent || div.innerText || '';
         let classes = '';
-        try {
-            if (isObject(div.firstChild) && isObject(div.firstChild.classList)) {
-                classes = div.firstChild.classList.value;
-            }
-        } catch (e) {
-            // may fail with Cannot read property 'classList' of null
-            // intentionally do nothing
+        if (isDefined(div.firstChild)) {
+            classes = div.firstChild.className;
         }
         return {textContent: textContent, classes: classes};
     },
@@ -83,10 +79,6 @@ module.exports = {
         return result;
     })
 };
-
-function isObject(element) {
-    return typeof element === 'object';
-}
 
 function extractPx(str) {
     if (true === isAString(str)) {

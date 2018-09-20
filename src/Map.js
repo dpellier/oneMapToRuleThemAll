@@ -2,11 +2,11 @@
 
 require('./style.css');
 const objectAssign = require('object-assign');
-const {isHTMLElement} = require('./utils/dom');
+const dom = require('./utils/dom');
 
 class Map {
     constructor(domSelector, apiKey, locale, options, plugins, customWindow) {
-        this.domElement = isHTMLElement(domSelector) ? domSelector : document.querySelector(domSelector);
+        this.domElement = dom.isHTMLElement(domSelector) ? domSelector : document.querySelector(domSelector);
         this.domId = this.domElement.id || '';
         this.apiKey = apiKey;
         this.locale = locale || 'en';
