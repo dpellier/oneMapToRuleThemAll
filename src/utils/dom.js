@@ -57,7 +57,7 @@ module.exports = {
     extractTextAndCssClasses: function (str) {
         let div = document.createElement('div');
         div.innerHTML = str;
-        let textContent = div.textContent || div.innerText || "";
+        let textContent = div.textContent || div.innerText || '';
         let classes = '';
         if (isDefined(div.firstChild)) {
             classes = div.firstChild.className;
