@@ -52,18 +52,18 @@ class Mappy extends Map {
         }
 
         domUtils.addResources(document.body, [
-            domUtils.createScript('//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.1/leaflet.js'),
-            domUtils.createStyle('//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.1/leaflet.css')
+            domUtils.createStyle('//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css'),
+            domUtils.createScript('//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js')
         ], () => {
             const resources = [
-                domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/Mappy/5.4.1/L.Mappy.js'),
-                domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/Mappy/5.4.1/L.Mappy.css')
+                domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/Mappy/7.5.0/L.Mappy.js'),
+                domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/Mappy/7.5.0/L.Mappy.css')
             ];
 
             if (this.plugins.clusterer) {
-                resources.push(domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/5.4.1/leaflet.markercluster.js'));
-                resources.push(domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/5.4.1/MarkerCluster.Default.css'));
-                resources.push(domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/5.4.1/MarkerCluster.css'));
+                resources.push(domUtils.createScript('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/7.5.0/leaflet.markercluster.js'));
+                resources.push(domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/7.5.0/MarkerCluster.Default.css'));
+                resources.push(domUtils.createStyle('//d11lbkprc85eyb.cloudfront.net/plugins/mappy/7.5.0/MarkerCluster.css'));
             }
 
             domUtils.addResources(document.body, resources, () => {
