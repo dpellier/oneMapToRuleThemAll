@@ -6,7 +6,7 @@ class Map extends L.Mappy.Map {
     constructor(domElement, options) {
         const defaultOptions = {
             logoControl: {
-                dir: '//d11lbkprc85eyb.cloudfront.net/Mappy/images/'
+                dir: '//d11lbkprc85eyb.cloudfront.net/Mappy/7.5.0/images/'
             }
         };
 
