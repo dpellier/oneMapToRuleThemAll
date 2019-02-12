@@ -57,8 +57,12 @@ class Yandex extends Map {
 
         // If one marker: readjust zoom because bounds are too small to show tiles
         if (this.points && this.points.length === 1) {
-            this.setZoom(16);
+            this.setZoom(this.getDefaultZoomLevel());
         }
+    }
+
+    getDefaultZoomLevel() {
+        return (this.options && this.options.map && this.options.map.zoom) || 16;
     }
 
     load(callback, loadingMask) {
@@ -94,7 +98,7 @@ class Yandex extends Map {
     }
 
     // Use focusOnMarker instead, this one is for retro compat
-    focusOnMarker(markerId) {
+    focusOnMarker(markerId, showInfoWindow = false, pan = false, zoom = undefined) {
         markerId = markerId.toString();
         let marker = this.markers.filter((marker) => {
             return marker.id.toString() === markerId;
@@ -104,7 +108,7 @@ class Yandex extends Map {
 
         if (marker.length) {
             this.map.setCenter(marker[0].geometry.getCoordinates());
-            this.map.setZoom(16);
+            this.map.setZoom(zoom === undefined ? this.getDefaultZoomLevel() : zoom);
             marker[0].events.fire('click');
         }
     }
