@@ -37,7 +37,7 @@ Each file can be included with its minified version by inserting the `.min.js` f
 If you need to test your developments before releasing on Cloudfront, you can push the compiled filed to Github Pages.
 To do this, just run `npm run gh-deploy`.
 
-You'll find the generated files on this link: https://leadformance.github.io/oneMapToRuleThemAll/[PROVIDER].js
+You'll find the generated files on this link: https://github.com/Leadformance/oneMapToRuleThemAll/tree/gh-pages/[PROVIDER].js
 
 ## Usage
 
