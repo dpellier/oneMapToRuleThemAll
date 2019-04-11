@@ -6,7 +6,7 @@
  */
 
 /*jshint -W079 */
-const Map = require('../../Map');
+const AbstractMap = require('../../AbstractMap');
 /* jshint +W079 */
 
 const domUtils = require('../../utils/dom');
@@ -15,7 +15,7 @@ const loaderUtils = require('../../utils/loader');
 let MappyMap;
 let Marker;
 
-class Mappy extends Map {
+class Mappy extends AbstractMap {
     constructor(...args) {
         super(...args);
 
@@ -67,7 +67,7 @@ class Mappy extends Map {
             }
 
             domUtils.addResources(document.body, resources, () => {
-                MappyMap = require('./Map');
+                MappyMap = require('./MappyMap');
                 Marker = require('./Marker');
 
                 callback();
@@ -143,5 +143,5 @@ class Mappy extends Map {
     }
 }
 
-window.Map = Mappy;
+window.MappyMap = Mappy;
 window.OneMap = Mappy;

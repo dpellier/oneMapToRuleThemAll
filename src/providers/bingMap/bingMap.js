@@ -6,7 +6,7 @@
  */
 
 /*jshint -W079 */
-let Map = require('../../Map');
+let AbstractMap = require('../../AbstractMap');
 /* jshint +W079 */
 
 let domUtils = require('../../utils/dom');
@@ -20,7 +20,7 @@ let MarkerClusterer;
 
 let directionsService;
 
-class BingMap extends Map {
+class BingMap extends AbstractMap {
     constructor(...args) {
         super(...args);
 
@@ -167,5 +167,5 @@ class BingMap extends Map {
     }
 }
 
-window.Map = BingMap;
+window.BingMap = BingMap;
 window.OneMap = BingMap;

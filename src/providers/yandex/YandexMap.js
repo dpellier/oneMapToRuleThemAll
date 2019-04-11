@@ -2,7 +2,7 @@
 
 let objectAssign = require('object-assign');
 
-class Map extends ymaps.Map {
+class YandexMap extends ymaps.Map {
     constructor(domElement, options) {
         let defaultOptions = {
             center: [0, 0],
@@ -13,4 +13,4 @@ class Map extends ymaps.Map {
     }
 }
 
-module.exports = Map;
+module.exports = YandexMap;

@@ -2,7 +2,7 @@
 
 const objectAssign = require('object-assign');
 
-class Map extends L.Mappy.Map {
+class MappyMap extends L.Mappy.Map {
     constructor(domElement, options) {
         const defaultOptions = {
             logoControl: {
@@ -17,4 +17,4 @@ class Map extends L.Mappy.Map {
     }
 }
 
-module.exports = Map;
+module.exports = MappyMap;

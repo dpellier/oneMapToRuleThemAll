@@ -7,7 +7,7 @@
  */
 
 /*jshint -W079 */
-let Map = require('../../Map');
+let AbstractMap = require('../../AbstractMap');
 /* jshint +W079 */
 
 let domUtils = require('../../utils/dom');
@@ -19,7 +19,7 @@ let BaiduMap;
 
 let directionsService;
 
-class Baidu extends Map {
+class Baidu extends AbstractMap {
     constructor(...args) {
         super(...args);
 
@@ -72,7 +72,7 @@ class Baidu extends Map {
 
         window._baiduCallbackOnLoad = function() {
             // Require baidu object here cause they're not loaded before
-            BaiduMap = require('./Map');
+            BaiduMap = require('./BaiduMap');
             Marker = require('./Marker');
 
             ieUtils.delete(window, '_baiduCallbackOnLoad');
@@ -121,5 +121,5 @@ class Baidu extends Map {
     }
 }
 
-window.Map = Baidu;
+window.BaiduMap = Baidu;
 window.OneMap = Baidu;
