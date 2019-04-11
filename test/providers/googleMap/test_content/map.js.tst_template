@@ -6,7 +6,7 @@ class MappedMap {
     }
 
     init() {
-        this.map = new window.Map(`#map`, this.attr.apiKey, this.attr.locale, {}, {clusterer: true});
+        this.map = new window.OneMap(`#map`, this.attr.apiKey, this.attr.locale, {}, {clusterer: true});
         this.displayMap();
     }
 

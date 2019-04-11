@@ -1,6 +1,6 @@
 'use strict';
 
-class Map extends BMap.Map {
+class BaiduMap extends BMap.Map {
     constructor(domElement, options) {
         super(domElement, options);
 
@@ -16,4 +16,4 @@ class Map extends BMap.Map {
     }
 }
 
-module.exports = Map;
+module.exports = BaiduMap;

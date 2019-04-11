@@ -6,7 +6,7 @@
  */
 
 /*jshint -W079 */
-let Map = require('../../Map');
+let AbstractMap = require('../../AbstractMap');
 /* jshint +W079 */
 
 let domUtils = require('../../utils/dom');
@@ -18,7 +18,7 @@ let YandexMap;
 
 let directionsService;
 
-class Yandex extends Map {
+class Yandex extends AbstractMap {
     constructor(...args) {
         super(...args);
 
@@ -73,7 +73,7 @@ class Yandex extends Map {
 
         window._yandexCallbackOnLoad = function() {
             // Require yandex object here cause they're not loaded before
-            YandexMap = require('./Map');
+            YandexMap = require('./YandexMap');
             Marker = require('./Marker');
 
             ieUtils.delete(window, '_yandexCallbackOnLoad');
@@ -137,5 +137,5 @@ function getLargestBounds(bounds, point) {
     ];
 }
 
-window.Map = Yandex;
+window.YandexMap = Yandex;
 window.OneMap = Yandex;

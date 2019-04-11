@@ -4,7 +4,7 @@ require('./style.css');
 const objectAssign = require('object-assign');
 const dom = require('./utils/dom');
 
-class Map {
+class AbstractMap {
     constructor(domSelector, apiKey, locale, options, plugins, customWindow) {
         this.domElement = dom.isHTMLElement(domSelector) ? domSelector : document.querySelector(domSelector);
         this.domId = this.domElement.id || '';
@@ -77,4 +77,4 @@ class Map {
     }
 }
 
-module.exports = Map;
+module.exports = AbstractMap;

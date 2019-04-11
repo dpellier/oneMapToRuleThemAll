@@ -6,7 +6,7 @@
  */
 
 /*jshint -W079 */
-let Map = require('../../Map');
+let AbstractMap = require('../../AbstractMap');
 /* jshint +W079 */
 
 let domUtils = require('../../utils/dom');
@@ -16,7 +16,7 @@ let objectAssign = require('object-assign');
 let InfoWindow;
 let Marker;
 
-class GoogleMap extends Map {
+class GoogleMap extends AbstractMap {
     constructor(...args) {
         super(...args);
 
@@ -251,5 +251,5 @@ class GoogleMap extends Map {
     }
 }
 
-window.Map = GoogleMap;
+window.GoogleMap = GoogleMap;
 window.OneMap = GoogleMap;

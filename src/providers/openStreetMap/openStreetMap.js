@@ -6,13 +6,13 @@
  */
 
 /*jshint -W079 */
-let Map = require('../../Map');
+let AbstractMap = require('../../AbstractMap');
 /* jshint +W079 */
 
 let domUtils = require('../../utils/dom');
 let _ = require('lodash');
 
-class OpenStreetMap extends Map {
+class OpenStreetMap extends AbstractMap {
     constructor(...args) {
         super(...args);
 
@@ -193,5 +193,5 @@ class OpenStreetMap extends Map {
     }
 }
 
-window.Map = OpenStreetMap;
+window.OpenStreetMap = OpenStreetMap;
 window.OneMap = OpenStreetMap;

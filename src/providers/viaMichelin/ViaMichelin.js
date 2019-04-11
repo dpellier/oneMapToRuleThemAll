@@ -6,7 +6,7 @@
  */
 
 /*jshint -W079 */
-let Map = require('../../Map');
+let AbstractMap = require('../../AbstractMap');
 /* jshint +W079 */
 
 let domUtils = require('../../utils/dom');
@@ -19,7 +19,7 @@ let markerClusterer;
 let directionsService;
 let vmService;
 
-class ViaMichelinMap extends Map {
+class ViaMichelinMap extends AbstractMap {
     constructor(...args) {
         super(...args);
 
@@ -217,5 +217,5 @@ function getLargestBounds(bounds, point) {
     ];
 }
 
-window.Map = ViaMichelinMap;
+window.ViaMichelinMap = ViaMichelinMap;
 window.OneMap = ViaMichelinMap;
