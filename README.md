@@ -39,6 +39,19 @@ To do this, just run `npm run gh-deploy`.
 
 You'll find the generated files on this link: https://github.com/Leadformance/oneMapToRuleThemAll/tree/gh-pages/[PROVIDER].js
 
+### Deploy your devs
+
+To deploy and release your code you have to merge your branch on master.
+
+Now you can switch on master and run `npm run deploy <versions>` (version: major / minor / patch).
+This deploy script will do several chosen, and in particular it will generate the folder **dist** with every provider js (normal and minified).
+
+Copy every **dist** file and go on this [S3 Bucket](https://s3.console.aws.amazon.com/s3/buckets/bridge-template-map-vendors/oneMapToRuleThemAll/?region=eu-west-1&tab=overview), create a folder with in name the **new version** deployed and paste all the files you copied.
+
+Now you can go [here](https://github.com/Leadformance/oneMapToRuleThemAll/releases) and click on **Draft a new release**, in the description explain your changes and if there are any, your breaking changes.
+
+Now you can use this version in your project.
+
 ## Usage
 
 Each provider expose the same set of methods, that will call the corresponding action using the provider native way.
