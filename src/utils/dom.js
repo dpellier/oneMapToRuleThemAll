@@ -83,8 +83,8 @@ module.exports = {
 function extractPx(str) {
     if (true === isAString(str)) {
         const pxValue = str.replace('px', '').replace('"', '');
-        const pxNumber = Number.parseInt(pxValue);
-        return Number.isFinite(pxNumber) ? pxNumber : 0;
+        const pxNumber = parseInt(pxValue);
+        return isFinite(pxNumber) ? pxNumber : 0;
     } else {
         return 0;
     }
