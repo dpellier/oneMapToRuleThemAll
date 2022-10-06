@@ -62,7 +62,7 @@ class GoogleMap extends AbstractMap {
         }
     }
 
-    load(callback, loadingMask) {
+    load(callback, loadingMask,loadParams) {
         if (window.google && window.google.maps) {
             callback();
             return;
@@ -96,14 +96,14 @@ class GoogleMap extends AbstractMap {
             callback = loaderUtils.addLoader(this.domElement, loadingMask, callback);
         }
 
-        let urlParams = Object.keys(this.options.loadParams).reduce((param, key) => {
-            param += key + '=' + this.options.loadParams[key] + '&';
+        let urlParams = Object.keys(loadParams).reduce((param, key) => {
+            param += key + '=' + loadParams[key] + '&';
             return param;
         }, '?');
 
         urlParams += 'v=3.31&callback=_googleMapCallbackOnLoad&language=' + this.locale;
 
-        if (!this.options.loadParams.signature) {
+        if (!loadParams.signature) {
             urlParams += '&key=' + this.apiKey;
         }
 
